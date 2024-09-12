@@ -16,4 +16,6 @@ public partial class UmRole
     public DateTime CreatedDate { get; set; }
 
     public int CreatedBy { get; set; }
+
+    public virtual ICollection<UmUserAccountRole> UmUserAccountRoles { get; set; } = new List<UmUserAccountRole>();
 }

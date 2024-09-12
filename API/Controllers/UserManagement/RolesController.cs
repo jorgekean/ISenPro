@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository.Models;
+using Service;
 using Service.Dto.UserManagement;
 using Service.UserManagement.Interface;
 
@@ -24,18 +26,29 @@ namespace API.Controllers.UserManagement
 
         // GET: api/Roles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UmRole>>> GetRoles()
-            {
+        public async Task<ActionResult<PaginatedResponse<RoleDto>>> GetRoles([FromQuery] PagingParameters pagingParameters)
+        {
             try
             {
-                return Ok(await _roleService.GetAllAsync());
+                var paginatedResult = await _roleService.GetPagedAndFilteredAsync(pagingParameters);                
+
+                var response = new PaginatedResponse<RoleDto>
+                {
+                    Items = paginatedResult.Data,
+                    TotalCount = paginatedResult.TotalRecords,
+                    PageNumber = pagingParameters.PageNumber,
+                    PageSize = pagingParameters.PageSize
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                // logging here
-                return BadRequest();
+                // Logging here
+                return BadRequest(new { message = ex.Message });
             }
         }
+
 
         // GET: api/Roles/5
         [HttpGet("{id}")]
