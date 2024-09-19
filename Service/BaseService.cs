@@ -61,7 +61,7 @@ namespace Service
                 await _context.SaveChangesAsync();
             }
 
-            public virtual async Task DeleteAsync(int id)
+            public virtual async Task DeleteAsync(string id)
             {
                 var entity = await _dbSet.FindAsync(id);
                 if (entity != null)

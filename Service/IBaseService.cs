@@ -15,6 +15,6 @@ namespace Service
         Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters);
         Task AddAsync(TDto dto);
         Task UpdateAsync(TDto dto);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(string id);
     }    
 }

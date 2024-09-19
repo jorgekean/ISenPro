@@ -122,20 +122,34 @@ namespace API.Controllers.UserManagement
         }
 
         //// DELETE: api/Roles/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUmRole(string id)
-        //{
-        //    var umRole = await _context.UmRoles.FindAsync(id);
-        //    if (umRole == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUmRole(string id)
+        {
+            //    var role = await _roleService.GetByIdAsync(id);
+            //    if (role == null)
+            //    {
+            //        return NotFound();
+            //    }
 
-        //    _context.UmRoles.Remove(umRole);
-        //    await _context.SaveChangesAsync();
+            try
+            {
+                await _roleService.DeleteAsync(id);
+            }
+            catch (Exception ex)
+            {
+                if (!(await roleExists(id)))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    // logging
+                    throw;
+                }
+            }
 
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         private async Task<bool> roleExists(string id)
         {
