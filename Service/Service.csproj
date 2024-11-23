@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EF\Repository.csproj" />
+    <ProjectReference Include="..\EF\EF.csproj" />
   </ItemGroup>
 
   <ItemGroup>

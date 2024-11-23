@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EF\Repository.csproj" />
+    <ProjectReference Include="..\EF\EF.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 

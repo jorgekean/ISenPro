@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Repository.Models;
+using EF.Models;
 using Service.Dto.UserManagement;
 using Service.UserManagement.Interface;
 

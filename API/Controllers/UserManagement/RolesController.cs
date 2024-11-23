@@ -6,7 +6,7 @@ using API.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Repository.Models;
+//using EF.Models;
 using Service;
 using Service.Dto.UserManagement;
 using Service.UserManagement.Interface;
@@ -99,7 +99,7 @@ namespace API.Controllers.UserManagement
         // POST: api/Roles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UmRole>> PostUmRole(RoleDto umRole)
+        public async Task<ActionResult<RoleDto>> PostUmRole(RoleDto umRole)
         {
             //_context.UmRoles.Add(umRole);
             try

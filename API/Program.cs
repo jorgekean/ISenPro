@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Repository.Models;
 using Service.UserManagement;
 using Service.UserManagement.Interface;
+using EF.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

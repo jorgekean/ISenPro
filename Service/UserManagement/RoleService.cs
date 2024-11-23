@@ -1,4 +1,5 @@
-﻿using Repository.Models;
+﻿using EF;
+using EF.Models;
 using Service.Dto.UserManagement;
 using Service.Service;
 using Service.UserManagement.Interface;

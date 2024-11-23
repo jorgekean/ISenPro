@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Repository.Models;
+namespace EF.Models;
 
 public partial class ISenProContext : DbContext
 {
