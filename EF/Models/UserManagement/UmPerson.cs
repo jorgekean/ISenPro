@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EF.Models;
+namespace EF.Models.UserManagement;
 
 public partial class UmPerson
 {
@@ -32,4 +32,8 @@ public partial class UmPerson
     public long CreatedByUserId { get; set; }
 
     public DateTime CreatedDate { get; set; }
+
+    public int? DepartmentId { get; set; }
+
+    public int? SectionId { get; set; }
 }

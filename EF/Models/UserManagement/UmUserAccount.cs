@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EF.Models;
+namespace EF.Models.UserManagement;
 
 public partial class UmUserAccount
 {
@@ -23,5 +23,5 @@ public partial class UmUserAccount
 
     public int PersonId { get; set; }
 
-    public virtual ICollection<UmUserAccountRole> UmUserAccountRoles { get; set; } = new List<UmUserAccountRole>();
+    public int? RoleId { get; set; }
 }

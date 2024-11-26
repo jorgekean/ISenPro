@@ -1,5 +1,6 @@
 ﻿using EF;
 using EF.Models;
+using EF.Models.UserManagement;
 using Service.Dto.UserManagement;
 using Service.Service;
 using Service.UserManagement.Interface;

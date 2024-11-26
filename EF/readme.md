@@ -9,4 +9,5 @@ EF Scaffolding Steps
 4.) dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -c ISenProContext
     dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -c ISenProContext --force
 
-5.) dotnet ef dbcontext scaffold "(LocalDB)\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models --table <tablename 1> --table <tablename 2>
+5.) dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models/SystemSetup --table SS_UnitOfMeasurement -c TempContext --context-dir Models --force
+   -- copy the newly created DBset and modelBuilder.Entity from TemContext to ISenProContext

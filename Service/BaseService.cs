@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Service
 {
+    using EF;
     using EF.Models;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
