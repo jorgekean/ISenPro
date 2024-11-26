@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Service.UserManagement;
 using Service.UserManagement.Interface;
 using EF.Models;
+using Service.SystemSetup;
+using Service.SystemSetup.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,8 @@ builder.Services.AddDbContext<ISenProContext>(options =>
 #region Services
 
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
+
 #endregion
 
 var app = builder.Build();

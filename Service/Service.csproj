@@ -10,8 +10,4 @@
     <ProjectReference Include="..\EF\EF.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SystemSetup\" />
-  </ItemGroup>
-
 </Project>
