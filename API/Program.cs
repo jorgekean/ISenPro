@@ -4,6 +4,7 @@ using Service.UserManagement.Interface;
 using EF.Models;
 using Service.SystemSetup;
 using Service.SystemSetup.Interface;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,24 @@ builder.Services.AddDbContext<ISenProContext>(options =>
 
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
+
+#endregion
+
+#region Serilog
+
+// Configure Serilog for daily rolling files
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console() // Optional: Logs to the console
+    .WriteTo.File(
+        path: "Logs/log-.txt", // Log file name pattern
+        rollingInterval: RollingInterval.Day, // Create a new file daily
+        retainedFileCountLimit: 60, // Optional: Retain the last 60 days of logs
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
+    .CreateLogger();
+
+// Use Serilog as the logging provider
+builder.Host.UseSerilog();
 
 #endregion
 

@@ -18,10 +18,12 @@ namespace API.Controllers.UserManagement
     public class RolesController : ControllerBase
     {
         private readonly IRoleService _roleService;
+        private readonly ILogger<RolesController> _logger;
 
-        public RolesController(IRoleService roleService)
+        public RolesController(IRoleService roleService, ILogger<RolesController> logger)
         {
             _roleService = roleService;
+            _logger = logger;
         }
 
         // GET: api/Roles
@@ -30,7 +32,7 @@ namespace API.Controllers.UserManagement
         {
             try
             {
-                var paginatedResult = await _roleService.GetPagedAndFilteredAsync(pagingParameters);                
+                var paginatedResult = await _roleService.GetPagedAndFilteredAsync(pagingParameters);
 
                 var response = new PaginatedResponse<RoleDto>
                 {
@@ -44,7 +46,8 @@ namespace API.Controllers.UserManagement
             }
             catch (Exception ex)
             {
-                // Logging here
+                _logger.LogError(ex, ex.Message);
+
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -74,14 +77,11 @@ namespace API.Controllers.UserManagement
                 return BadRequest();
             }
 
-            //_roleService./*Entry*/(umRole).State = EntityState.Modified;
-            //await _roleService.UpdateAsync(umRole);
-
             try
             {
                 await _roleService.UpdateAsync(umRole);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!(await roleExists(id)))
                 {
@@ -89,8 +89,12 @@ namespace API.Controllers.UserManagement
                 }
                 else
                 {
-                    // logging here
+                    _logger.LogError(ex, ex.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
 
             return NoContent();
@@ -106,7 +110,7 @@ namespace API.Controllers.UserManagement
             {
                 await _roleService.AddAsync(umRole);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (await roleExists(umRole.Code))
                 {
@@ -114,8 +118,12 @@ namespace API.Controllers.UserManagement
                 }
                 else
                 {
-                    // logging
+                    _logger.LogError(ex, ex.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
 
             return CreatedAtAction("GetRole", new { id = umRole.Code }, umRole);
@@ -135,7 +143,7 @@ namespace API.Controllers.UserManagement
             {
                 await _roleService.DeleteAsync(id);
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
                 if (!(await roleExists(id)))
                 {
@@ -143,9 +151,12 @@ namespace API.Controllers.UserManagement
                 }
                 else
                 {
-                    // logging
-                    throw;
+                    _logger.LogError(ex, ex.Message);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
             }
 
             return NoContent();
