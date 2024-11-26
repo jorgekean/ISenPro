@@ -42,7 +42,8 @@ builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>(
 
 // Configure Serilog for daily rolling files
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console() // Optional: Logs to the console
+    .MinimumLevel.Error()  // Log only errors
+    //.WriteTo.Console() // Optional: Logs to the console
     .WriteTo.File(
         path: "Logs/log-.txt", // Log file name pattern
         rollingInterval: RollingInterval.Day, // Create a new file daily
