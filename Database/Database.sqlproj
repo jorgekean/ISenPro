@@ -65,5 +65,10 @@
     <Build Include="dbo\Tables\CT_UM_Role.sql" />
     <Build Include="dbo\Tables\ChangeTrackingTable.sql" />
     <Build Include="dbo\Tables\ChangeDetailsTable.sql" />
+    <Build Include="dbo\Tables\UM_UserAccount.sql" />
+    <Build Include="dbo\Tables\UM_Policy.sql" />
+    <Build Include="dbo\Tables\UM_Person.sql" />
+    <Build Include="dbo\Tables\SS_UnitOfMeasurement.sql" />
+    <Build Include="dbo\Tables\SS_PurchasingType.sql" />
   </ItemGroup>
 </Project>
