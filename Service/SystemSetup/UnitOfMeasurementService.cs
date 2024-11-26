@@ -30,6 +30,7 @@ namespace Service.SystemSetup
         {
             var dto = new UnitOfMeasurementDto
             {
+                Id = entity.UnitOfMeasurementId,
                 Code = entity.Code,
                 Name = entity.Name,
                 IsActive = entity.IsActive.GetValueOrDefault(),
@@ -43,6 +44,7 @@ namespace Service.SystemSetup
         {
             var entity = new SsUnitOfMeasurement
             {
+                UnitOfMeasurementId = dto.Id.GetValueOrDefault(),
                 Code = dto.Code,
                 Name = dto.Name,
                 IsActive = dto.IsActive,

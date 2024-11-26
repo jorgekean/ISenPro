@@ -16,5 +16,6 @@ namespace Service
         Task AddAsync(TDto dto);
         Task UpdateAsync(TDto dto);
         Task DeleteAsync(string id);
+        Task DeleteAsync(int id);
     }    
 }

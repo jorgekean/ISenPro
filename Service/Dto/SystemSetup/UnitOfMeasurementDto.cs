@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ namespace Service.Dto.SystemSetup
 {
     public class UnitOfMeasurementDto
     {
+        public int? Id { get; set; } = null!;
+
         public string Code { get; set; } = null!;
 
         public string Name { get; set; } = null!;      
@@ -19,6 +22,6 @@ namespace Service.Dto.SystemSetup
         public int CreatedBy { get; set; }
 
 
-        public string CreatedDateStr { get { return CreatedDate.ToString("MM/dd/yyyy"); } }        
+        public string CreatedDateStr => CreatedDate.ToString("d", CultureInfo.InvariantCulture);
     }
 }

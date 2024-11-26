@@ -72,6 +72,16 @@ namespace Service
                 }
             }
 
+            public virtual async Task DeleteAsync(int id)
+            {
+                var entity = await _dbSet.FindAsync(id);
+                if (entity != null)
+                {
+                    _context.Entry(entity).Property("IsActive").CurrentValue = false;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             public virtual async Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters)
             {
                 var query = _dbSet.Where(e => EF.Property<bool>(e, "IsActive"));
