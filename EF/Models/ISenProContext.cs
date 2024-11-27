@@ -27,6 +27,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
 
+    public virtual DbSet<SsPurchasingType> SsPurchasingTypes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=(LocalDB)\\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;");
@@ -106,6 +108,19 @@ public partial class ISenProContext : DbContext
 
             entity.Property(e => e.Code).HasMaxLength(100);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<SsPurchasingType>(entity =>
+        {
+            entity.HasKey(e => e.PurchasingTypeId);
+
+            entity.ToTable("SS_PurchasingType");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.MaximumAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.MinimumAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Name).HasMaxLength(200);
         });
         #endregion

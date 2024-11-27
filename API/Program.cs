@@ -35,6 +35,7 @@ builder.Services.AddDbContext<ISenProContext>(options =>
 
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
+builder.Services.AddScoped<IPurchasingTypeService, PurchasingTypeService>();
 
 #endregion
 
