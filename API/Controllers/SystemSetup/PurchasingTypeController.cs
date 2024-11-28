@@ -9,12 +9,12 @@ namespace API.Controllers.UserManagement
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PurchasingTypeController : ControllerBase
+    public class PurchasingTypesController : ControllerBase
     {
         private readonly IPurchasingTypeService _purchasingTypeService;
-        private readonly ILogger<PurchasingTypeController> _logger;
+        private readonly ILogger<PurchasingTypesController> _logger;
 
-        public PurchasingTypeController(IPurchasingTypeService purchasingtypeService, ILogger<PurchasingTypeController> logger)
+        public PurchasingTypesController(IPurchasingTypeService purchasingtypeService, ILogger<PurchasingTypesController> logger)
         {
             _purchasingTypeService = purchasingtypeService;
             _logger = logger;
