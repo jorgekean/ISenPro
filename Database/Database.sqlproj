@@ -72,5 +72,7 @@
     <Build Include="dbo\Tables\SS_PurchasingType.sql" />
     <Build Include="dbo\Tables\SS_ItemType.sql" />
     <Build Include="dbo\Tables\SS_AccountCode.sql" />
+    <Build Include="dbo\Tables\SS_SubCategory.sql" />
+    <Build Include="dbo\Tables\SS_MajorCategory.sql" />
   </ItemGroup>
 </Project>

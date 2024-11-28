@@ -30,9 +30,16 @@ public partial class ISenProContext : DbContext
     #region System Setup
 
     public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
+
     public virtual DbSet<SsPurchasingType> SsPurchasingTypes { get; set; }
-    public virtual DbSet<SsItemType> SsItemTypes { get; set; }
+
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
+
+    public virtual DbSet<SsItemType> SsItemTypes { get; set; }
+
+    public virtual DbSet<SsMajorCategory> SsMajorCategories { get; set; }
+
+    public virtual DbSet<SsSubCategory> SsSubCategories { get; set; }
 
     #endregion
 
@@ -152,6 +159,36 @@ public partial class ISenProContext : DbContext
             entity.ToTable("SS_ItemType");
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<SsMajorCategory>(entity =>
+        {
+            entity.HasKey(e => e.MajorCategoryId);
+
+            entity.ToTable("SS_MajorCategory");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+
+            entity.HasOne(d => d.AccountCode).WithMany(p => p.SsMajorCategories)
+                .HasForeignKey(d => d.AccountCodeId)
+                .HasConstraintName("FK_SS_MajorCategory_SS_AccountCode");
+        });
+
+        modelBuilder.Entity<SsSubCategory>(entity =>
+        {
+            entity.HasKey(e => e.SubCategoryId);
+
+            entity.ToTable("SS_SubCategory");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+
+            entity.HasOne(d => d.MajorCategory).WithMany(p => p.SsSubCategories)
+                .HasForeignKey(d => d.MajorCategoryId)
+                .HasConstraintName("FK_SS_SubCategory_SS_MajorCategory");
         });
 
 

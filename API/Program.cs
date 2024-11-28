@@ -41,6 +41,8 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
 builder.Services.AddScoped<IPurchasingTypeService, PurchasingTypeService>();
 builder.Services.AddScoped<IAccountCodeService, AccountCodeService>();
+builder.Services.AddScoped<IMajorCategoryService, MajorCategoryService>();
+builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
 #endregion
 
 #endregion
