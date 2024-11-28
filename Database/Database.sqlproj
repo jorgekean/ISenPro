@@ -70,5 +70,7 @@
     <Build Include="dbo\Tables\UM_Person.sql" />
     <Build Include="dbo\Tables\SS_UnitOfMeasurement.sql" />
     <Build Include="dbo\Tables\SS_PurchasingType.sql" />
+    <Build Include="dbo\Tables\SS_ItemType.sql" />
+    <Build Include="dbo\Tables\SS_AccountCode.sql" />
   </ItemGroup>
 </Project>

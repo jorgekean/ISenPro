@@ -40,6 +40,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 #region SystemSetup
 builder.Services.AddScoped<IUnitOfMeasurementService, UnitOfMeasurementService>();
 builder.Services.AddScoped<IPurchasingTypeService, PurchasingTypeService>();
+builder.Services.AddScoped<IAccountCodeService, AccountCodeService>();
 #endregion
 
 #endregion

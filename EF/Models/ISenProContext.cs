@@ -17,6 +17,7 @@ public partial class ISenProContext : DbContext
     {
     }
 
+    #region User Management
     public virtual DbSet<UmPerson> UmPeople { get; set; }
 
     public virtual DbSet<UmPolicy> UmPolicies { get; set; }
@@ -24,10 +25,16 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<UmRole> UmRoles { get; set; }
 
     public virtual DbSet<UmUserAccount> UmUserAccounts { get; set; }
+    #endregion
+
+    #region System Setup
 
     public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
-
     public virtual DbSet<SsPurchasingType> SsPurchasingTypes { get; set; }
+    public virtual DbSet<SsItemType> SsItemTypes { get; set; }
+    public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
+
+    #endregion
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -123,6 +130,31 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.MinimumAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Name).HasMaxLength(200);
         });
+
+        modelBuilder.Entity<SsAccountCode>(entity =>
+        {
+            entity.HasKey(e => e.AccountCodeId);
+
+            entity.ToTable("SS_AccountCode");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ItemType).WithMany(p => p.SsAccountCodes)
+                .HasForeignKey(d => d.ItemTypeId)
+                .HasConstraintName("FK_SS_AccountCode_SS_ItemType");
+        });
+
+        modelBuilder.Entity<SsItemType>(entity =>
+        {
+            entity.HasKey(e => e.ItemTypeId);
+
+            entity.ToTable("SS_ItemType");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
+
         #endregion
 
         OnModelCreatingPartial(modelBuilder);

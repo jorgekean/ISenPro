@@ -26,7 +26,8 @@ namespace Service
 
             public virtual async Task<IEnumerable<TDto>> GetAllAsync()
             {
-                var entities = await _dbSet.Where(e => EF.Property<bool>(e, "IsActive")).ToListAsync();
+                var query = IncludeNavigationProperties(_dbSet);
+                var entities = await query.Where(e => EF.Property<bool>(e, "IsActive")).ToListAsync();
                 return entities.Select(MapToDto).ToList();
             }
 
@@ -84,7 +85,7 @@ namespace Service
 
             public virtual async Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters)
             {
-                var query = _dbSet.Where(e => EF.Property<bool>(e, "IsActive"));
+                var query = IncludeNavigationProperties(_dbSet).Where(e => EF.Property<bool>(e, "IsActive"));
 
                 if (!string.IsNullOrEmpty(pagingParameters.SearchQuery))
                 {
@@ -92,7 +93,6 @@ namespace Service
                 }
 
                 var totalRecords = await query.CountAsync();
-
                 var data = await query.Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
                                       .Take(pagingParameters.PageSize)
                                       .ToListAsync();
@@ -100,6 +100,12 @@ namespace Service
                 var dtoData = data.Select(MapToDto).ToList();
                 return (dtoData, totalRecords);
             }
+
+            protected virtual IQueryable<TEntity> IncludeNavigationProperties(IQueryable<TEntity> query)
+            {
+                return query; // By default, no navigation properties are included.
+            }
+
 
             protected abstract IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string searchQuery);
 
