@@ -24,11 +24,12 @@ namespace Service.SystemSetup
 
         public Task<List<MajorCategoryDto>> GetMajorCategories()
         {
-            return _context.SsMajorCategories.Where(x => x.IsActive).Select(p => new MajorCategoryDto
+            return _context.SsMajorCategories.Where(x => x.IsActive).Include(s => s.AccountCode).Select(p => new MajorCategoryDto
             {
                 Id = p.MajorCategoryId,
                 Code = p.Code,
                 Name = p.Name,
+                AccountCodeCode = p.AccountCode != null ? p.AccountCode.Code : "",
                 //ItemTypeName = p.ItemType?.Name,
                 Description = p.Description
             }).ToListAsync();
@@ -36,7 +37,7 @@ namespace Service.SystemSetup
 
         protected override IQueryable<SsSubCategory> IncludeNavigationProperties(IQueryable<SsSubCategory> query)
         {
-            return query.Include(o => o.MajorCategory);
+            return query.Include(o => o.MajorCategory).ThenInclude(s => s.AccountCode).ThenInclude(s => s.ItemType);
         }
 
         protected override IQueryable<SsSubCategory> ApplySearchFilter(IQueryable<SsSubCategory> query, string searchQuery)
@@ -59,6 +60,8 @@ namespace Service.SystemSetup
                 MajorCategoryCode = entity.MajorCategory?.Code,
                 MajorCategoryId = entity.MajorCategoryId,
                 MajorCategoryName = entity.MajorCategory?.Name,
+                AccountCode = entity.MajorCategory?.AccountCode?.Code,
+                ItemTypeName = entity.MajorCategory?.AccountCode?.ItemType?.Name
             };
             return dto;
         }
@@ -73,7 +76,7 @@ namespace Service.SystemSetup
                 IsActive = dto.IsActive,
                 CreatedDate = dto.CreatedDate,
                 CreatedByUserId = dto.CreatedBy,
-                MajorCategoryId = dto.MajorCategoryId,                
+                MajorCategoryId = dto.MajorCategoryId,
                 Name = dto.Name
             };
             return entity;

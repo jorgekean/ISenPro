@@ -49,7 +49,7 @@ namespace API.Controllers.UserManagement
 
         // GET: api/Roles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoleDto>> GetRole(string id)
+        public async Task<ActionResult<RoleDto>> GetRole(int id)
         {
             var umRole = await _roleService.GetByIdAsync(id);
 
@@ -125,7 +125,7 @@ namespace API.Controllers.UserManagement
 
         //// DELETE: api/Roles/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUmRole(string id)
+        public async Task<IActionResult> DeleteUmRole(int id)
         {
             //    var role = await _roleService.GetByIdAsync(id);
             //    if (role == null)
@@ -139,14 +139,14 @@ namespace API.Controllers.UserManagement
             }
             catch (DbUpdateException ex)
             {
-                if (!(await roleExists(id)))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    _logger.LogError(ex, ex.Message);
-                }
+                //if (!(await roleExists(id)))
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                //    _logger.LogError(ex, ex.Message);
+                //}
             }
             catch (Exception ex)
             {

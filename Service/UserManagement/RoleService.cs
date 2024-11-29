@@ -27,6 +27,7 @@ namespace Service.UserManagement
         {
             var dto = new RoleDto
             {
+                Id = entity.RoleId,
                 Code = entity.Code,
                 Name = entity.Name,
                 Description = entity.Description,
@@ -41,6 +42,7 @@ namespace Service.UserManagement
         {
             var entity = new UmRole
             {
+                RoleId = dto.Id.GetValueOrDefault(),
                 Code = dto.Code,
                 Name = dto.Name,
                 Description = dto.Description,

@@ -6,9 +6,11 @@ namespace Service
 {
     using EF;
     using EF.Models;
+    using EF.Models.SystemSetup;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     namespace Service
@@ -83,9 +85,22 @@ namespace Service
                 }
             }
 
+           
+            public virtual IQueryable<TEntity> ApplyFilters(IQueryable<TEntity> query, List<Filter> filters)
+            {               
+                return query;
+            }           
+
+
             public virtual async Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters)
             {
                 var query = IncludeNavigationProperties(_dbSet).Where(e => EF.Property<bool>(e, "IsActive"));
+
+                if (pagingParameters.Filters != null && pagingParameters.Filters.Any())
+                {
+                    // Apply dynamic filters
+                    query = ApplyFilters(query, pagingParameters.Filters);
+                }
 
                 if (!string.IsNullOrEmpty(pagingParameters.SearchQuery))
                 {
@@ -105,6 +120,23 @@ namespace Service
             {
                 return query; // By default, no navigation properties are included.
             }
+
+            // Helper method to combine expressions with OR logic
+            protected Expression<Func<SsMajorCategory, bool>> CombineWithOr(
+                Expression<Func<SsMajorCategory, bool>> firstCondition,
+                Expression<Func<SsMajorCategory, bool>> secondCondition)
+            {
+                var parameter = Expression.Parameter(typeof(SsMajorCategory), "p");
+
+                // Combine the two expressions using OR logic
+                var body = Expression.OrElse(
+                    Expression.Invoke(firstCondition, parameter),
+                    Expression.Invoke(secondCondition, parameter)
+                );
+
+                return Expression.Lambda<Func<SsMajorCategory, bool>>(body, parameter);
+            }
+
 
 
             protected abstract IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string searchQuery);

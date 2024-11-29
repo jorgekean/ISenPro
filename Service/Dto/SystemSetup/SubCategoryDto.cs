@@ -16,6 +16,8 @@ public partial class SubCategoryDto : BaseDto
     public int? MajorCategoryId { get; set; }
     public string? MajorCategoryCode { get; set; }
     public string? MajorCategoryName { get; set; }
+    public string? AccountCode { get; set; }
+    public string? ItemTypeName { get; set; }
 
     public MajorCategoryDto? MajorCategory { get; set; }
 }
