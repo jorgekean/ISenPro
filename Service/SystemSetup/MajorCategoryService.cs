@@ -36,12 +36,22 @@ namespace Service.SystemSetup
 
         protected override IQueryable<SsMajorCategory> IncludeNavigationProperties(IQueryable<SsMajorCategory> query)
         {
-            return query.Include(o => o.AccountCode);
+            return query.Include(o => o.AccountCode).ThenInclude(i => i.ItemType);
         }
 
         protected override IQueryable<SsMajorCategory> ApplySearchFilter(IQueryable<SsMajorCategory> query, string searchQuery)
         {
-            return query.Where(p => new[] { p.Description, p.Code }
+            // for efficiency, if there is no search query, return the query as is
+            if (string.IsNullOrEmpty(searchQuery))
+            {
+                return query;
+
+            }
+
+            return query.Where(p => new[] { p.Description, p.Code, p.Name,  
+                                            p.AccountCode != null ? p.AccountCode.Code : null,
+                                            p.AccountCode != null ? p.AccountCode.Description : null,
+                                            p.AccountCode != null && p.AccountCode.ItemType != null ? p.AccountCode.ItemType.Name : null }
                             .Any(value => value != null && value.Contains(searchQuery)));
         }
 
@@ -57,7 +67,8 @@ namespace Service.SystemSetup
                 CreatedBy = entity.CreatedByUserId,
                 Name = entity.Name,
                 AccountCodeId = entity.AccountCodeId,
-                AccountCodeCode = entity.AccountCode?.Code,                
+                AccountCodeCode = entity.AccountCode?.Code,
+                ItemTypeName = entity.AccountCode?.ItemType?.Name
             };
             return dto;
         }
@@ -73,7 +84,7 @@ namespace Service.SystemSetup
                 CreatedDate = dto.CreatedDate,
                 CreatedByUserId = dto.CreatedBy,
                 AccountCodeId = dto.AccountCodeId,
-                Name = dto.Name                
+                Name = dto.Name
             };
             return entity;
         }

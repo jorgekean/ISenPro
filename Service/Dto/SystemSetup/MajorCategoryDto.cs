@@ -17,6 +17,7 @@ namespace Service.Dto.SystemSetup
         public int? AccountCodeId { get; set; }
 
         public string? AccountCodeCode { get; set; }
+        public string? ItemTypeName { get; set; }
         public AccountCodeDto? AccountCode { get; set; }
 
         //public virtual ICollection<SsSubCategory> SsSubCategories { get; set; } = new List<SsSubCategory>();
