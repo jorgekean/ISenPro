@@ -24,7 +24,7 @@ public partial class TempContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-       
+        
 
         OnModelCreatingPartial(modelBuilder);
     }

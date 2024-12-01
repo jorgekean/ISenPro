@@ -43,6 +43,8 @@ builder.Services.AddScoped<IPurchasingTypeService, PurchasingTypeService>();
 builder.Services.AddScoped<IAccountCodeService, AccountCodeService>();
 builder.Services.AddScoped<IMajorCategoryService, MajorCategoryService>();
 builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+
 #endregion
 
 #endregion

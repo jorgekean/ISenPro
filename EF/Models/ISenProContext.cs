@@ -41,6 +41,7 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<SsSubCategory> SsSubCategories { get; set; }
 
+    public virtual DbSet<SsSupplier> SsSuppliers { get; set; }
     #endregion
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -191,6 +192,17 @@ public partial class ISenProContext : DbContext
                 .HasConstraintName("FK_SS_SubCategory_SS_MajorCategory");
         });
 
+        modelBuilder.Entity<SsSupplier>(entity =>
+        {
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B4504D5BF9");
+
+            entity.ToTable("SS_Suppliers");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.RestoredDate).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
 
         #endregion
 
