@@ -68,7 +68,6 @@ namespace Service.SystemSetup
             return query;
         }       
 
-
         protected override IQueryable<SsMajorCategory> IncludeNavigationProperties(IQueryable<SsMajorCategory> query)
         {
             return query.Include(o => o.AccountCode).ThenInclude(i => i.ItemType);

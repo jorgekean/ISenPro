@@ -122,11 +122,11 @@ namespace Service
             }
 
             // Helper method to combine expressions with OR logic
-            protected Expression<Func<SsMajorCategory, bool>> CombineWithOr(
-                Expression<Func<SsMajorCategory, bool>> firstCondition,
-                Expression<Func<SsMajorCategory, bool>> secondCondition)
+            protected Expression<Func<TEntity, bool>> CombineWithOr(
+                Expression<Func<TEntity, bool>> firstCondition,
+                Expression<Func<TEntity, bool>> secondCondition)
             {
-                var parameter = Expression.Parameter(typeof(SsMajorCategory), "p");
+                var parameter = Expression.Parameter(typeof(TEntity), "p");
 
                 // Combine the two expressions using OR logic
                 var body = Expression.OrElse(
@@ -134,7 +134,7 @@ namespace Service
                     Expression.Invoke(secondCondition, parameter)
                 );
 
-                return Expression.Lambda<Func<SsMajorCategory, bool>>(body, parameter);
+                return Expression.Lambda<Func<TEntity, bool>>(body, parameter);
             }
 
 

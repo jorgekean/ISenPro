@@ -11,6 +11,7 @@ using Service.UserManagement.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +45,44 @@ namespace Service.SystemSetup
         {
             return query.Where(p => new[] { p.Description, p.Code, p.Name }
                             .Any(value => value != null && value.Contains(searchQuery)));
+        }
+
+        public override IQueryable<SsSubCategory> ApplyFilters(IQueryable<SsSubCategory> query, List<Filter> filters)
+        {
+            if (filters != null && filters.Any())
+            {
+                // Apply each filter
+                foreach (var filter in filters)
+                {
+                    if (filter.FilterOptions != null && filter.FilterOptions.Any())
+                    {
+                        // Apply filter using OR logic for FilterOptions
+                        Expression<Func<SsSubCategory, bool>> filterCondition = p => false; // Default false, will combine with OR
+
+                        foreach (var option in filter.FilterOptions)
+                        {
+                            if (filter.FilterName.Equals("accountcode", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Combine filter options with OR logic
+                                var currentCondition = (Expression<Func<SsSubCategory, bool>>)(p => p.MajorCategory != null && p.MajorCategory.AccountCode != null && p.MajorCategory.AccountCode.AccountCodeId == option.Value);
+                                filterCondition = CombineWithOr(filterCondition, currentCondition);
+                            }
+
+                            if (filter.FilterName.Equals("majorcategory", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Combine filter options with OR logic
+                                var currentCondition = (Expression<Func<SsSubCategory, bool>>)(p => p.MajorCategory != null && p.MajorCategory.MajorCategoryId == option.Value);
+                                filterCondition = CombineWithOr(filterCondition, currentCondition);
+                            }
+                        }
+
+                        // Apply the OR condition to the query
+                        query = query.Where(filterCondition);
+                    }
+                }
+            }
+
+            return query;
         }
 
         protected override SubCategoryDto MapToDto(SsSubCategory entity)
