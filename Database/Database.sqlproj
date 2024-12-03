@@ -75,5 +75,7 @@
     <Build Include="dbo\Tables\SS_SubCategory.sql" />
     <Build Include="dbo\Tables\SS_MajorCategory.sql" />
     <Build Include="dbo\Tables\SS_Supplier.sql" />
+    <Build Include="dbo\Tables\SS_PSDBMCatalogue.sql" />
+    <Build Include="dbo\Tables\SS_SupplementaryCatalogue.sql" />
   </ItemGroup>
 </Project>

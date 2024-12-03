@@ -16,4 +16,8 @@ public partial class SsUnitOfMeasurement
     public int CreatedByUserId { get; set; }
 
     public DateTime CreatedDate { get; set; }
+
+    public virtual ICollection<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; } = new List<SsPsdbmcatalogue>();
+
+    public virtual ICollection<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; } = new List<SsSupplementaryCatalogue>();
 }

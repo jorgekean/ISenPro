@@ -29,8 +29,6 @@ public partial class ISenProContext : DbContext
 
     #region System Setup
 
-    public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
-
     public virtual DbSet<SsPurchasingType> SsPurchasingTypes { get; set; }
 
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
@@ -42,6 +40,12 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<SsSubCategory> SsSubCategories { get; set; }
 
     public virtual DbSet<SsSupplier> SsSuppliers { get; set; }
+
+    public virtual DbSet<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; }
+
+    public virtual DbSet<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; }
+
+    public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
     #endregion
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -115,6 +119,44 @@ public partial class ISenProContext : DbContext
 
 
         #region System Setup
+
+        modelBuilder.Entity<SsPsdbmcatalogue>(entity =>
+        {
+            entity.HasKey(e => e.PsdbmcatalogueId);
+
+            entity.ToTable("SS_PSDBMCatalogue");
+
+            entity.Property(e => e.PsdbmcatalogueId).HasColumnName("PSDBMCatalogueId");
+            entity.Property(e => e.CatalogueYear).HasColumnType("datetime");
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Thumbnail).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+
+            entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsPsdbmcatalogues)
+                .HasForeignKey(d => d.UnitOfMeasurementId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_PSDBMCatalogue_SS_UnitOfMeasurement");
+        });
+
+        modelBuilder.Entity<SsSupplementaryCatalogue>(entity =>
+        {
+            entity.HasKey(e => e.SupplementaryCatalogueId);
+
+            entity.ToTable("SS_SupplementaryCatalogue");
+
+            entity.Property(e => e.CatalogueYear).HasColumnType("datetime");
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Thumbnail).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+
+            entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsSupplementaryCatalogues)
+                .HasForeignKey(d => d.UnitOfMeasurementId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_SupplementaryCatalogue_SS_UnitOfMeasurement");
+        });
+
         modelBuilder.Entity<SsUnitOfMeasurement>(entity =>
         {
             entity.HasKey(e => e.UnitOfMeasurementId);
