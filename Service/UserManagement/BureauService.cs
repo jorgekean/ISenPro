@@ -1,5 +1,6 @@
 ﻿using EF;
 using EF.Models;
+using EF.Models.SystemSetup;
 using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 using Service.Dto.UserManagement;
@@ -8,6 +9,7 @@ using Service.UserManagement.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,37 @@ namespace Service.UserManagement
         protected override IQueryable<UmBureau> IncludeNavigationProperties(IQueryable<UmBureau> query)
         {
             return query.Include(o => o.Division);
+        }
+
+        public override IQueryable<UmBureau> ApplyFilters(IQueryable<UmBureau> query, List<Filter> filters)
+        {
+            if (filters != null && filters.Any())
+            {
+                // Apply each filter
+                foreach (var filter in filters)
+                {
+                    if (filter.FilterOptions != null && filter.FilterOptions.Any())
+                    {
+                        // Apply filter using OR logic for FilterOptions
+                        Expression<Func<UmBureau, bool>> filterCondition = p => false; // Default false, will combine with OR
+
+                        foreach (var option in filter.FilterOptions)
+                        {
+                            if (filter.FilterName.ToLower() == "division")
+                            {
+                                // Combine filter options with OR logic
+                                var currentCondition = (Expression<Func<UmBureau, bool>>)(p => p.DivisionId == option.Value);
+                                filterCondition = CombineWithOr(filterCondition, currentCondition);
+                            }
+                        }
+
+                        // Apply the OR condition to the query
+                        query = query.Where(filterCondition);
+                    }
+                }
+            }
+
+            return query;
         }
 
         protected override IQueryable<UmBureau> ApplySearchFilter(IQueryable<UmBureau> query, string searchQuery)

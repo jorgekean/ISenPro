@@ -9,26 +9,26 @@ namespace API.Controllers.UserManagement
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DivisionsController : ControllerBase
+    public class BureausController : ControllerBase
     {
-        private readonly IDivisionService _divisionService;
-        private readonly ILogger<DivisionsController> _logger;
+        private readonly IBureauService _bureauService;
+        private readonly ILogger<BureausController> _logger;
 
-        public DivisionsController(IDivisionService divisionService, ILogger<DivisionsController> logger)
+        public BureausController(IBureauService bureauService, ILogger<BureausController> logger)
         {
-            _divisionService = divisionService;
+            _bureauService = bureauService;
             _logger = logger;
         }
 
-        // GET: api/Divisions
+        // GET: api/Bureaus
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<DivisionDto>>> GetDivisions([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<BureauDto>>> GetBureaus([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _divisionService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _bureauService.GetPagedAndFilteredAsync(pagingParameters);
 
-                var response = new PaginatedResponse<DivisionDto>
+                var response = new PaginatedResponse<BureauDto>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,
@@ -47,37 +47,37 @@ namespace API.Controllers.UserManagement
         }
 
 
-        // GET: api/Divisions/5
+        // GET: api/Bureaus/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DivisionDto>> GetDivision(int id)
+        public async Task<ActionResult<BureauDto>> GetBureau(int id)
         {
-            var umDivision = await _divisionService.GetByIdAsync(id);
+            var umBureau = await _bureauService.GetByIdAsync(id);
 
-            if (umDivision == null)
+            if (umBureau == null)
             {
                 return NotFound();
             }
 
-            return umDivision;
+            return umBureau;
         }
 
-        // PUT: api/Divisions/5
+        // PUT: api/Bureaus/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDivision(string id, DivisionDto umDivision)
+        public async Task<IActionResult> PutBureau(string id, BureauDto umBureau)
         {
-            if (id != umDivision.Code)
+            if (id != umBureau.Code)
             {
                 return BadRequest();
             }
 
             try
             {
-                await _divisionService.UpdateAsync(umDivision);
+                await _bureauService.UpdateAsync(umBureau);
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                if (!(await divisionExists(id)))
+                if (!(await bureauExists(id)))
                 {
                     return NotFound();
                 }
@@ -94,19 +94,19 @@ namespace API.Controllers.UserManagement
             return NoContent();
         }
 
-        // POST: api/Divisions
+        // POST: api/Bureaus
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DivisionDto>> PostUmDivision(DivisionDto umDivision)
+        public async Task<ActionResult<BureauDto>> PostUmBureau(BureauDto umBureau)
         {
-            //_context.UmDivisions.Add(umDivision);
+            //_context.UmBureaus.Add(umBureau);
             try
             {
-                await _divisionService.AddAsync(umDivision);
+                await _bureauService.AddAsync(umBureau);
             }
             catch (DbUpdateException ex)
             {
-                if (await divisionExists(umDivision.Code))
+                if (await bureauExists(umBureau.Code))
                 {
                     return Conflict();
                 }
@@ -120,26 +120,26 @@ namespace API.Controllers.UserManagement
                 _logger.LogError(ex, ex.Message);
             }
 
-            return CreatedAtAction("GetDivision", new { id = umDivision.Code }, umDivision);
+            return CreatedAtAction("GetBureau", new { id = umBureau.Code }, umBureau);
         }
 
-        //// DELETE: api/Divisions/5
+        //// DELETE: api/Bureaus/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUmDivision(int id)
+        public async Task<IActionResult> DeleteUmBureau(int id)
         {
-            //    var division = await _divisionService.GetByIdAsync(id);
-            //    if (division == null)
+            //    var bureau = await _bureauService.GetByIdAsync(id);
+            //    if (bureau == null)
             //    {
             //        return NotFound();
             //    }
 
             try
             {
-                await _divisionService.DeleteAsync(id);
+                await _bureauService.DeleteAsync(id);
             }
             catch (DbUpdateException ex)
             {
-                //if (!(await divisionExists(id)))
+                //if (!(await bureauExists(id)))
                 //{
                 //    return NotFound();
                 //}
@@ -156,9 +156,9 @@ namespace API.Controllers.UserManagement
             return NoContent();
         }
 
-        private async Task<bool> divisionExists(string id)
+        private async Task<bool> bureauExists(string id)
         {
-            return (await _divisionService.GetAllAsync()).Any(e => e.Code == id);
+            return (await _bureauService.GetAllAsync()).Any(e => e.Code == id);
         }
     }
 }
