@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Service.Dto;
+using System;
 using System.Collections.Generic;
 
 namespace EF.Models.UserManagement;
 
-public partial class UmPerson
+public class PersonDto : BaseDto
 {
-    public int PersonId { get; set; }
+    public int? Id { get; set; }
 
     public string? LastName { get; set; }
 
@@ -29,19 +30,22 @@ public partial class UmPerson
 
     public int? EmployeeTitle { get; set; }
 
-    public int? EmployeeStatus { get; set; }
-
-    public bool IsActive { get; set; }
-
-    public int CreatedByUserId { get; set; }
-
-    public DateTime CreatedDate { get; set; }
+    public int? EmployeeStatus { get; set; }   
 
     public int? DepartmentId { get; set; }
 
     public int? SectionId { get; set; }
 
-    public virtual UmDepartment? Department { get; set; }
+    public DepartmentDto? Department { get; set; }
 
-    public virtual UmSection? Section { get; set; }
+    public SectionDto? Section { get; set; }
+
+
+    public string FullName
+    {
+        get
+        {            
+            return $"{LastName}, {FirstName} {MiddleName}";
+        }
+    }
 }

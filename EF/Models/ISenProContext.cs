@@ -205,10 +205,10 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Thumbnail).HasMaxLength(100);
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
 
-            entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsPsdbmcatalogues)
-                .HasForeignKey(d => d.UnitOfMeasurementId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SS_PSDBMCatalogue_SS_UnitOfMeasurement");
+            //entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsPsdbmcatalogues)
+            //    .HasForeignKey(d => d.UnitOfMeasurementId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_SS_PSDBMCatalogue_SS_UnitOfMeasurement");
         });
 
         modelBuilder.Entity<SsSupplementaryCatalogue>(entity =>
@@ -223,10 +223,10 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Thumbnail).HasMaxLength(100);
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
 
-            entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsSupplementaryCatalogues)
-                .HasForeignKey(d => d.UnitOfMeasurementId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SS_SupplementaryCatalogue_SS_UnitOfMeasurement");
+            //entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsSupplementaryCatalogues)
+            //    .HasForeignKey(d => d.UnitOfMeasurementId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_SS_SupplementaryCatalogue_SS_UnitOfMeasurement");
         });
 
         modelBuilder.Entity<SsUnitOfMeasurement>(entity =>

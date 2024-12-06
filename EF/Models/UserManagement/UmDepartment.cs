@@ -17,7 +17,7 @@ public partial class UmDepartment
 
     public bool IsActive { get; set; }
 
-    public long CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
