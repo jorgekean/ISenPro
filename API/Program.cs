@@ -35,6 +35,11 @@ builder.Services.AddDbContext<ISenProContext>(options =>
 
 #region UserManagement
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IDivisionService, DivisionService>();
+builder.Services.AddScoped<IBureauService, BureauService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<ISectionService, SectionService>();
+builder.Services.AddScoped<IPersonService, PersonService>();
 #endregion
 
 #region SystemSetup
