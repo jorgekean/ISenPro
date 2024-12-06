@@ -7,7 +7,7 @@ public partial class SsSupplier
 {
     public int SupplierId { get; set; }
 
-    public bool? Blacklist { get; set; }
+    public bool Blacklist { get; set; }
 
     public string? CompanyName { get; set; }
 
@@ -25,19 +25,7 @@ public partial class SsSupplier
 
     public bool IsActive { get; set; }
 
-    public long CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     public DateTime CreatedDate { get; set; }
-
-    public long? UpdatedByUserId { get; set; }
-
-    public DateTime? UpdatedDate { get; set; }
-
-    public long? RestoredByUserId { get; set; }
-
-    public DateTime? RestoredDate { get; set; }
-
-    public long? DeletedByUserId { get; set; }
-
-    public DateTime? DeletedDate { get; set; }
 }

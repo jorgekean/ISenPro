@@ -10,7 +10,7 @@ namespace Service.Dto.SystemSetup
     {
         public int Id { get; set; }
 
-        public bool? Blacklist { get; set; }
+        public bool Blacklist { get; set; }
 
         public string? CompanyName { get; set; }
 

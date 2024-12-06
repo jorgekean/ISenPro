@@ -35,7 +35,7 @@ namespace Service.SystemSetup
             {
                 Id = entity.SupplierId,
                 CompanyName = entity.CompanyName ?? string.Empty,
-                Blacklist = entity.Blacklist ?? false,
+                Blacklist = entity.Blacklist,
                 Address = entity.Address ?? string.Empty,
                 EmailAddress = entity.EmailAddress ?? string.Empty,
                 Remarks = entity.Remarks ?? string.Empty,
@@ -59,6 +59,7 @@ namespace Service.SystemSetup
             entity.EmailAddress = dto.EmailAddress;
             entity.Remarks = dto.Remarks;
             entity.FaxNumber = dto.FaxNumber;
+            entity.Tin = dto.Tin;
 
             if (dto.Id == 0)
             {
@@ -66,11 +67,6 @@ namespace Service.SystemSetup
                 entity.CreatedDate = DateTime.Now;
                 entity.CreatedByUserId = 1;
             }
-            else
-            {
-                entity.UpdatedDate = DateTime.Now;
-                entity.UpdatedByUserId = 1;
-            }            
 
             return entity;
         }

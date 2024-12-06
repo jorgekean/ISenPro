@@ -1,22 +1,16 @@
 ﻿CREATE TABLE [dbo].[SS_Suppliers](
 	[SupplierId] [int] IDENTITY(1,1) NOT NULL,
-	[Blacklist] [bit] NULL,
-	[CompanyName] [nvarchar](max) NULL,
-	[Address] [nvarchar](max) NULL,
-	[EmailAddress] [nvarchar](max) NULL,
+	[Blacklist] [bit] NOT NULL,
+	[CompanyName] [nvarchar](200) NULL,
+	[Address] [nvarchar](500) NULL,
+	[EmailAddress] [nvarchar](100) NULL,
 	[Remarks] [nvarchar](max) NULL,
-	[FaxNumber] [nvarchar](max) NULL,
-	[Tin] [nvarchar](max) NULL,
+	[FaxNumber] [nvarchar](50) NULL,
+	[Tin] [nvarchar](30) NULL,
 	[Industry] [int] NULL,
 	[IsActive] [bit] NOT NULL,
-	[CreatedByUserId] [bigint] NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedByUserId] [bigint] NULL,
-	[UpdatedDate] [datetime] NULL,
-	[RestoredByUserId] [bigint] NULL,
-	[RestoredDate] [datetime] NULL,
-	[DeletedByUserId] [bigint] NULL,
-	[DeletedDate] [datetime] NULL,
+	[CreatedByUserId] INT NOT NULL,
+	[CreatedDate] [datetime] NOT NULL
 PRIMARY KEY CLUSTERED 
 (
 	[SupplierId] ASC

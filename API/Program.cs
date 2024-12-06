@@ -44,6 +44,8 @@ builder.Services.AddScoped<IAccountCodeService, AccountCodeService>();
 builder.Services.AddScoped<IMajorCategoryService, MajorCategoryService>();
 builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IPSDBMCatalogueService, PSDBMCatalogueService>();
+builder.Services.AddScoped<ISupplementaryCatalogueService, SupplementaryCatalogueService>();
 
 #endregion
 
