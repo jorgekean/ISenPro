@@ -5,10 +5,12 @@
     [ExpireDate]      DATETIME       NULL,
     [IsAdmin]         BIT            NOT NULL,
     [IsActive]        BIT            NOT NULL,
-    [CreatedByUserId] BIGINT         NOT NULL,
+    [CreatedByUserId] INT            NOT NULL,
     [CreatedDate]     DATETIME       NOT NULL,
     [PersonId]        INT            NOT NULL,
     [RoleId]          INT            NULL,
     CONSTRAINT [PK_UM_UserAccount] PRIMARY KEY CLUSTERED ([UserAccountId] ASC)
 );
+
+
 

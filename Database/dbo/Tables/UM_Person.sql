@@ -13,7 +13,7 @@
     [EmployeeTitle]   INT            NULL,
     [EmployeeStatus]  INT            NULL,
     [IsActive]        BIT            NOT NULL,
-    [CreatedByUserId] BIGINT         NOT NULL,
+    [CreatedByUserId] INT            NOT NULL,
     [CreatedDate]     DATETIME       NOT NULL,
     [DepartmentId]    INT            NULL,
     [SectionId]       INT            NULL,
@@ -21,6 +21,8 @@
     CONSTRAINT [FK_UM_Person_UM_Department] FOREIGN KEY ([DepartmentId]) REFERENCES [dbo].[UM_Department] ([DepartmentId]),
     CONSTRAINT [FK_UM_Person_UM_Section] FOREIGN KEY ([SectionId]) REFERENCES [dbo].[UM_Section] ([SectionId])
 );
+
+
 
 
 
