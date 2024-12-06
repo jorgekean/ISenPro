@@ -9,7 +9,7 @@ public partial class UmPerson
 
     public string? LastName { get; set; }
 
-    public string FirstName { get; set; } = null!;
+    public string? FirstName { get; set; }
 
     public string? MiddleName { get; set; }
 
@@ -20,6 +20,10 @@ public partial class UmPerson
     public string? Email { get; set; }
 
     public string? ContactNo { get; set; }
+
+    public string? Thumbnail { get; set; }
+
+    public string? Remarks { get; set; }
 
     public string? Designation { get; set; }
 
@@ -36,4 +40,8 @@ public partial class UmPerson
     public int? DepartmentId { get; set; }
 
     public int? SectionId { get; set; }
+
+    public virtual UmDepartment? Department { get; set; }
+
+    public virtual UmSection? Section { get; set; }
 }

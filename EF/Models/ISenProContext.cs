@@ -18,7 +18,15 @@ public partial class ISenProContext : DbContext
     }
 
     #region User Management
+    public virtual DbSet<UmBureau> UmBureaus { get; set; }
+
+    public virtual DbSet<UmDepartment> UmDepartments { get; set; }
+
+    public virtual DbSet<UmDivision> UmDivisions { get; set; }
+
     public virtual DbSet<UmPerson> UmPeople { get; set; }
+
+    public virtual DbSet<UmSection> UmSections { get; set; }
 
     public virtual DbSet<UmPolicy> UmPolicies { get; set; }
 
@@ -56,6 +64,47 @@ public partial class ISenProContext : DbContext
     {
 
         #region User Management
+        modelBuilder.Entity<UmBureau>(entity =>
+        {
+            entity.HasKey(e => e.BureauId);
+
+            entity.ToTable("UM_Bureau");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+
+            entity.HasOne(d => d.Division).WithMany(p => p.UmBureaus)
+                .HasForeignKey(d => d.DivisionId)
+                .HasConstraintName("FK_UM_Bureau_UM_Division");
+        });
+
+        modelBuilder.Entity<UmDepartment>(entity =>
+        {
+            entity.HasKey(e => e.DepartmentId);
+
+            entity.ToTable("UM_Department");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+
+            entity.HasOne(d => d.Bureau).WithMany(p => p.UmDepartments)
+                .HasForeignKey(d => d.BureauId)
+                .HasConstraintName("FK_UM_Department_UM_Bureau");
+        });
+
+        modelBuilder.Entity<UmDivision>(entity =>
+        {
+            entity.HasKey(e => e.DivisionId);
+
+            entity.ToTable("UM_Division");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+        });
+
         modelBuilder.Entity<UmPerson>(entity =>
         {
             entity.HasKey(e => e.PersonId);
@@ -63,13 +112,36 @@ public partial class ISenProContext : DbContext
             entity.ToTable("UM_Person");
 
             entity.Property(e => e.Address).HasMaxLength(200);
-            entity.Property(e => e.ContactNo).HasMaxLength(50);
+            entity.Property(e => e.ContactNo).HasMaxLength(100);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-            entity.Property(e => e.Designation).HasMaxLength(50);
+            entity.Property(e => e.Designation).HasMaxLength(200);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.LastName).HasMaxLength(100);
-            entity.Property(e => e.MiddleName).HasMaxLength(50);
+            entity.Property(e => e.MiddleName).HasMaxLength(100);
+
+            entity.HasOne(d => d.Department).WithMany(p => p.UmPeople)
+                .HasForeignKey(d => d.DepartmentId)
+                .HasConstraintName("FK_UM_Person_UM_Department");
+
+            entity.HasOne(d => d.Section).WithMany(p => p.UmPeople)
+                .HasForeignKey(d => d.SectionId)
+                .HasConstraintName("FK_UM_Person_UM_Section");
+        });
+
+        modelBuilder.Entity<UmSection>(entity =>
+        {
+            entity.HasKey(e => e.SectionId);
+
+            entity.ToTable("UM_Section");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(200);
+
+            entity.HasOne(d => d.Department).WithMany(p => p.UmSections)
+                .HasForeignKey(d => d.DepartmentId)
+                .HasConstraintName("FK_UM_Section_UM_Department");
         });
 
         modelBuilder.Entity<UmPolicy>(entity =>
