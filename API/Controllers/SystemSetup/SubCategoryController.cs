@@ -20,23 +20,23 @@ namespace API.Controllers.UserManagement
             _logger = logger;
         }
 
-        //// GET: api/SubCategories/MajorCategories
-        //[HttpGet("MajorCategories")]
-        //public async Task<ActionResult<PaginatedResponse<MajorCategoryDto>>> GetMajorCategories()
-        //{
-        //    try
-        //    {
-        //        var response = await _subCategorieservice.GetMajorCategories();
+        // GET: api/SubCategories/MajorCategories
+        [HttpGet("MajorCategories")]
+        public async Task<ActionResult<PaginatedResponse<MajorCategoryDto>>> GetMajorCategories()
+        {
+            try
+            {
+                var response = await _subCategorieservice.GetMajorCategories();
 
-        //        return Ok(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, ex.Message);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
 
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         // GET: api/SubCategories
         [HttpGet]

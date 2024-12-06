@@ -31,7 +31,7 @@ namespace Service.SystemSetup
                 Code = p.Code,
                 Name = p.Name,
                 AccountCodeCode = p.AccountCode != null ? p.AccountCode.Code : "",
-                //ItemTypeName = p.ItemType?.Name,
+                ItemTypeName = p.AccountCode != null && p.AccountCode.ItemType != null ? p.AccountCode.ItemType.Name : "",
                 Description = p.Description
             }).ToListAsync();
         }
