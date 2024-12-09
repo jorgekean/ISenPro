@@ -9,26 +9,26 @@ namespace API.Controllers.UserManagement
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DivisionsController : ControllerBase
+    public class DepartmentsController : ControllerBase
     {
-        private readonly IDivisionService _divisionService;
-        private readonly ILogger<DivisionsController> _logger;
+        private readonly IDepartmentService _departmentService;
+        private readonly ILogger<DepartmentsController> _logger;
 
-        public DivisionsController(IDivisionService divisionService, ILogger<DivisionsController> logger)
+        public DepartmentsController(IDepartmentService departmentService, ILogger<DepartmentsController> logger)
         {
-            _divisionService = divisionService;
+            _departmentService = departmentService;
             _logger = logger;
         }
 
-        // GET: api/Divisions
+        // GET: api/Departments
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<DivisionDto>>> GetDivisions([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<DepartmentDto>>> GetDepartments([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _divisionService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _departmentService.GetPagedAndFilteredAsync(pagingParameters);
 
-                var response = new PaginatedResponse<DivisionDto>
+                var response = new PaginatedResponse<DepartmentDto>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,
@@ -47,37 +47,37 @@ namespace API.Controllers.UserManagement
         }
 
 
-        // GET: api/Divisions/5
+        // GET: api/Departments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DivisionDto>> GetDivision(int id)
+        public async Task<ActionResult<DepartmentDto>> GetDepartment(int id)
         {
-            var umDivision = await _divisionService.GetByIdAsync(id);
+            var umDepartment = await _departmentService.GetByIdAsync(id);
 
-            if (umDivision == null)
+            if (umDepartment == null)
             {
                 return NotFound();
             }
 
-            return umDivision;
+            return umDepartment;
         }
 
-        // PUT: api/Divisions/5
+        // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDivision(string id, DivisionDto umDivision)
+        public async Task<IActionResult> PutDepartment(string id, DepartmentDto umDepartment)
         {
-            if (id != umDivision.Code)
+            if (id != umDepartment.Code)
             {
                 return BadRequest();
             }
 
             try
             {
-                await _divisionService.UpdateAsync(umDivision);
+                await _departmentService.UpdateAsync(umDepartment);
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                if (!(await divisionExists(id)))
+                if (!(await departmentExists(id)))
                 {
                     return NotFound();
                 }
@@ -94,19 +94,19 @@ namespace API.Controllers.UserManagement
             return NoContent();
         }
 
-        // POST: api/Divisions
+        // POST: api/Departments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DivisionDto>> PostUmDivision(DivisionDto umDivision)
+        public async Task<ActionResult<DepartmentDto>> PostUmDepartment(DepartmentDto umDepartment)
         {
-            //_context.UmDivisions.Add(umDivision);
+            //_context.UmDepartments.Add(umDepartment);
             try
             {
-                await _divisionService.AddAsync(umDivision);
+                await _departmentService.AddAsync(umDepartment);
             }
             catch (DbUpdateException ex)
             {
-                if (await divisionExists(umDivision.Code))
+                if (await departmentExists(umDepartment.Code))
                 {
                     return Conflict();
                 }
@@ -120,26 +120,26 @@ namespace API.Controllers.UserManagement
                 _logger.LogError(ex, ex.Message);
             }
 
-            return CreatedAtAction("GetDivision", new { id = umDivision.Code }, umDivision);
+            return CreatedAtAction("GetDepartment", new { id = umDepartment.Code }, umDepartment);
         }
 
-        //// DELETE: api/Divisions/5
+        //// DELETE: api/Departments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUmDivision(int id)
+        public async Task<IActionResult> DeleteUmDepartment(int id)
         {
-            //    var division = await _divisionService.GetByIdAsync(id);
-            //    if (division == null)
+            //    var department = await _departmentService.GetByIdAsync(id);
+            //    if (department == null)
             //    {
             //        return NotFound();
             //    }
 
             try
             {
-                await _divisionService.DeleteAsync(id);
+                await _departmentService.DeleteAsync(id);
             }
             catch (DbUpdateException ex)
             {
-                //if (!(await divisionExists(id)))
+                //if (!(await departmentExists(id)))
                 //{
                 //    return NotFound();
                 //}
@@ -156,9 +156,9 @@ namespace API.Controllers.UserManagement
             return NoContent();
         }
 
-        private async Task<bool> divisionExists(string id)
+        private async Task<bool> departmentExists(string id)
         {
-            return (await _divisionService.GetAllAsync()).Any(e => e.Code == id);
+            return (await _departmentService.GetAllAsync()).Any(e => e.Code == id);
         }
     }
 }

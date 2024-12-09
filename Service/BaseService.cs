@@ -51,11 +51,20 @@ namespace Service
                 return entity != null ? MapToDto(entity) : null;
             }
 
-            public virtual async Task AddAsync(TDto dto)
+            //public virtual async Task AddAsync(TDto dto)
+            //{
+            //    var entity = MapToEntity(dto);
+            //    await _dbSet.AddAsync(entity);
+            //    await _context.SaveChangesAsync();
+            //}
+
+            public virtual async Task<object> AddAsync(TDto dto)
             {
                 var entity = MapToEntity(dto);
-                await _dbSet.AddAsync(entity);
+                var result = await _dbSet.AddAsync(entity);
                 await _context.SaveChangesAsync();
+                //var entityId = _context.Entry(entity).Property("Id").CurrentValue; // Retrieve the ID (replace "Id" with your actual property name)
+                return result.Entity;
             }
 
             public virtual async Task UpdateAsync(TDto dto)
