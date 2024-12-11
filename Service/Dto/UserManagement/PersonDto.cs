@@ -28,9 +28,9 @@ public class PersonDto : BaseDto
 
     public string? Designation { get; set; }
 
-    public int? EmployeeTitle { get; set; }
+    public string? EmployeeTitle { get; set; }
 
-    public int? EmployeeStatus { get; set; }   
+    public string? EmployeeStatus { get; set; }   
 
     public int? DepartmentId { get; set; }
 
@@ -40,6 +40,9 @@ public class PersonDto : BaseDto
 
     public SectionDto? Section { get; set; }
 
+
+    public int? DivisionId { get; set; }
+    public int? BureauId { get; set; }
 
     public string FullName
     {

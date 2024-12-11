@@ -2,6 +2,7 @@
 using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Service.Dto.UserManagement;
 using Service.Service;
 using Service.UserManagement.Interface;
@@ -21,12 +22,37 @@ namespace Service.UserManagement
 
         protected override IQueryable<UmPerson> IncludeNavigationProperties(IQueryable<UmPerson> query)
         {
-            return query.Include(o => o.Department).Include(o => o.Section);
+            return query.Include(o => o.Department).ThenInclude(s => s.Bureau).Include(o => o.Section);
         }
 
         protected override IQueryable<UmPerson> ApplySearchFilter(IQueryable<UmPerson> query, string searchQuery)
         {
             return query.Where(p => p.FirstName.Contains(searchQuery) || p.LastName.Contains(searchQuery));
+        }
+
+        public override async Task<PersonDto> GetByIdAsync(int id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+
+            await _context.Entry(entity).Reference(x => x.Department).LoadAsync();
+
+            if (entity != null)
+            {
+                if (entity.Department != null)
+                {
+                    await _context.Entry(entity.Department).Reference(x => x.Bureau).LoadAsync();
+
+                    if (entity.Department.Bureau != null)
+                    {
+                        await _context.Entry(entity.Department.Bureau).Reference(x => x.Division).LoadAsync();
+                    }
+                }
+
+              
+
+                return MapToDto(entity);
+            }
+            return null;
         }
 
         protected override PersonDto MapToDto(UmPerson entity)
@@ -59,7 +85,14 @@ namespace Service.UserManagement
                     Description = entity.Department.Description,
                     IsActive = entity.Department.IsActive,
                     CreatedDate = entity.Department.CreatedDate,
-                    CreatedBy = entity.Department.CreatedByUserId
+                    CreatedBy = entity.Department.CreatedByUserId,
+                    Bureau = entity.Department.Bureau == null ? null : new BureauDto
+                    {
+                        Id = entity.Department.Bureau.BureauId,
+                        Code = entity.Department.Bureau.Code,
+                        Description = entity.Department.Bureau.Description,
+                        Name = entity.Department.Bureau.Name,
+                    }
                 },
                 Section = entity.Section == null ? null : new SectionDto
                 {
@@ -70,7 +103,9 @@ namespace Service.UserManagement
                     IsActive = entity.Section.IsActive,
                     CreatedDate = entity.Section.CreatedDate,
                     CreatedBy = entity.Section.CreatedByUserId
-                }
+                },
+                BureauId = entity.Department?.BureauId,
+                DivisionId = entity?.Department?.Bureau?.DivisionId
             };
             return dto;
         }

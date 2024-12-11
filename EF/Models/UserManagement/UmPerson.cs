@@ -27,9 +27,9 @@ public partial class UmPerson
 
     public string? Designation { get; set; }
 
-    public int? EmployeeTitle { get; set; }
+    public string? EmployeeTitle { get; set; }
 
-    public int? EmployeeStatus { get; set; }
+    public string? EmployeeStatus { get; set; }
 
     public bool IsActive { get; set; }
 
