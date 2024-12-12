@@ -81,5 +81,9 @@
     <Build Include="dbo\Tables\UM_Division.sql" />
     <Build Include="dbo\Tables\UM_Department.sql" />
     <Build Include="dbo\Tables\UM_Bureau.sql" />
+    <Build Include="dbo\Tables\UM_Page.sql" />
+    <Build Include="dbo\Tables\UM_ModuleControl.sql" />
+    <Build Include="dbo\Tables\UM_Module.sql" />
+    <Build Include="dbo\Tables\UM_Control.sql" />
   </ItemGroup>
 </Project>

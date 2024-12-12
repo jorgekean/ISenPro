@@ -33,6 +33,13 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<UmRole> UmRoles { get; set; }
 
     public virtual DbSet<UmUserAccount> UmUserAccounts { get; set; }
+    public virtual DbSet<UmControl> UmControls { get; set; }
+
+    public virtual DbSet<UmModule> UmModules { get; set; }
+
+    public virtual DbSet<UmModuleControl> UmModuleControls { get; set; }
+
+    public virtual DbSet<UmPage> UmPages { get; set; }
     #endregion
 
     #region System Setup
@@ -186,6 +193,63 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .HasColumnName("UserID");
+        });
+
+        modelBuilder.Entity<UmControl>(entity =>
+        {
+            entity.HasKey(e => e.ControlId);
+
+            entity.ToTable("UM_Control");
+
+            entity.Property(e => e.ControlId).ValueGeneratedNever();
+            entity.Property(e => e.ControlName).HasMaxLength(50);
+            entity.Property(e => e.Description).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<UmModule>(entity =>
+        {
+            entity.HasKey(e => e.ModuleId);
+
+            entity.ToTable("UM_Module");
+
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(100);
+
+            entity.HasOne(d => d.Page).WithMany(p => p.UmModules)
+                .HasForeignKey(d => d.PageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_Module_UM_Page");
+        });
+
+        modelBuilder.Entity<UmModuleControl>(entity =>
+        {
+            entity.HasKey(e => e.ModuleControlId);
+
+            entity.ToTable("UM_ModuleControl");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Control).WithMany(p => p.UmModuleControls)
+                .HasForeignKey(d => d.ControlId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_ModuleControl_UM_Control");
+
+            entity.HasOne(d => d.Module).WithMany(p => p.UmModuleControls)
+                .HasForeignKey(d => d.ModuleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_ModuleControl_UM_Module");
+        });
+
+        modelBuilder.Entity<UmPage>(entity =>
+        {
+            entity.HasKey(e => e.PageId);
+
+            entity.ToTable("UM_Page");
+
+            entity.Property(e => e.PageId).ValueGeneratedNever();
+            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.PageName).HasMaxLength(50);
         });
         #endregion
 
