@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
 using Service.Dto.SystemSetup;
+using Service.SystemSetup;
 using Service.SystemSetup.Interface;
 
 namespace API.Controllers.UserManagement
@@ -11,12 +12,12 @@ namespace API.Controllers.UserManagement
     [ApiController]
     public class SupplementaryCataloguesController : ControllerBase
     {
-        private readonly ISupplementaryCatalogueService _SupplementaryCataloguesservice;
+        private readonly ISupplementaryCatalogueService _supplementaryCataloguesservice;
         private readonly ILogger<SupplementaryCataloguesController> _logger;
 
-        public SupplementaryCataloguesController(ISupplementaryCatalogueService SupplementaryCataloguesservice, ILogger<SupplementaryCataloguesController> logger)
+        public SupplementaryCataloguesController(ISupplementaryCatalogueService supplementaryCataloguesservice, ILogger<SupplementaryCataloguesController> logger)
         {
-            _SupplementaryCataloguesservice = SupplementaryCataloguesservice;
+            _supplementaryCataloguesservice = supplementaryCataloguesservice;
             _logger = logger;
         }
 
@@ -26,7 +27,25 @@ namespace API.Controllers.UserManagement
         {
             try
             {
-                var response = await _SupplementaryCataloguesservice.GetUnitOfMeasurements();
+                var response = await _supplementaryCataloguesservice.GetUnitOfMeasurements();
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // GET: api/PSDBMCatalogues/AccountCodes
+        [HttpGet("AccountCodes")]
+        public async Task<ActionResult<PaginatedResponse<UnitOfMeasurementDto>>> GetAccountCodes()
+        {
+            try
+            {
+                var response = await _supplementaryCataloguesservice.GetAccountCodes();
 
                 return Ok(response);
             }
@@ -44,7 +63,7 @@ namespace API.Controllers.UserManagement
         {
             try
             {
-                var paginatedResult = await _SupplementaryCataloguesservice.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _supplementaryCataloguesservice.GetPagedAndFilteredAsync(pagingParameters);
 
                 var response = new PaginatedResponse<SupplementaryCatalogueDto>
                 {
@@ -71,7 +90,7 @@ namespace API.Controllers.UserManagement
         {
             try
             {
-                var umSupplementaryCatalogue = await _SupplementaryCataloguesservice.GetByIdAsync(id);
+                var umSupplementaryCatalogue = await _supplementaryCataloguesservice.GetByIdAsync(id);
 
                 if (umSupplementaryCatalogue == null)
                 {
@@ -102,7 +121,7 @@ namespace API.Controllers.UserManagement
 
             try
             {
-                await _SupplementaryCataloguesservice.UpdateAsync(umSupplementaryCatalogue);
+                await _supplementaryCataloguesservice.UpdateAsync(umSupplementaryCatalogue);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -131,7 +150,7 @@ namespace API.Controllers.UserManagement
             //_context.UmSupplementaryCatalogues.Add(umSupplementaryCatalogue);
             try
             {
-                await _SupplementaryCataloguesservice.AddAsync(umSupplementaryCatalogue);
+                await _supplementaryCataloguesservice.AddAsync(umSupplementaryCatalogue);
             }
             catch (DbUpdateException ex)
             {
@@ -159,7 +178,7 @@ namespace API.Controllers.UserManagement
 
             try
             {
-                await _SupplementaryCataloguesservice.DeleteAsync(id);
+                await _supplementaryCataloguesservice.DeleteAsync(id);
             }           
             catch (Exception ex)
             {
@@ -171,7 +190,7 @@ namespace API.Controllers.UserManagement
 
         private async Task<bool> SupplementaryCatalogueExists(string code)
         {
-            return (await _SupplementaryCataloguesservice.GetAllAsync()).Any(e => e.Code == code);
+            return (await _supplementaryCataloguesservice.GetAllAsync()).Any(e => e.Code == code);
         }
     }
 }

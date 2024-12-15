@@ -27,9 +27,25 @@ public partial class SsSupplementaryCatalogue
 
     public DateTime CreatedDate { get; set; }
 
-    public int UnitOfMeasurementId { get; set; }
+    public int? ItemTypeId { get; set; }
+
+    public int? AccountCodeId { get; set; }
+
+    public int? MajorCategoryId { get; set; }
+
+    public int? SubCategoryId { get; set; }
+
+    public int? UnitOfMeasurementId { get; set; }
 
     public bool? IsOriginal { get; set; }
 
-    public virtual SsUnitOfMeasurement UnitOfMeasurement { get; set; } = null!;
+    public virtual SsAccountCode? AccountCode { get; set; }
+
+    public virtual SsItemType? ItemType { get; set; }
+
+    public virtual SsMajorCategory? MajorCategory { get; set; }
+
+    public virtual SsSubCategory? SubCategory { get; set; }
+
+    public virtual SsUnitOfMeasurement? UnitOfMeasurement { get; set; }
 }

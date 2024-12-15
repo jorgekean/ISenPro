@@ -23,5 +23,9 @@ public partial class SsMajorCategory
 
     public virtual SsAccountCode? AccountCode { get; set; }
 
+    public virtual ICollection<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; } = new List<SsPsdbmcatalogue>();
+
     public virtual ICollection<SsSubCategory> SsSubCategories { get; set; } = new List<SsSubCategory>();
+
+    public virtual ICollection<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; } = new List<SsSupplementaryCatalogue>();
 }

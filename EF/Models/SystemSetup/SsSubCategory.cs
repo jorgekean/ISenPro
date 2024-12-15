@@ -22,4 +22,8 @@ public partial class SsSubCategory
     public int? MajorCategoryId { get; set; }
 
     public virtual SsMajorCategory? MajorCategory { get; set; }
+
+    public virtual ICollection<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; } = new List<SsPsdbmcatalogue>();
+
+    public virtual ICollection<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; } = new List<SsSupplementaryCatalogue>();
 }

@@ -11,8 +11,16 @@ CREATE TABLE [dbo].[SS_PSDBMCatalogue](
 	[IsActive] [bit] NOT NULL,
 	[CreatedByUserId] INT NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
-	[UnitOfMeasurementId] [int] NOT NULL,
+	[ItemTypeId] [int] NULL,
+	[AccountCodeId] [int] NULL,
+	[MajorCategoryId] [int] NULL,
+	[SubCategoryId] [int] NULL,
+	[UnitOfMeasurementId] [int] NULL,
 	[IsOriginal] [bit] NULL,
 	CONSTRAINT [PK_SS_PSDBMCatalogue] PRIMARY KEY CLUSTERED ([PSDBMCatalogueId] ASC),
+	CONSTRAINT [FK_SS_PSDBMCatalogue_SS_ItemType] FOREIGN KEY ([ItemTypeId]) REFERENCES [dbo].[SS_ItemType] ([ItemTypeId]),
+	CONSTRAINT [FK_SS_PSDBMCatalogue_SS_AccountCode] FOREIGN KEY ([AccountCodeId]) REFERENCES [dbo].[SS_AccountCode] ([AccountCodeId]),
+	CONSTRAINT [FK_SS_PSDBMCatalogue_SS_MajorCategory] FOREIGN KEY ([MajorCategoryId]) REFERENCES [dbo].[SS_MajorCategory] ([MajorCategoryId]),
+	CONSTRAINT [FK_SS_PSDBMCatalogue_SS_SubCategory] FOREIGN KEY ([SubCategoryId]) REFERENCES [dbo].[SS_SubCategory] ([SubCategoryId]),
 	CONSTRAINT [FK_SS_PSDBMCatalogue_SS_UnitOfMeasurement] FOREIGN KEY ([UnitOfMeasurementId]) REFERENCES [dbo].[SS_UnitOfMeasurement] ([UnitOfMeasurementId])
 );

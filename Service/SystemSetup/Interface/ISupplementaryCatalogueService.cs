@@ -16,5 +16,6 @@ namespace Service.SystemSetup.Interface
         // Additional methods specific to ProductService
 
         Task<List<UnitOfMeasurementDto>> GetUnitOfMeasurements();
+        Task<List<AccountCodeDto>> GetAccountCodes();
     }
 }

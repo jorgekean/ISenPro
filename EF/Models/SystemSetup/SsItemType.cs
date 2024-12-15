@@ -18,4 +18,8 @@ public partial class SsItemType
     public DateTime CreatedDate { get; set; }
 
     public virtual ICollection<SsAccountCode> SsAccountCodes { get; set; } = new List<SsAccountCode>();
+
+    public virtual ICollection<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; } = new List<SsPsdbmcatalogue>();
+
+    public virtual ICollection<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; } = new List<SsSupplementaryCatalogue>();
 }

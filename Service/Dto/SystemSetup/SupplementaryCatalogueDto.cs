@@ -22,11 +22,31 @@ namespace Service.Dto.SystemSetup
 
         public string? Thumbnail { get; set; }
 
-        public int UnitOfMeasurementId { get; set; }
+        public int? UnitOfMeasurementId { get; set; }
+
+        public int? ItemTypeId { get; set; }
+
+        public int? AccountCodeId { get; set; }
+
+        public int? MajorCategoryId { get; set; }
+
+        public int? SubCategoryId { get; set; }
 
         public bool? IsOriginal { get; set; }
 
+        public string? ItemTypeName { get; set; }
+        public string? AccountCodeDescription { get; set; }
+        public string? MajorCategoryName { get; set; }
+        public string? SubCategoryName { get; set; }
         public string? UnitOfMeasurementCode { get; set; }
-        public virtual SsUnitOfMeasurement UnitOfMeasurement { get; set; } = null!;
+        public virtual UnitOfMeasurementDto? UnitOfMeasurement { get; set; } = null!;
+
+        public virtual ItemTypeDto? ItemType { get; set; } = null!;
+
+        public virtual AccountCodeDto? AccountCode { get; set; } = null!;
+
+        public virtual MajorCategoryDto? MajorCategory { get; set; } = null!;
+
+        public virtual SubCategoryDto? SubCategory { get; set; } = null!;
     }
 }

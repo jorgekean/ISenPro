@@ -38,6 +38,24 @@ namespace API.Controllers.UserManagement
             }
         }
 
+        // GET: api/PSDBMCatalogues/AccountCodes
+        [HttpGet("AccountCodes")]
+        public async Task<ActionResult<PaginatedResponse<UnitOfMeasurementDto>>> GetAccountCodes()
+        {
+            try
+            {
+                var response = await _psdbmCataloguesservice.GetAccountCodes();
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         // GET: api/PSDBMCatalogues
         [HttpGet]
         public async Task<ActionResult<PaginatedResponse<PSDBMCatalogueDto>>> GetPSDBMCatalogues([FromQuery] PagingParameters pagingParameters)

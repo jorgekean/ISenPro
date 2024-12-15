@@ -35,6 +35,16 @@ namespace Service.SystemSetup
             }).ToListAsync();
         }
 
+        public Task<List<AccountCodeDto>> GetAccountCodes()
+        {
+            return _context.SsAccountCodes.Where(x => x.IsActive == true).Select(p => new AccountCodeDto
+            {
+                Id = p.AccountCodeId,
+                Code = p.Code + " - " + p.Description,
+                Description = p.Code + " - " + p.Description,
+            }).ToListAsync();
+        }
+
         public override IQueryable<SsPsdbmcatalogue> ApplyFilters(IQueryable<SsPsdbmcatalogue> query, List<Filter> filters)
         {
             if (filters != null && filters.Any())
@@ -68,7 +78,7 @@ namespace Service.SystemSetup
 
         protected override IQueryable<SsPsdbmcatalogue> IncludeNavigationProperties(IQueryable<SsPsdbmcatalogue> query)
         {
-            return query.Include(o => o.UnitOfMeasurement);
+            return query.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory);
         }
 
         protected override IQueryable<SsPsdbmcatalogue> ApplySearchFilter(IQueryable<SsPsdbmcatalogue> query, string searchQuery)
@@ -83,8 +93,8 @@ namespace Service.SystemSetup
             return query.Where(p => new[] { p.Description, 
                                             p.Code, 
                                             p.Description,
-                                            p.UnitOfMeasurement.Code,
-                                            p.UnitOfMeasurement.Name
+                                            p.UnitOfMeasurement != null ? p.UnitOfMeasurement.Code : string.Empty,
+                                            p.ItemType != null ? p.ItemType.Name : string.Empty,
                                           }
                             .Any(value => value != null && value.Contains(searchQuery)));
         }
@@ -96,11 +106,21 @@ namespace Service.SystemSetup
                 Id = entity.PsdbmcatalogueId,
                 Code = entity.Code,
                 Description = entity.Description,
+                Remarks = entity.Remarks,
+                UnitPrice = entity.UnitPrice.HasValue ? entity.UnitPrice.Value : 0,
                 IsActive = entity.IsActive,
                 CreatedDate = entity.CreatedDate,
                 CreatedBy = entity.CreatedByUserId,
                 UnitOfMeasurementId = entity.UnitOfMeasurementId,
-                UnitOfMeasurementCode = entity.UnitOfMeasurement.Code
+                UnitOfMeasurementCode = entity.UnitOfMeasurement?.Code,
+                AccountCodeId = entity.AccountCodeId,
+                AccountCodeDescription = entity.AccountCode?.Description,
+                MajorCategoryId = entity.MajorCategoryId,
+                MajorCategoryName = entity.MajorCategory?.Name,
+                SubCategoryName = entity.SubCategory?.Name,
+                SubCategoryId = entity.SubCategoryId,
+                ItemTypeName = entity.ItemType?.Name,
+                ItemTypeId = entity.ItemTypeId
             };
             return dto;
         }
@@ -111,8 +131,14 @@ namespace Service.SystemSetup
 
             entity.Code = dto.Code;
             entity.Description = dto.Description;
+            entity.ItemTypeId = dto.ItemTypeId;
+            entity.AccountCodeId = dto.AccountCodeId;
+            entity.MajorCategoryId = dto.MajorCategoryId;
+            entity.SubCategoryId = dto.SubCategoryId;
             entity.UnitOfMeasurementId = dto.UnitOfMeasurementId;
-            
+            entity.UnitPrice = dto.UnitPrice;
+            entity.Remarks = dto.Remarks;
+
             if (dto.Id == 0)
             {
                 entity.IsActive = true;

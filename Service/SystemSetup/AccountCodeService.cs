@@ -11,6 +11,7 @@ using Service.UserManagement.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,6 +36,37 @@ namespace Service.SystemSetup
         protected override IQueryable<SsAccountCode> IncludeNavigationProperties(IQueryable<SsAccountCode> query)
         {
             return query.Include(o => o.ItemType);
+        }
+
+        public override IQueryable<SsAccountCode> ApplyFilters(IQueryable<SsAccountCode> query, List<Filter> filters)
+        {
+            if (filters != null && filters.Any())
+            {
+                // Apply each filter
+                foreach (var filter in filters)
+                {
+                    if (filter.FilterOptions != null && filter.FilterOptions.Any())
+                    {
+                        // Apply filter using OR logic for FilterOptions
+                        Expression<Func<SsAccountCode, bool>> filterCondition = p => false; // Default false, will combine with OR
+
+                        foreach (var option in filter.FilterOptions)
+                        {
+                            if (filter.FilterName.ToLower() == "itemtype")
+                            {
+                                // Combine filter options with OR logic
+                                var currentCondition = (Expression<Func<SsAccountCode, bool>>)(p => p.ItemTypeId == option.Value);
+                                filterCondition = CombineWithOr(filterCondition, currentCondition);
+                            }
+                        }
+
+                        // Apply the OR condition to the query
+                        query = query.Where(filterCondition);
+                    }
+                }
+            }
+
+            return query;
         }
 
         protected override IQueryable<SsAccountCode> ApplySearchFilter(IQueryable<SsAccountCode> query, string searchQuery)
