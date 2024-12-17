@@ -26,7 +26,8 @@ namespace Service.UserManagement
 
         protected override IQueryable<UmDivision> ApplySearchFilter(IQueryable<UmDivision> query, string searchQuery)
         {
-            return query.Where(p => p.Name.Contains(searchQuery) || p.Code.Contains(searchQuery) || (string.IsNullOrWhiteSpace(p.Description) || p.Description.Contains(searchQuery)));
+            return query.Where(p => new[] { p.Name, p.Code, p.Description }
+                            .Any(value => value != null && value.Contains(searchQuery)));
         }
 
         protected override DivisionDto MapToDto(UmDivision entity)

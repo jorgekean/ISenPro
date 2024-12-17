@@ -27,7 +27,8 @@ namespace Service.UserManagement
 
         protected override IQueryable<UmPerson> ApplySearchFilter(IQueryable<UmPerson> query, string searchQuery)
         {
-            return query.Where(p => p.FirstName.Contains(searchQuery) || p.LastName.Contains(searchQuery));
+            return query.Where(p => new[] { p.FirstName, p.LastName }
+                            .Any(value => value != null && value.Contains(searchQuery)));
         }
 
         public override async Task<PersonDto> GetByIdAsync(int id)
