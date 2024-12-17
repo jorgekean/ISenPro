@@ -5,6 +5,7 @@ using EF.Models;
 using Service.SystemSetup;
 using Service.SystemSetup.Interface;
 using Serilog;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,7 @@ builder.Services.AddDbContext<ISenProContext>(options =>
 
 #region UserManagement
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IModuleService, ModuleService>();
 builder.Services.AddScoped<IDivisionService, DivisionService>();
 builder.Services.AddScoped<IBureauService, BureauService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
@@ -72,6 +74,15 @@ Log.Logger = new LoggerConfiguration()
 
 // Use Serilog as the logging provider
 builder.Host.UseSerilog();
+
+#endregion
+
+#region Redis
+//builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+//{
+//    var configuration = builder.Configuration.GetConnectionString("Redis");
+//    return ConnectionMultiplexer.Connect(configuration);
+//});
 
 #endregion
 
