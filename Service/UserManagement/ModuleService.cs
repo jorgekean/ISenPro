@@ -31,6 +31,20 @@ namespace Service.UserManagement
             return query.Where(p => p.Name.Contains(searchQuery) || p.Code.Contains(searchQuery) || (string.IsNullOrWhiteSpace(p.Description) || p.Description.Contains(searchQuery)));
         }
 
+        public override async Task<ModuleDto> GetByIdAsync(int id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+
+            await _context.Entry(entity).Collection(x => x.UmModuleControls).LoadAsync();
+
+            if (entity != null)
+            {
+                return MapToDto(entity);
+            }                
+
+            return null;
+        }
+
         protected override ModuleDto MapToDto(UmModule entity)
         {
             var dto = new ModuleDto
@@ -83,7 +97,7 @@ namespace Service.UserManagement
                     ControlId = x.ControlId,
                     IsChecked = x.IsChecked,
                     IsActive = x.IsActive,
-                    CreatedDate = x.CreatedDate,
+                    CreatedDate = x.CreatedDate == DateTime.MinValue ? DateTime.Now : x.CreatedDate,
                     CreatedByUserId = x.CreatedBy
                 }).ToList()
             };

@@ -61,18 +61,76 @@ namespace Service
             public virtual async Task<object> AddAsync(TDto dto)
             {
                 var entity = MapToEntity(dto);
+
+                // Track child entities generically
+                TrackChildEntities(entity);
+
+                // Add the parent entity
                 var result = await _dbSet.AddAsync(entity);
+
+                // Save changes for both parent and child entities
                 await _context.SaveChangesAsync();
-                //var entityId = _context.Entry(entity).Property("Id").CurrentValue; // Retrieve the ID (replace "Id" with your actual property name)
+
                 return result.Entity;
             }
 
             public virtual async Task UpdateAsync(TDto dto)
             {
                 var entity = MapToEntity(dto);
+
+                // Track child entities generically
+                TrackChildEntities(entity);
+
                 _dbSet.Update(entity);
                 await _context.SaveChangesAsync();
             }
+
+            /// <summary>
+            /// Generic method to track child entities and ensure they are marked as Added.
+            /// </summary>
+            /// <param name="entity">The parent entity containing child collections.</param>
+            private void TrackChildEntities(TEntity entity)
+            {
+                var context = _context; // DbContext reference
+
+                // Use reflection to find all navigation properties that are collections
+                var collectionProperties = entity.GetType().GetProperties()
+                    .Where(p => typeof(System.Collections.IEnumerable).IsAssignableFrom(p.PropertyType)
+                                && p.PropertyType != typeof(string));
+
+                foreach (var property in collectionProperties)
+                {
+                    var childEntities = property.GetValue(entity) as System.Collections.IEnumerable;
+
+                    if (childEntities == null) continue;
+
+                    foreach (var childEntity in childEntities)
+                    {
+                        // Safely retrieve the entity type
+                        var entityType = context.Model.FindEntityType(childEntity.GetType());
+                        if (entityType == null) continue; // Skip if entity type is not mapped
+
+                        // Safely retrieve the primary key
+                        var keyProperties = entityType.FindPrimaryKey()?.Properties;
+                        if (keyProperties == null) continue; // Skip if no primary key is defined
+
+                        // Check if the child entity is new
+                        var isNew = keyProperties.All(kp =>
+                        {
+                            var keyValue = childEntity.GetType().GetProperty(kp.Name)?.GetValue(childEntity);
+                            return keyValue == null || (int.TryParse(keyValue.ToString(), out int id) && id == 0);
+                        });
+
+                        // Mark entity state accordingly
+                        var entry = context.Entry(childEntity);
+                        if (entry.State == EntityState.Detached)
+                        {
+                            context.Entry(childEntity).State = isNew ? EntityState.Added : EntityState.Modified;
+                        }
+                    }
+                }
+            }
+          
 
             public virtual async Task DeleteAsync(string id)
             {
