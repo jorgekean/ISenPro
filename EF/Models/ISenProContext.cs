@@ -183,9 +183,11 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<UmUserAccount>(entity =>
         {
-            entity.HasKey(e => e.UserAccountId);
+            entity.HasKey(e => e.UserAccountId).HasName("PK_UM_UserAccount_1");
 
             entity.ToTable("UM_UserAccount");
+
+            entity.HasIndex(e => e.PersonId, "IX_UM_UserAccount").IsUnique();
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.ExpireDate).HasColumnType("datetime");
@@ -193,6 +195,15 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .HasColumnName("UserID");
+
+            entity.HasOne(d => d.Person).WithOne(p => p.UmUserAccount)
+                .HasForeignKey<UmUserAccount>(d => d.PersonId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_UserAccount_UM_Person");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UmUserAccounts)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_UM_UserAccount_UM_Role");
         });
 
         modelBuilder.Entity<UmControl>(entity =>

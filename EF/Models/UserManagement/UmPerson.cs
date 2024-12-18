@@ -44,4 +44,6 @@ public partial class UmPerson
     public virtual UmDepartment? Department { get; set; }
 
     public virtual UmSection? Section { get; set; }
+
+    public virtual UmUserAccount? UmUserAccount { get; set; }
 }

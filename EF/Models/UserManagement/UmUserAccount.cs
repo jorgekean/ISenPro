@@ -24,4 +24,8 @@ public partial class UmUserAccount
     public int PersonId { get; set; }
 
     public int? RoleId { get; set; }
+
+    public virtual UmPerson Person { get; set; } = null!;
+
+    public virtual UmRole? Role { get; set; }
 }
