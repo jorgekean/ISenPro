@@ -42,6 +42,7 @@ builder.Services.AddScoped<IBureauService, BureauService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IPersonService, PersonService>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 #endregion
 
 #region SystemSetup
