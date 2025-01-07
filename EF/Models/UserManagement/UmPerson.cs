@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EF.Models.SystemSetup;
+using System;
 using System.Collections.Generic;
 
 namespace EF.Models.UserManagement;
@@ -41,9 +42,11 @@ public partial class UmPerson
 
     public int? SectionId { get; set; }
 
+    public virtual UmUserAccount? UmUserAccount { get; set; }
+
     public virtual UmDepartment? Department { get; set; }
 
     public virtual UmSection? Section { get; set; }
 
-    public virtual UmUserAccount? UmUserAccount { get; set; }
+    public virtual ICollection<SsSignatory> SsSignatories { get; set; } = new List<SsSignatory>();
 }

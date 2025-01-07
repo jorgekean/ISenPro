@@ -9,26 +9,26 @@ namespace API.Controllers.SystemSetup
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UnitOfMeasurementsController : ControllerBase
+    public class ReferenceTablesController : ControllerBase
     {
-        private readonly IUnitOfMeasurementService _uomService;
-        private readonly ILogger<UnitOfMeasurementsController> _logger;
+        private readonly IReferenceTableService _referenceTableService;
+        private readonly ILogger<ReferenceTablesController> _logger;
 
-        public UnitOfMeasurementsController(IUnitOfMeasurementService unitofmeasurementService, ILogger<UnitOfMeasurementsController> logger)
+        public ReferenceTablesController(IReferenceTableService referenceTableService, ILogger<ReferenceTablesController> logger)
         {
-            _uomService = unitofmeasurementService;
+            _referenceTableService = referenceTableService;
             _logger = logger;
         }
 
-        // GET: api/UnitOfMeasurements
+        // GET: api/ReferenceTables
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<UnitOfMeasurementDto>>> GetUOMs([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<ReferenceTableDto>>> GetUOMs([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _uomService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _referenceTableService.GetPagedAndFilteredAsync(pagingParameters);
 
-                var response = new PaginatedResponse<UnitOfMeasurementDto>
+                var response = new PaginatedResponse<ReferenceTableDto>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,
@@ -47,20 +47,20 @@ namespace API.Controllers.SystemSetup
         }
 
 
-        // GET: api/UnitOfMeasurements/5
+        // GET: api/ReferenceTables/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UnitOfMeasurementDto>> GetUnitOfMeasurement(int id)
+        public async Task<ActionResult<ReferenceTableDto>> GetReferenceTable(int id)
         {
             try
             {
-                var umUnitOfMeasurement = await _uomService.GetByIdAsync(id);
+                var umReferenceTable = await _referenceTableService.GetByIdAsync(id);
 
-                if (umUnitOfMeasurement == null)
+                if (umReferenceTable == null)
                 {
                     return NotFound();
                 }
 
-                return umUnitOfMeasurement;
+                return umReferenceTable;
             }
             catch (Exception ex)
             {
@@ -72,23 +72,23 @@ namespace API.Controllers.SystemSetup
             return BadRequest();
         }
 
-        // PUT: api/UnitOfMeasurements/5
+        // PUT: api/ReferenceTables/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUnitOfMeasurement(string id, UnitOfMeasurementDto umUnitOfMeasurement)
+        public async Task<IActionResult> PutReferenceTable(string id, ReferenceTableDto umReferenceTable)
         {
-            if (id != umUnitOfMeasurement.Code)
+            if (id != umReferenceTable.Code)
             {
                 return BadRequest();
             }
 
             try
             {
-                await _uomService.UpdateAsync(umUnitOfMeasurement);
+                await _referenceTableService.UpdateAsync(umReferenceTable);
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                if (!(await unitofmeasurementExists(umUnitOfMeasurement.Code)))
+                if (!(await referenceTableDataExists(umReferenceTable.Code)))
                 {
                     return NotFound();
                 }
@@ -105,19 +105,19 @@ namespace API.Controllers.SystemSetup
             return NoContent();
         }
 
-        // POST: api/UnitOfMeasurements
+        // POST: api/ReferenceTables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UnitOfMeasurementDto>> PostUmUnitOfMeasurement(UnitOfMeasurementDto umUnitOfMeasurement)
+        public async Task<ActionResult<ReferenceTableDto>> PostUmReferenceTable(ReferenceTableDto umReferenceTable)
         {
-            //_context.UmUnitOfMeasurements.Add(umUnitOfMeasurement);
+            //_context.UmReferenceTables.Add(umReferenceTable);
             try
             {
-                await _uomService.AddAsync(umUnitOfMeasurement);
+                await _referenceTableService.AddAsync(umReferenceTable);
             }
             catch (DbUpdateException ex)
             {
-                if (await unitofmeasurementExists(umUnitOfMeasurement.Code))
+                if (await referenceTableDataExists(umReferenceTable.Code))
                 {
                     return Conflict();
                 }
@@ -131,17 +131,17 @@ namespace API.Controllers.SystemSetup
                 _logger.LogError(ex, ex.Message);
             }
 
-            return CreatedAtAction("GetUnitOfMeasurement", new { id = umUnitOfMeasurement.Code }, umUnitOfMeasurement);
+            return CreatedAtAction("GetReferenceTable", new { id = umReferenceTable.Code }, umReferenceTable);
         }
 
-        //// DELETE: api/UnitOfMeasurements/5
+        //// DELETE: api/ReferenceTables/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUmUnitOfMeasurement(int id)
+        public async Task<IActionResult> DeleteUmReferenceTable(int id)
         {
 
             try
             {
-                await _uomService.DeleteAsync(id);
+                await _referenceTableService.DeleteAsync(id);
             }           
             catch (Exception ex)
             {
@@ -151,9 +151,9 @@ namespace API.Controllers.SystemSetup
             return NoContent();
         }
 
-        private async Task<bool> unitofmeasurementExists(string code)
+        private async Task<bool> referenceTableDataExists(string code)
         {
-            return (await _uomService.GetAllAsync()).Any(e => e.Code == code);
+            return (await _referenceTableService.GetAllAsync()).Any(e => e.Code == code);
         }
     }
 }

@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
 using Service.Dto.SystemSetup;
+using Service.SystemSetup;
 using Service.SystemSetup.Interface;
 
-namespace API.Controllers.UserManagement
+namespace API.Controllers.SystemSetup
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,9 +21,27 @@ namespace API.Controllers.UserManagement
             _logger = logger;
         }
 
+        // GET: api/Supplier/Industries
+        [HttpGet("Industries")]
+        public async Task<ActionResult<PaginatedResponse<UnitOfMeasurementDto>>> GetIndustries()
+        {
+            try
+            {
+                var response = await _supplierService.GetIndustries();
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         // GET: api/Suppliers
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<SupplierDto>>> GetUOMs([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<SupplierDto>>> GetSuppliers([FromQuery] PagingParameters pagingParameters)
         {
             try
             {

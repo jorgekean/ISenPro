@@ -16,6 +16,11 @@ public partial class TempContext : DbContext
     {
     }
 
+    public virtual DbSet<UmPerson> UmPeople { get; set; }
+
+    public virtual DbSet<UmRole> UmRoles { get; set; }
+
+    public virtual DbSet<UmUserAccount> UmUserAccounts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -23,7 +28,67 @@ public partial class TempContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-       
+        modelBuilder.Entity<UmPerson>(entity =>
+        {
+            entity.HasKey(e => e.PersonId);
+
+            entity.ToTable("UM_Person");
+
+            entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.ContactNo).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Designation).HasMaxLength(200);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.EmployeeStatus).HasMaxLength(50);
+            entity.Property(e => e.EmployeeTitle).HasMaxLength(50);
+            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.MiddleName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<UmRole>(entity =>
+        {
+            entity.HasKey(e => e.RoleId);
+
+            entity.ToTable("UM_Role", tb => tb.HasTrigger("trg_UM_Role_Changes"));
+
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Description)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<UmUserAccount>(entity =>
+        {
+            entity.HasKey(e => e.UserAccountId).HasName("PK_UM_UserAccount_1");
+
+            entity.ToTable("UM_UserAccount");
+
+            entity.HasIndex(e => e.PersonId, "IX_UM_UserAccount").IsUnique();
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.ExpireDate).HasColumnType("datetime");
+            entity.Property(e => e.Password).HasMaxLength(100);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(50)
+                .HasColumnName("UserID");
+
+            entity.HasOne(d => d.Person).WithOne(p => p.UmUserAccount)
+                .HasForeignKey<UmUserAccount>(d => d.PersonId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_UserAccount_UM_Person");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UmUserAccounts)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_UM_UserAccount_UM_Role");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

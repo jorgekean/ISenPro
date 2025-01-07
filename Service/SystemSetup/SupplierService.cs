@@ -14,6 +14,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service.SystemSetup
 {
@@ -21,6 +22,15 @@ namespace Service.SystemSetup
     {
         public SupplierService(ISenProContext context) : base(context)
         {
+        }
+
+        public Task<List<ReferenceTableDto>> GetIndustries()
+        {
+            return _context.SsReferenceTables.Where(x => x.IsActive == true && x.RefTableId == 3).Select(p => new ReferenceTableDto
+            {
+                ReferenceTableId = p.ReferenceTableId,
+                Name = p.Name
+            }).OrderBy(x => x.Name).ToListAsync();
         }
 
         protected override IQueryable<SsSupplier> ApplySearchFilter(IQueryable<SsSupplier> query, string searchQuery)
@@ -31,6 +41,10 @@ namespace Service.SystemSetup
 
         protected override SupplierDto MapToDto(SsSupplier entity)
         {
+            var industryName = entity.Industry.HasValue
+                                    ? _context.SsReferenceTables.FirstOrDefault(x => x.ReferenceTableId == entity.Industry.Value).Name
+                                    : string.Empty;
+
             var dto = new SupplierDto
             {
                 Id = entity.SupplierId,
@@ -42,6 +56,7 @@ namespace Service.SystemSetup
                 FaxNumber = entity.FaxNumber ?? string.Empty,
                 Tin = entity.Tin ?? string.Empty,
                 Industry = entity.Industry ?? 0,
+                IndustryName = industryName,
                 IsActive = entity.IsActive,
                 CreatedDate = entity.CreatedDate,
                 CreatedBy = (int)entity.CreatedByUserId
@@ -60,6 +75,7 @@ namespace Service.SystemSetup
             entity.Remarks = dto.Remarks;
             entity.FaxNumber = dto.FaxNumber;
             entity.Tin = dto.Tin;
+            entity.Industry = dto.Industry;
 
             if (dto.Id == 0)
             {

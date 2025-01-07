@@ -25,5 +25,7 @@ namespace Service.Dto.SystemSetup
         public string? Tin { get; set; }
 
         public int? Industry { get; set; }
+
+        public string? IndustryName { get; set; }
     }
 }

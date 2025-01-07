@@ -85,5 +85,7 @@
     <Build Include="dbo\Tables\UM_ModuleControl.sql" />
     <Build Include="dbo\Tables\UM_Module.sql" />
     <Build Include="dbo\Tables\UM_Control.sql" />
+    <Build Include="dbo\Tables\SS_ReferenceTable.sql" />
+    <Build Include="dbo\Tables\SS_Signatories.sql" />
   </ItemGroup>
 </Project>

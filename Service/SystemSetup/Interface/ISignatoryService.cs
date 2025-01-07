@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 
 namespace Service.SystemSetup.Interface
 {
-    public interface ISupplierService : IBaseService<SsSupplier, SupplierDto>
+    public interface ISignatoryService : IBaseService<SsSignatory, SignatoryDto>
     {
-       // Additional methods specific to Supplier Service
-       Task<List<ReferenceTableDto>> GetIndustries();
+        // Additional methods specific to Signatory Service
+        Task<List<ModuleDto>> GetModules();
+        Task<List<ReferenceTableDto>> GetListOfReference(int refId);
     }
 }

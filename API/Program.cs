@@ -54,6 +54,8 @@ builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IPSDBMCatalogueService, PSDBMCatalogueService>();
 builder.Services.AddScoped<ISupplementaryCatalogueService, SupplementaryCatalogueService>();
+builder.Services.AddScoped<ISignatoryService, SignatoryService>();
+builder.Services.AddScoped<IReferenceTableService, ReferenceTableService>();
 
 #endregion
 

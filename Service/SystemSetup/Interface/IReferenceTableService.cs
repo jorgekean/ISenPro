@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 
 namespace Service.SystemSetup.Interface
 {
-    public interface ISupplierService : IBaseService<SsSupplier, SupplierDto>
+    public interface IReferenceTableService : IBaseService<SsReferenceTable, ReferenceTableDto>
     {
-       // Additional methods specific to Supplier Service
-       Task<List<ReferenceTableDto>> GetIndustries();
+        // Additional methods specific to Reference Table Service
     }
 }

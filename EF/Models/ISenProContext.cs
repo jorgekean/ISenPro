@@ -61,6 +61,10 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
 
+    public virtual DbSet<SsReferenceTable> SsReferenceTables { get; set; }
+
+    public virtual DbSet<SsSignatory> SsSignatories { get; set; }
+
     #endregion
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -423,6 +427,37 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Code).HasMaxLength(100);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<SsReferenceTable>(entity =>
+        {
+            entity.HasKey(e => e.ReferenceTableId).HasName("PK__SS_Refer__65F2CF6F263D4BA4");
+
+            entity.ToTable("SS_ReferenceTable");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.InflationValue).HasColumnType("decimal(19, 5)");
+        });
+
+        modelBuilder.Entity<SsSignatory>(entity =>
+        {
+            entity.HasKey(e => e.SignatoryId);
+
+            entity.ToTable("SS_Signatories");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Person).WithMany(p => p.SsSignatories)
+                .HasForeignKey(d => d.PersonId)
+                .HasConstraintName("FK_SS_Signatories_SS_Person");
+
+            entity.HasOne(d => d.ReportSection).WithMany(p => p.SsSignatoryReportSections)
+                .HasForeignKey(d => d.ReportSectionId)
+                .HasConstraintName("FK_SS_Signatories_SS_Reference_Report_Section");
+
+            entity.HasOne(d => d.SignatoryDesignation).WithMany(p => p.SsSignatorySignatoryDesignations)
+                .HasForeignKey(d => d.SignatoryDesignationId)
+                .HasConstraintName("FK_SS_Signatories_SS_Reference_Signatory_Designation");
         });
 
         #endregion
