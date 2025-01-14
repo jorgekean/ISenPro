@@ -43,6 +43,7 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<ISectionService, SectionService>();
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IPolicyService, PolicyService>();
 #endregion
 
 #region SystemSetup

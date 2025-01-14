@@ -22,4 +22,6 @@ public partial class UmModuleControl
     public virtual UmControl Control { get; set; } = null!;
 
     public virtual UmModule Module { get; set; } = null!;
+
+    public virtual ICollection<UmPolicyModuleControl> UmPolicyModuleControls { get; set; } = new List<UmPolicyModuleControl>();
 }

@@ -1,5 +1,4 @@
-﻿using EF.Models;
-using EF.Models.SystemSetup;
+﻿using EF.Models.SystemSetup;
 using EF.Models.UserManagement;
 using Service.Dto.SystemSetup;
 using Service.Dto.UserManagement;
