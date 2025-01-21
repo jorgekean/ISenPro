@@ -9,8 +9,8 @@ public class PolicyRoleDto : BaseDto
 {
     public int? Id { get; set; }
 
-    public int PolicyId { get; set; }   
+    public int? PolicyId { get; set; }   
     public int RoleId { get; set; }
 
-    public RoleDto Role { get; set; } = null!;
+    //public RoleDto Role { get; set; } = null!;
 }

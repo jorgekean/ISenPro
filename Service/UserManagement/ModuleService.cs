@@ -3,6 +3,8 @@ using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 using Service.Dto.UserManagement;
+using Service.Enums;
+using Service.Helpers;
 using Service.Service;
 using Service.UserManagement.Interface;
 using System;
@@ -41,7 +43,7 @@ namespace Service.UserManagement
             if (entity != null)
             {
                 return MapToDto(entity);
-            }                
+            }
 
             return null;
         }
@@ -65,7 +67,7 @@ namespace Service.UserManagement
                     Id = x.ModuleControlId,
                     ModuleId = x.ModuleId,
                     ControlId = x.ControlId,
-                    ControlName = x.Control?.ControlName,
+                    ControlName = EnumHelper.GetEnumByValue<ControlEnum>(x.ControlId)?.ToString(),
                     IsChecked = x.IsChecked,
                     ModuleName = x.Module?.Name,
                     IsActive = x.IsActive,

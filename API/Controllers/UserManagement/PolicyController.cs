@@ -121,7 +121,7 @@ namespace API.Controllers.UserManagement
                 _logger.LogError(ex, ex.Message);
             }
 
-            return CreatedAtAction("GetRole", new { id = umRole.Code }, umRole);
+            return CreatedAtAction("GetPolicy", new { id = umRole.Code }, umRole);
         }
 
         //// DELETE: api/Policies/5

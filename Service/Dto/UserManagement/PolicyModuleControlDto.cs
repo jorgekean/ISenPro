@@ -9,9 +9,10 @@ public class PolicyModuleControlDto : BaseDto
 {
     public int Id { get; set; }
 
-    public int PolicyId { get; set; }    
+    public int? PolicyId { get; set; }
+    public bool IsChecked { get; set; }    
 
     public int ModuleControlId { get; set; }
 
-    public ModuleControlDto ModuleControl { get; set; } = null!;
+    //public ModuleControlDto ModuleControl { get; set; } = null!;
 }
