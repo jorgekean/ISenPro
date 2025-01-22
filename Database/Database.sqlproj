@@ -87,6 +87,8 @@
     <Build Include="dbo\Tables\UM_Control.sql" />
     <Build Include="dbo\Tables\SS_ReferenceTable.sql" />
     <Build Include="dbo\Tables\SS_Signatories.sql" />
+    <Build Include="dbo\Tables\UM_WorkFlow.sql" />
+    <Build Include="dbo\Tables\UM_WorkStep.sql" />
     <Build Include="dbo\Tables\UM_PolicyRoles.sql" />
     <Build Include="dbo\Tables\UM_PolicyModuleControls.sql" />
   </ItemGroup>

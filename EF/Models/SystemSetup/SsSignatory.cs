@@ -24,11 +24,11 @@ public partial class SsSignatory
 
     public double? MaximumAmount { get; set; }
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
-    public long? CreatedByUserId { get; set; }
+    public long CreatedByUserId { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public int? PersonId { get; set; }
 

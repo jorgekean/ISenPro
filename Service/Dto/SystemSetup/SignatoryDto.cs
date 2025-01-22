@@ -39,10 +39,6 @@ namespace Service.Dto.SystemSetup
 
         public virtual PersonDto? Person { get; set; }
 
-        public bool? IsActive { get; set; }
-
         public long? CreatedByUserId { get; set; }
-
-        public DateTime? CreatedDate { get; set; }
     }
 }

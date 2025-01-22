@@ -75,6 +75,10 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmUserAccount> UmUserAccounts { get; set; }
 
+    public virtual DbSet<UmWorkFlow> UmWorkFlows { get; set; }
+
+    public virtual DbSet<UmWorkStep> UmWorkSteps { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=(LocalDB)\\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;");
@@ -558,6 +562,29 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.UmUserAccounts)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("FK_UM_UserAccount_UM_Role");
+        });
+
+        modelBuilder.Entity<UmWorkFlow>(entity =>
+        {
+            entity.HasKey(e => e.WorkflowId).HasName("PK_UM_WorkFlows");
+
+            entity.ToTable("UM_WorkFlow");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<UmWorkStep>(entity =>
+        {
+            entity.HasKey(e => e.WorkstepId);
+
+            entity.ToTable("UM_WorkStep");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Workflow).WithMany(p => p.UmWorkSteps)
+                .HasForeignKey(d => d.WorkflowId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_WorkSteps_UM_WorkFlows");
         });
 
         OnModelCreatingPartial(modelBuilder);

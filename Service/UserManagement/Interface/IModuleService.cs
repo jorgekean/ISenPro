@@ -8,5 +8,7 @@ namespace Service.UserManagement.Interface
         // Additional methods specific
         Task<IEnumerable<PageDto>> GetAllPagesAsync();
         Task<IEnumerable<ControlDto>> GetAllControlsAsync();
+
+        Task<List<ModuleDto>> GetTransactionAndMonitoringModules();
     }
 }

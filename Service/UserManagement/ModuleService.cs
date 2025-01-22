@@ -131,5 +131,14 @@ namespace Service.UserManagement
                 Description = s.Description
             }).ToList();
         }
+
+        public Task<List<ModuleDto>> GetTransactionAndMonitoringModules()
+        {
+            return _context.UmModules.Where(x => x.IsActive && (x.ParentModuleId == 13 || x.ParentModuleId == 15)).Select(p => new ModuleDto
+            {
+                Id = p.ModuleId,
+                Name = p.Name
+            }).OrderBy(x => x.Name).ToListAsync();
+        }
     }
 }

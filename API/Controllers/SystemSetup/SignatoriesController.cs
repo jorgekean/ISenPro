@@ -6,6 +6,7 @@ using Service.Dto.SystemSetup;
 using Service.Dto.UserManagement;
 using Service.SystemSetup;
 using Service.SystemSetup.Interface;
+using Service.UserManagement.Interface;
 
 namespace API.Controllers.SystemSetup
 {
@@ -14,10 +15,12 @@ namespace API.Controllers.SystemSetup
     public class SignatoriesController : ControllerBase
     {
         private readonly ISignatoryService _signatoriesService;
+        private readonly IModuleService _moduleService;
         private readonly ILogger<SignatoriesController> _logger;
 
-        public SignatoriesController(ISignatoryService signatoriesService, ILogger<SignatoriesController> logger)
+        public SignatoriesController(ISignatoryService signatoriesService, IModuleService moduleService, ILogger<SignatoriesController> logger)
         {
+            _moduleService = moduleService;
             _signatoriesService = signatoriesService;
             _logger = logger;
         }
@@ -28,7 +31,7 @@ namespace API.Controllers.SystemSetup
         {
             try
             {
-                var response = await _signatoriesService.GetModules();
+                var response = await _moduleService.GetTransactionAndMonitoringModules();
 
                 return Ok(response);
             }

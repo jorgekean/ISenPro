@@ -29,15 +29,6 @@ namespace Service.SystemSetup
             return query.Include(o => o.Person).ThenInclude(s => s.Department);
         }
 
-        public Task<List<ModuleDto>> GetModules()
-        {
-            return _context.UmModules.Where(x => x.IsActive && (x.ParentModuleId == 13 || x.ParentModuleId == 15)).Select(p => new ModuleDto
-            {
-                Id = p.ModuleId,
-                Name = p.Name
-            }).OrderBy(x => x.Name).ToListAsync();
-        }
-
         public Task<List<ReferenceTableDto>> GetListOfReference(int refId)
         {
             return _context.SsReferenceTables.Where(x => x.IsActive == true && x.RefTableId == refId).Select(p => new ReferenceTableDto

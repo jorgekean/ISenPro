@@ -57,6 +57,8 @@ builder.Services.AddScoped<IPSDBMCatalogueService, PSDBMCatalogueService>();
 builder.Services.AddScoped<ISupplementaryCatalogueService, SupplementaryCatalogueService>();
 builder.Services.AddScoped<ISignatoryService, SignatoryService>();
 builder.Services.AddScoped<IReferenceTableService, ReferenceTableService>();
+builder.Services.AddScoped<IWorkFlowService, WorkFlowService>();
+builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 
 #endregion
 
