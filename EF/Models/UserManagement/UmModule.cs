@@ -26,4 +26,6 @@ public partial class UmModule
     public virtual UmPage Page { get; set; } = null!;
 
     public virtual ICollection<UmModuleControl> UmModuleControls { get; set; } = new List<UmModuleControl>();
+
+    public virtual ICollection<UmWorkFlow> UmWorkFlows { get; set; } = new List<UmWorkFlow>();
 }

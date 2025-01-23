@@ -27,5 +27,7 @@ public partial class UmWorkStep
 
     public DateTime CreatedDate { get; set; }
 
+    public virtual ICollection<UmWorkStepApprover> UmWorkStepApprovers { get; set; } = new List<UmWorkStepApprover>();
+
     public virtual UmWorkFlow Workflow { get; set; } = null!;
 }
