@@ -24,10 +24,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region EF
-// Add DbContext to the DI container
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       "Server=(LocalDB)\\MSSQLLocalDB;Database=TestinganDB;Integrated Security=True;";
+var environment = builder.Configuration["Environment"] ?? "Local";
+var connectionString = builder.Configuration.GetSection("ConnectionStrings")[environment];
 
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException($"Connection string for environment '{environment}' is not configured.");
+}
+
+
+// Register the connection string for use in DI
+builder.Services.AddSingleton(sp => new { ConnectionString = connectionString });
+
+// Add DbContext to the DI container
 builder.Services.AddDbContext<ISenProContext>(options =>
     options.UseSqlServer(connectionString));
 #endregion
