@@ -17,8 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{3254336B-ECDE-427A-AB22-D1A421F9B096}"
 	ProjectSection(SolutionItems) = preProject
+		Control.sql = Control.sql
 		Module.sql = Module.sql
 		ModuleControl.sql = ModuleControl.sql
+		Page.sql = Page.sql
 		Role.sql = Role.sql
 	EndProjectSection
 EndProject

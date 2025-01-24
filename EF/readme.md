@@ -24,7 +24,7 @@ EF Scaffolding Steps
     dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=PPMS2025_TEST;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models/SystemSetup --table SS_ItemType --table SS_AccountCode -c TempContext --context-dir Models --force
 
 # For generating all tables
- 
+
     dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=PPMS2025_TEST;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -c ISenProContext
     dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=PPMS2025_TEST;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -c ISenProContext --force
 

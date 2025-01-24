@@ -9,11 +9,20 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add environment-specific configuration
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>();
+
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000")
+        builder => builder.WithOrigins(allowedOrigins ?? ["http://localhost:3000"])
                           .AllowAnyHeader()
                           .AllowAnyMethod());
 });
@@ -24,12 +33,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region EF
-var environment = builder.Configuration["Environment"] ?? "Local";
-var connectionString = builder.Configuration.GetSection("ConnectionStrings")[environment];
+var connectionString = builder.Configuration.GetConnectionString("Default");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException($"Connection string for environment '{environment}' is not configured.");
+    throw new InvalidOperationException($"Connection string for environment '{builder.Environment.EnvironmentName}' is not configured.");
 }
 
 
@@ -74,13 +82,15 @@ builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 #endregion
 
 #region Serilog
+// Read configuration
+var logFilePath = builder.Configuration["Logging:Serilog:LogFilePath"];
 
 // Configure Serilog for daily rolling files
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Error()  // Log only errors
     //.WriteTo.Console() // Optional: Logs to the console
     .WriteTo.File(
-        path: "Logs/log-.txt", // Log file name pattern
+        path: logFilePath ?? "Logs/log-.txt", // Log file name pattern
         rollingInterval: RollingInterval.Day, // Create a new file daily
         retainedFileCountLimit: 60, // Optional: Retain the last 60 days of logs
         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
