@@ -21,7 +21,7 @@ public partial class UmWorkFlow
 
     public int? ModuleId { get; set; }
 
-    public virtual UmModule Module { get; set; } = null!;
+    public virtual UmModule? Module { get; set; }
 
     public virtual ICollection<UmWorkStep> UmWorkSteps { get; set; } = new List<UmWorkStep>();
 }

@@ -91,5 +91,6 @@
     <Build Include="dbo\Tables\UM_WorkStep.sql" />
     <Build Include="dbo\Tables\UM_PolicyRoles.sql" />
     <Build Include="dbo\Tables\UM_PolicyModuleControls.sql" />
+    <Build Include="dbo\Tables\UM_WorkStepApprover.sql" />
   </ItemGroup>
 </Project>

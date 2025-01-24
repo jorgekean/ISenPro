@@ -28,4 +28,6 @@ public partial class UmUserAccount
     public virtual UmPerson Person { get; set; } = null!;
 
     public virtual UmRole? Role { get; set; }
+
+    public virtual ICollection<UmWorkStepApprover> UmWorkStepApprovers { get; set; } = new List<UmWorkStepApprover>();
 }
