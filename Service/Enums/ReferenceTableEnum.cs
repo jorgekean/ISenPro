@@ -2,7 +2,7 @@
 
 namespace Service.Enums
 {
-    public enum ReferanceTableModule
+    public enum ReferenceTableModule
     {
         Title = 1,
 

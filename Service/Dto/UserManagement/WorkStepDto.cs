@@ -26,5 +26,7 @@ namespace Service.Dto.UserManagement
         public int? WorkflowId { get; set; }
 
         public virtual UmWorkFlow? Workflow { get; set; } = null!;
+
+        public virtual List<WorkStepApproverDto> WorkStepApprovers { get; set; } = new List<WorkStepApproverDto>();
     }
 }

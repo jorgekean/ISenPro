@@ -28,7 +28,7 @@ namespace Service.SystemSetup
         {
             return _context.SsReferenceTables.Where(x => x.IsActive == true && x.RefTableId == 3).Select(p => new ReferenceTableDto
             {
-                ReferenceTableId = p.ReferenceTableId,
+                Id = p.ReferenceTableId,
                 Name = p.Name
             }).OrderBy(x => x.Name).ToListAsync();
         }

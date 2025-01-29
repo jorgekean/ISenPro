@@ -13,5 +13,6 @@ namespace Service.SystemSetup.Interface
     public interface IReferenceTableService : IBaseService<SsReferenceTable, ReferenceTableDto>
     {
         // Additional methods specific to Reference Table Service
+        Task<List<ReferenceTableDto>> GetListOfReference(int refId);
     }
 }

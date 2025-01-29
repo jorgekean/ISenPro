@@ -29,11 +29,11 @@ namespace API.Controllers.UserManagement
 
         // GET: api/WorkFlows/Modules
         [HttpGet("Modules")]
-        public async Task<ActionResult<PaginatedResponse<ModuleDto>>> GetModules()
+        public async Task<ActionResult<PaginatedResponse<ModuleDto>>> GetModules([FromQuery] int workFlowId)
         {
             try
             {
-                var response = await _moduleService.GetTransactionAndMonitoringModules();
+                var response = await _workFlowService.GetTransactionAndMonitoringModules(workFlowId);
 
                 return Ok(response);
             }
@@ -88,6 +88,25 @@ namespace API.Controllers.UserManagement
                 };
 
                 return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // GET: api/WorkFlows
+        [HttpPost("DeleteWorkStep")]
+        public async Task<IActionResult> DeleteWorkStep(WorkStepDto workStep)
+        {
+            try
+            {
+                var workStepId = workStep.Id.HasValue ? workStep.Id.Value : 0;
+                await _workStepService.DeleteAsync(workStepId);
+
+                return Ok();
             }
             catch (Exception ex)
             {

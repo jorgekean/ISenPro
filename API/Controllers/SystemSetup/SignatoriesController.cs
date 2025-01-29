@@ -16,10 +16,12 @@ namespace API.Controllers.SystemSetup
     {
         private readonly ISignatoryService _signatoriesService;
         private readonly IModuleService _moduleService;
+        private readonly IReferenceTableService _referenceTableService;
         private readonly ILogger<SignatoriesController> _logger;
 
-        public SignatoriesController(ISignatoryService signatoriesService, IModuleService moduleService, ILogger<SignatoriesController> logger)
+        public SignatoriesController(ISignatoryService signatoriesService, IModuleService moduleService, IReferenceTableService referenceTableService, ILogger<SignatoriesController> logger)
         {
+            _referenceTableService = referenceTableService;
             _moduleService = moduleService;
             _signatoriesService = signatoriesService;
             _logger = logger;
@@ -49,7 +51,7 @@ namespace API.Controllers.SystemSetup
         {
             try
             {
-                var response = await _signatoriesService.GetListOfReference(5);
+                var response = await _referenceTableService.GetListOfReference(5);
 
                 return Ok(response);
             }
@@ -67,7 +69,7 @@ namespace API.Controllers.SystemSetup
         {
             try
             {
-                var response = await _signatoriesService.GetListOfReference(6);
+                var response = await _referenceTableService.GetListOfReference(6);
 
                 return Ok(response);
             }
@@ -85,7 +87,7 @@ namespace API.Controllers.SystemSetup
         {
             try
             {
-                var response = await _signatoriesService.GetListOfReference(4);
+                var response = await _referenceTableService.GetListOfReference(4);
 
                 return Ok(response);
             }

@@ -70,7 +70,7 @@ namespace Service.UserManagement
 
         public Task<List<WorkStepDto>> GetWorkSteps(int workFlowId)
         {
-            var workSteps = _context.UmWorkSteps.Where(x => x.WorkflowId == workFlowId).Select(x => new WorkStepDto
+            var workSteps = _context.UmWorkSteps.Where(x => x.IsActive && x.WorkflowId == workFlowId).Select(x => new WorkStepDto
             {
                 Id = x.WorkstepId,
                 WorkflowId = x.WorkflowId,
@@ -80,7 +80,14 @@ namespace Service.UserManagement
                 RequiredApprover = x.RequiredApprover,
                 CanModify = x.CanModify,
                 IsLastStep = x.IsLastStep,
-                IsActive = x.IsActive
+                IsActive = x.IsActive,
+                WorkStepApprovers = x.UmWorkStepApprovers.Where(x => x.IsActive).Select(x => new WorkStepApproverDto { 
+                    Id = x.WorkstepApproverId,
+                    WorkstepId = x.WorkstepId,
+                    UserAccountId = x.UserAccountId,
+                    UserAccountName = x.UserAccount.Person.LastName + ", " + x.UserAccount.Person.FirstName + " " + x.UserAccount.Person.MiddleName,
+                }).ToList()
+
             }).ToListAsync();
 
             return workSteps;
@@ -136,6 +143,17 @@ namespace Service.UserManagement
             };
 
             return entity;
+        }
+
+        public Task<List<ModuleDto>> GetTransactionAndMonitoringModules(int workFlowId)
+        {
+            var activeModuleIds = _context.UmWorkFlows.Where(x => x.IsActive && x.WorkflowId != workFlowId).Select(x => x.ModuleId).Distinct().ToList();
+
+            return _context.UmModules.Where(x => x.IsActive && (x.ParentModuleId == 13 || x.ParentModuleId == 15) && !activeModuleIds.Contains(x.ModuleId)).Select(p => new ModuleDto
+            {
+                Id = p.ModuleId,
+                Name = p.Name
+            }).OrderBy(x => x.Name).ToListAsync();
         }
     }
 }

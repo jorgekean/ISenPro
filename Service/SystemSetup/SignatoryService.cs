@@ -29,15 +29,6 @@ namespace Service.SystemSetup
             return query.Include(o => o.Person).ThenInclude(s => s.Department);
         }
 
-        public Task<List<ReferenceTableDto>> GetListOfReference(int refId)
-        {
-            return _context.SsReferenceTables.Where(x => x.IsActive == true && x.RefTableId == refId).Select(p => new ReferenceTableDto
-            {
-                ReferenceTableId = p.ReferenceTableId,
-                Name = p.Name
-            }).OrderBy(x => x.Name).ToListAsync();
-        }
-
         protected override IQueryable<SsSignatory> ApplySearchFilter(IQueryable<SsSignatory> query, string searchQuery)
         {
             return query.Where(p => new[] { p.SignatoryDesignation.Name, p.ReportSection.Name }
@@ -110,24 +101,22 @@ namespace Service.SystemSetup
 
         protected override SsSignatory MapToEntity(SignatoryDto dto)
         {
-            var entity = _dbSet.Find(dto.Id) ?? new SsSignatory();
-
-            entity.Transactions = dto.Transactions ?? (int?)null;
-            entity.Sequence = dto.Sequence;
-            entity.SignatoryDesignationId = dto.SignatoryDesignationId ?? (int?)null;
-            entity.SignatoryOfficeId = dto.SignatoryOfficeId ?? (int?)null;
-            entity.ReportSectionId = dto.ReportSectionId ?? (int?)null;
-            entity.WithCondition = dto.WithCondition ?? (bool?)null;
-            entity.MaximumAmount = dto.MaximumAmount ?? (double?)null;
-            entity.MinimumAmount = dto.MinimumAmount ?? (double?)null;
-            entity.PersonId = dto.PersonId ?? (int?)null;
-
-            if (dto.Id == 0)
+            var entity = new SsSignatory
             {
-                entity.IsActive = true;
-                entity.CreatedDate = DateTime.Now;
-                entity.CreatedByUserId = 1;
-            }
+                SignatoryId = dto.Id.GetValueOrDefault(),
+                Sequence = dto.Sequence,
+                Transactions = dto.Transactions,
+                SignatoryDesignationId = dto.SignatoryDesignationId,
+                SignatoryOfficeId = dto.SignatoryOfficeId,
+                ReportSectionId = dto.ReportSectionId,
+                WithCondition = dto.WithCondition,
+                MaximumAmount = dto.MaximumAmount,
+                MinimumAmount = dto.MinimumAmount,
+                PersonId = dto.PersonId,
+                IsActive = true,
+                CreatedDate = DateTime.Now,
+                CreatedByUserId = 1,
+            };
 
             return entity;
         }

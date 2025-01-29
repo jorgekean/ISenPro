@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
 using Service.Dto.SystemSetup;
+using Service.Dto.UserManagement;
+using Service.Enums;
+using Service.Helpers;
 using Service.SystemSetup.Interface;
 
 namespace API.Controllers.SystemSetup
@@ -46,6 +49,34 @@ namespace API.Controllers.SystemSetup
             }
         }
 
+        // GET: api/referencetables/referencetableparents
+        [HttpGet("referencetableparents")]
+        public ActionResult<IEnumerable<ControlDto>> GetReferenceTableParents()
+        {
+            try
+            {
+                var enumList = EnumHelper.GetEnumList<ReferenceTableModule>();
+
+                // Transform the enum list to match the desired response structure
+                var list = enumList.Select(e => new
+                {
+                    Id = e.Value,
+                    Label = e.Description
+                }).ToList();
+
+                var response = new PaginatedResponse<object>
+                {
+                    Items = list
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         // GET: api/ReferenceTables/5
         [HttpGet("{id}")]
@@ -77,7 +108,7 @@ namespace API.Controllers.SystemSetup
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReferenceTable(string id, ReferenceTableDto umReferenceTable)
         {
-            if (id != umReferenceTable.Code)
+            if (id != umReferenceTable.Id.ToString())
             {
                 return BadRequest();
             }

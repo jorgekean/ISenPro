@@ -77,7 +77,9 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkFlow> UmWorkFlows { get; set; }
 
-    public virtual DbSet<UmWorkStep> UmWorkSteps { get; set; }   
+    public virtual DbSet<UmWorkStep> UmWorkSteps { get; set; }
+
+    public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -581,6 +583,25 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.WorkflowId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UM_WorkSteps_UM_WorkFlows");
+        });
+
+        modelBuilder.Entity<UmWorkStepApprover>(entity =>
+        {
+            entity.HasKey(e => e.WorkstepApproverId);
+
+            entity.ToTable("UM_WorkStepApprover");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.UserAccount).WithMany(p => p.UmWorkStepApprovers)
+                .HasForeignKey(d => d.UserAccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_WorkStepApprovers_UM_UserAccounts");
+
+            entity.HasOne(d => d.Workstep).WithMany(p => p.UmWorkStepApprovers)
+                .HasForeignKey(d => d.WorkstepId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -8,9 +8,11 @@ namespace Service.Dto.SystemSetup
 {
     public class ReferenceTableDto : BaseDto
     {
-        public int ReferenceTableId { get; set; }
+        public int? Id { get; set; }
 
         public int? RefTableId { get; set; }
+
+        public string? RefTableName { get; set; }
 
         public string? Name { get; set; }
 

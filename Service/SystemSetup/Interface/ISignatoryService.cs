@@ -13,6 +13,5 @@ namespace Service.SystemSetup.Interface
     public interface ISignatoryService : IBaseService<SsSignatory, SignatoryDto>
     {
         // Additional methods specific to Signatory Service
-        Task<List<ReferenceTableDto>> GetListOfReference(int refId);
     }
 }

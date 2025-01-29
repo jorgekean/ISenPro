@@ -9,7 +9,7 @@ namespace Service.Dto.SystemSetup
 {
     public class SignatoryDto : BaseDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public int? Transactions { get; set; }
 

@@ -13,5 +13,6 @@ namespace Service.UserManagement.Interface
     {
         // Additional methods specific
         Task<List<WorkStepDto>> GetWorkSteps(int workFlowId);
+        Task<List<ModuleDto>> GetTransactionAndMonitoringModules(int workFlowId);
     }
 }

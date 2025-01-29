@@ -1,6 +1,7 @@
 ﻿using EF;
 using EF.Models;
 using EF.Models.UserManagement;
+using Microsoft.EntityFrameworkCore;
 using Service.Dto.UserManagement;
 using Service.Service;
 using Service.UserManagement.Interface;
@@ -22,6 +23,90 @@ namespace Service.UserManagement
         {
             return query.Where(p => new[] { p.Name, p.Description }
                             .Any(value => value != null && value.Contains(searchQuery)));
+        }
+
+        public override async Task<object> AddAsync(WorkStepDto dto)
+        {
+            var entity = MapToEntity(dto);
+
+            //// Track child entities generically
+            //TrackChildEntities(entity);
+
+            // Add the parent entity
+            var result = await _dbSet.AddAsync(entity);
+
+            // Save changes for parent
+            await _context.SaveChangesAsync();
+
+            #region Approvers
+
+            // loop through dto.WorkStepApprovers
+            dto.WorkStepApprovers.ForEach(item =>
+            {
+                var workStepApprover = new UmWorkStepApprover
+                {
+                    WorkstepId = entity.WorkstepId,
+                    UserAccountId = item.UserAccountId,
+                    CreatedByUserId = entity.CreatedByUserId,
+                    CreatedDate = entity.CreatedDate,
+                    IsActive = item.IsActive
+                };
+                _context.UmWorkStepApprovers.Add(workStepApprover);
+            });
+
+            await _context.SaveChangesAsync();
+
+            #endregion
+
+            return result.Entity;
+        }
+
+        public override async Task UpdateAsync(WorkStepDto dto)
+        {
+            var entity = MapToEntity(dto);
+
+            // update parent
+            _dbSet.Update(entity);
+
+            #region Approvers
+
+            // update child roles: delete then insert
+            _context.UmWorkStepApprovers.RemoveRange(_context.UmWorkStepApprovers.Where(x => x.WorkstepId == entity.WorkstepId));
+
+            // loop through dto.WorkStepApprovers
+            dto.WorkStepApprovers.ForEach(item =>
+            {
+                var workStepApprover = new UmWorkStepApprover
+                {
+                    WorkstepId = entity.WorkstepId,
+                    UserAccountId = item.UserAccountId,
+                    CreatedByUserId = entity.CreatedByUserId,
+                    CreatedDate = entity.CreatedDate,
+                    IsActive = item.IsActive
+                };
+                _context.UmWorkStepApprovers.Add(workStepApprover);
+            });
+
+            await _context.SaveChangesAsync();
+
+            #endregion
+        }
+
+        public override async Task DeleteAsync(int id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            await _context.Entry(entity).Collection(x => x.UmWorkStepApprovers).LoadAsync();
+
+            if (entity != null)
+            {
+                foreach (var item in entity.UmWorkStepApprovers)
+                {
+                    _context.Entry(item).Property("IsActive").CurrentValue = false;
+                }
+
+                _context.Entry(entity).Property("IsActive").CurrentValue = false;
+                await _context.SaveChangesAsync();
+            }
         }
 
         protected override WorkStepDto MapToDto(UmWorkStep entity)

@@ -6,7 +6,7 @@
 	[IsActive] [bit] NOT NULL,
 	[CreatedByUserId] [bigint] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
-    [ModuleId] [int] NULL
+    [ModuleId] [int] NOT NULL
 
     CONSTRAINT [PK_UM_WorkFlows] PRIMARY KEY CLUSTERED ([WorkflowId] ASC),
 	CONSTRAINT [FK_UM_WorkFlows_UM_Modules] FOREIGN KEY ([ModuleId]) REFERENCES [dbo].[UM_Module] ([ModuleId])

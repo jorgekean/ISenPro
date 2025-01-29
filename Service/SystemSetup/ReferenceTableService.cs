@@ -2,8 +2,11 @@
 using EF.Models;
 using EF.Models.SystemSetup;
 using EF.Models.UserManagement;
+using Microsoft.EntityFrameworkCore;
 using Service.Dto.SystemSetup;
 using Service.Dto.UserManagement;
+using Service.Enums;
+using Service.Helpers;
 using Service.Service;
 using Service.SystemSetup.Interface;
 using Service.UserManagement.Interface;
@@ -26,11 +29,22 @@ namespace Service.SystemSetup
             return query.Where(p => p.Name.Contains(searchQuery) || p.Code.Contains(searchQuery) || p.Description.Contains(searchQuery));
         }
 
+        public Task<List<ReferenceTableDto>> GetListOfReference(int refId)
+        {
+            return _context.SsReferenceTables.Where(x => x.IsActive == true && x.RefTableId == refId).Select(p => new ReferenceTableDto
+            {
+                Id = p.ReferenceTableId,
+                Name = p.Name
+            }).OrderBy(x => x.Name).ToListAsync();
+        }
+
         protected override ReferenceTableDto MapToDto(SsReferenceTable entity)
         {
             var dto = new ReferenceTableDto
             {
-                ReferenceTableId = entity.ReferenceTableId,
+                Id = entity.ReferenceTableId,
+                RefTableId = entity.RefTableId,
+                RefTableName = entity.RefTableId.HasValue ? EnumHelper.GetEnumByValue<Enums.ReferenceTableModule>(entity.RefTableId.Value)?.ToString() : string.Empty, 
                 Code = entity.Code,
                 Name = entity.Name,
                 Description = entity.Description,
@@ -43,14 +57,16 @@ namespace Service.SystemSetup
         {
             var entity = new SsReferenceTable
             {
-                ReferenceTableId = dto.ReferenceTableId,
+                ReferenceTableId = dto.Id.GetValueOrDefault(),
+                RefTableId = dto.RefTableId,
                 Code = dto.Code,
                 Name = dto.Name,
-                IsActive = dto.IsActive,
                 Description = dto.Description,
-                CreatedDate = dto.CreatedDate,
-                CreatedByUserId = dto.CreatedBy
+                IsActive = true,
+                CreatedDate = DateTime.Now,
+                CreatedByUserId = 1,
             };
+                        
             return entity;
         }
     }
