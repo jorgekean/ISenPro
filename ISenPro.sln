@@ -28,11 +28,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManag
 		2_Bureau.sql = 2_Bureau.sql
 		3_Module.sql = 3_Module.sql
 		4_ModuleControl.sql = 4_ModuleControl.sql
+		4_Section.sql = 4_Section.sql
+		5_Person.sql = 5_Person.sql
+		6_UserAccount.sql = 6_UserAccount.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SystemSetup", "SystemSetup", "{A7D6E60E-7F35-4312-A631-A8C9E432872B}"
 	ProjectSection(SolutionItems) = preProject
 		1_ItemType.sql = 1_ItemType.sql
+		1_UnitOfMeasurement.sql = 1_UnitOfMeasurement.sql
 		2_AccountCode.sql = 2_AccountCode.sql
 		3_MajorCategory.sql = 3_MajorCategory.sql
 		4_SubCategory.sql = 4_SubCategory.sql
