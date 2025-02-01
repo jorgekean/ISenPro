@@ -17,11 +17,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{3254336B-ECDE-427A-AB22-D1A421F9B096}"
 	ProjectSection(SolutionItems) = preProject
-		Control.sql = Control.sql
-		Module.sql = Module.sql
-		ModuleControl.sql = ModuleControl.sql
-		Page.sql = Page.sql
-		Role.sql = Role.sql
+		1_Division.sql = 1_Division.sql
+		1_Policy.sql = 1_Policy.sql
+		1_Role.sql = 1_Role.sql
+		1_Page.sql = 1_Page.sql
+		2_PolicyModuleControl.sql = 2_PolicyModuleControl.sql
+		3_Department.sql = 3_Department.sql
+		2_PolicyRole.sql = 2_PolicyRole.sql
+		2_Control.sql = 2_Control.sql
+		2_Bureau.sql = 2_Bureau.sql
+		3_Module.sql = 3_Module.sql
+		4_ModuleControl.sql = 4_ModuleControl.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SystemSetup", "SystemSetup", "{A7D6E60E-7F35-4312-A631-A8C9E432872B}"
+	ProjectSection(SolutionItems) = preProject
+		1_ItemType.sql = 1_ItemType.sql
+		2_AccountCode.sql = 2_AccountCode.sql
+		3_MajorCategory.sql = 3_MajorCategory.sql
+		4_SubCategory.sql = 4_SubCategory.sql
 	EndProjectSection
 EndProject
 Global
@@ -55,6 +69,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{08C3D301-B9CC-4B82-8DDB-895CB508663D} = {7028940B-CD48-4411-A61F-40126E93D3D1}
 		{3254336B-ECDE-427A-AB22-D1A421F9B096} = {08C3D301-B9CC-4B82-8DDB-895CB508663D}
+		{A7D6E60E-7F35-4312-A631-A8C9E432872B} = {08C3D301-B9CC-4B82-8DDB-895CB508663D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08264280-5505-474C-8F6D-499BE2E27228}
