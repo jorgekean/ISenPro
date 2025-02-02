@@ -9,8 +9,7 @@
     <ProjectGuid>{475ea374-cdfc-4f76-8264-78e05b28f5ea}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>Database</RootNamespace>
     <AssemblyName>Database</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
@@ -48,7 +47,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -92,5 +90,6 @@
     <Build Include="dbo\Tables\UM_PolicyRoles.sql" />
     <Build Include="dbo\Tables\UM_PolicyModuleControls.sql" />
     <Build Include="dbo\Tables\UM_WorkStepApprover.sql" />
+    <Build Include="dbo\Tables\SS_SupplierContactPerson.sql" />
   </ItemGroup>
 </Project>

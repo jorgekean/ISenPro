@@ -28,4 +28,6 @@ public partial class SsSupplier
     public int CreatedByUserId { get; set; }
 
     public DateTime CreatedDate { get; set; }
+
+    public virtual ICollection<SsSupplierContactPerson> SsSupplierContactPeople { get; set; } = new List<SsSupplierContactPerson>();
 }

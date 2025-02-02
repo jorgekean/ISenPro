@@ -1,4 +1,5 @@
 ﻿using API.Dto;
+using EF.Models.SystemSetup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
@@ -132,7 +133,8 @@ namespace API.Controllers.SystemSetup
             //_context.UmSuppliers.Add(umSupplier);
             try
             {
-                await _supplierService.AddAsync(umSupplier);
+                var entity = (SsSupplier)await _supplierService.AddAsync(umSupplier);
+                umSupplier.Id = entity.SupplierId;
             }
             catch (DbUpdateException ex)
             {

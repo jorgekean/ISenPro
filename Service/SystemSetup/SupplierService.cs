@@ -39,6 +39,95 @@ namespace Service.SystemSetup
                             .Any(value => value != null && value.Contains(searchQuery)));
         }
 
+        public override async Task<object> AddAsync(SupplierDto dto)
+        {
+            var entity = MapToEntity(dto);
+
+            // Add the parent entity
+            var result = await _dbSet.AddAsync(entity);
+
+            // Save changes for parent
+            await _context.SaveChangesAsync();
+
+            #region Contact People
+
+            // loop through dto.WorkStepApprovers
+            dto.SupplierContactPeople.ForEach(item =>
+            {
+                var contactPerson = new SsSupplierContactPerson
+                {
+                    SupplierId = entity.SupplierId,
+                    ContactNumber = item.ContactNumber,
+                    ContactPerson = item.ContactPerson,
+                    CreatedByUserId = entity.CreatedByUserId,
+                    CreatedDate = entity.CreatedDate,
+                    IsActive = item.IsActive
+                };
+                _context.SsSupplierContactPeople.Add(contactPerson);
+            });
+
+            await _context.SaveChangesAsync();
+
+            #endregion
+
+            return result.Entity;
+        }
+
+        public override async Task<object> UpdateAsync(SupplierDto dto)
+        {
+            var entity = MapToEntity(dto);
+
+            // Add the parent entity
+            var result = _dbSet.Update(entity);
+
+            // update child roles: delete then insert
+            _context.SsSupplierContactPeople.RemoveRange(_context.SsSupplierContactPeople.Where(x => x.SupplierId == entity.SupplierId));
+
+            #region Contact People
+
+            // loop through dto.WorkStepApprovers
+            dto.SupplierContactPeople.ForEach(item =>
+            {
+                var contactPerson = new SsSupplierContactPerson
+                {
+                    SupplierId = entity.SupplierId,
+                    ContactNumber = item.ContactNumber,
+                    ContactPerson = item.ContactPerson,
+                    CreatedByUserId = entity.CreatedByUserId,
+                    CreatedDate = entity.CreatedDate,
+                    IsActive = item.IsActive
+                };
+                _context.SsSupplierContactPeople.Add(contactPerson);
+            });
+
+            await _context.SaveChangesAsync();
+
+            #endregion
+
+            return result.Entity;
+        }
+
+        public override async Task<SupplierDto> GetByIdAsync(int id)
+        {
+            try
+            {
+                var entity = await _dbSet.FindAsync(id);
+
+                await _context.Entry(entity).Collection(x => x.SsSupplierContactPeople).LoadAsync();
+
+                if (entity != null)
+                {
+                    return MapToDto(entity);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return null;
+        }
+
         protected override SupplierDto MapToDto(SsSupplier entity)
         {
             var industryName = entity.Industry.HasValue
@@ -59,7 +148,15 @@ namespace Service.SystemSetup
                 IndustryName = industryName,
                 IsActive = entity.IsActive,
                 CreatedDate = entity.CreatedDate,
-                CreatedBy = (int)entity.CreatedByUserId
+                CreatedBy = (int)entity.CreatedByUserId,
+                SupplierContactPeople = entity.SsSupplierContactPeople.Where(x => x.IsActive == true).Select(x => new SupplierContactPersonDto
+                {
+                    Id = x.SupplierContactPersonId,
+                    TempGuId = Guid.NewGuid().ToString(),
+                    SupplierId = x.SupplierId,
+                    ContactPerson = x.ContactPerson,
+                    ContactNumber = x.ContactNumber
+                }).ToList()
             };
             return dto;
         }

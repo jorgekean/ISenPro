@@ -81,6 +81,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
+    public virtual DbSet<SsSupplierContactPerson> SsSupplierContactPeople { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
@@ -317,7 +319,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsSupplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__tmp_ms_x__4BE666B4AC6C4195");
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B41D945853");
 
             entity.ToTable("SS_Suppliers");
 
@@ -327,6 +329,19 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.EmailAddress).HasMaxLength(100);
             entity.Property(e => e.FaxNumber).HasMaxLength(50);
             entity.Property(e => e.Tin).HasMaxLength(30);
+        });
+
+        modelBuilder.Entity<SsSupplierContactPerson>(entity =>
+        {
+            entity.HasKey(e => e.SupplierContactPersonId);
+
+            entity.ToTable("SS_SupplierContactPerson");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Supplier).WithMany(p => p.SsSupplierContactPeople)
+                .HasForeignKey(d => d.SupplierId)
+                .HasConstraintName("FK_SS_SupplierContactPerson_SS_Suppliers");
         });
 
         modelBuilder.Entity<SsUnitOfMeasurement>(entity =>

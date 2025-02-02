@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EF.Models.SystemSetup;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,5 +28,7 @@ namespace Service.Dto.SystemSetup
         public int? Industry { get; set; }
 
         public string? IndustryName { get; set; }
+
+        public virtual List<SupplierContactPersonDto> SupplierContactPeople { get; set; } = new List<SupplierContactPersonDto>();
     }
 }
