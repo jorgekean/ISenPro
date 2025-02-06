@@ -1,0 +1,11 @@
+﻿Delete from [dbo].[SS_ModeOfProcurement]
+
+SET IDENTITY_INSERT [dbo].[SS_ModeOfProcurement] ON
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (1, N'DIR_CONT', N'DIRECT CONTRACTING', N'DIRECT CONTRACTING', 0, 0, 0, 1, 1, N'2014-02-04 13:11:19')
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (2, N'LSB', N'LIMITED SOURCE BIDDING', N'LIMITED SOURCE BIDDING', 1, 0, 500000, 1, 1, N'2014-02-04 13:11:19')
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (3, N'NEG_PROC', N'NEGOTIATED PROCUREMENT', N'NEGOTIATED PROCUREMENT', 0, 0, 0, 1, 1, N'2014-02-04 13:11:19')
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (4, N'PUBLIC BIDDING', N'PUBLIC BIDDING', N'PUBLIC BIDDING', 1, 1000001, 0, 1, 1, N'2014-02-04 13:11:19')
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (5, N'REPEAT ORDER', N'REPEAT ORDER', N'used whenever there is A NEED TO REPLENISH goods procured under Competitive Public Bidding, ALL conditions below should be met', 1, 0, 500000, 1, 1, N'2014-02-04 13:11:19')
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (6, N'SHOPPING', N'SHOPPING', N'SHOPPING', 1, 0, 1000000, 1, 1, N'2014-02-04 13:11:19')
+INSERT INTO [dbo].[SS_ModeOfProcurement] ([ModeOfProcurementId], [Code], [Name], [Description], [WithCondition], [MinimumAmount], [MaximumAmount], [IsActive], [CreatedByUserId], [CreatedDate]) VALUES (7, N'OTHERS', N'OTHERS', N'OTHERS', 0, 0, 0, 1, 1, N'2015-10-13 18:45:05')
+SET IDENTITY_INSERT [dbo].[SS_ModeOfProcurement] OFF

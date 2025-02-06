@@ -6,6 +6,7 @@
 	[IsLastStep] [bit] NULL,
 	[RequiredApprover] [int] NULL,
 	[CanModify] [bit] NULL,
+	[IsOfficeLevel] [bit] NULL,
 	[WorkflowId] [int] NOT NULL,
 	[IsActive] [bit] NOT NULL,
 	[CreatedByUserId] [bigint] NOT NULL,

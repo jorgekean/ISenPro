@@ -91,5 +91,9 @@
     <Build Include="dbo\Tables\UM_PolicyModuleControls.sql" />
     <Build Include="dbo\Tables\UM_WorkStepApprover.sql" />
     <Build Include="dbo\Tables\SS_SupplierContactPerson.sql" />
+    <Build Include="dbo\Tables\SS_ModeOfProcurement.sql" />
+    <Build Include="dbo\Tables\SS_MopDetail.sql" />
+    <Build Include="dbo\Tables\SS_ItemStatus.sql" />
+    <Build Include="dbo\Tables\SS_SubStatus.sql" />
   </ItemGroup>
 </Project>

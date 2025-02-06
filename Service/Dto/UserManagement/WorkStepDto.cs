@@ -23,6 +23,8 @@ namespace Service.Dto.UserManagement
 
         public bool? CanModify { get; set; }
 
+        public bool? IsOfficeLevel { get; set; }
+
         public int? WorkflowId { get; set; }
 
         public virtual UmWorkFlow? Workflow { get; set; } = null!;
