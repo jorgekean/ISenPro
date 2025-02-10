@@ -52,6 +52,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SystemSetup", "SystemSetup"
 		2_SupplierContactPerson.sql = 2_SupplierContactPerson.sql
 		3_MajorCategory.sql = 3_MajorCategory.sql
 		4_SubCategory.sql = 4_SubCategory.sql
+		5_PSDBMCataglogue.sql = 5_PSDBMCataglogue.sql
+		5_SupplementaryCatalogue.sql = 5_SupplementaryCatalogue.sql
 	EndProjectSection
 EndProject
 Global
