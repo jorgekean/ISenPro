@@ -1,5 +1,6 @@
 ﻿using EF.Models.UserManagement;
 using Service.Dto.UserManagement;
+using EF.Models;
 
 namespace Service.UserManagement.Interface
 {

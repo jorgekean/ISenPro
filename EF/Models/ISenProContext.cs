@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using EF.Models.SystemSetup;
-using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 
 namespace EF.Models;
 
 public partial class ISenProContext : DbContext
 {
-    public ISenProContext()
-    {
-    }
-
     public ISenProContext(DbContextOptions<ISenProContext> options)
         : base(options)
     {
@@ -24,6 +18,12 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<CtUmRole> CtUmRoles { get; set; }
 
     public virtual DbSet<CtUmRoleDetail> CtUmRoleDetails { get; set; }
+
+    public virtual DbSet<Ppmp> Ppmps { get; set; }
+
+    public virtual DbSet<Ppmpcatalogue> Ppmpcatalogues { get; set; }
+
+    public virtual DbSet<Ppmpsupplementary> Ppmpsupplementaries { get; set; }
 
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
 
@@ -44,6 +44,8 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; }
 
     public virtual DbSet<SsSupplier> SsSuppliers { get; set; }
+
+    public virtual DbSet<SsSupplierContactPerson> SsSupplierContactPeople { get; set; }
 
     public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
 
@@ -81,13 +83,11 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
-    public virtual DbSet<SsSupplierContactPerson> SsSupplierContactPeople { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CDAA106B05");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD1A331309");
 
             entity.ToTable("ChangeDetailsTable");
 
@@ -99,12 +99,12 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.ChangeDetailsTables)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChangeDet__Chang__267ABA7A");
+                .HasConstraintName("FK__ChangeDet__Chang__5AEE82B9");
         });
 
         modelBuilder.Entity<ChangeTrackingTable>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B70781BC56");
+            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B7EDE63023");
 
             entity.ToTable("ChangeTrackingTable");
 
@@ -121,7 +121,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRole>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B78A2B9E4C");
+            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7F73B0AF9");
 
             entity.ToTable("CT_UM_Role");
 
@@ -138,7 +138,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRoleDetail>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD2C17F4CD");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD248F3172");
 
             entity.ToTable("CT_UM_Role_Details");
 
@@ -150,7 +150,87 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.CtUmRoleDetails)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CT_UM_Rol__Chang__2B3F6F97");
+                .HasConstraintName("FK__CT_UM_Rol__Chang__5BE2A6F2");
+        });
+
+        modelBuilder.Entity<Ppmp>(entity =>
+        {
+            entity.HasKey(e => e.Ppmpid).HasName("PK__PPMPs__4DF9D7C73A1DF98B");
+
+            entity.ToTable("PPMPs");
+
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.AdditionalInflationValue).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.AdditionalTenPercent).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CatalogueAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.GrandTotalAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.Ppmpno)
+                .HasMaxLength(100)
+                .HasColumnName("PPMPNo");
+            entity.Property(e => e.ProjectAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SubmittedDate).HasColumnType("datetime");
+            entity.Property(e => e.SupplementaryAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.RequestingOffice).WithMany(p => p.Ppmps)
+                .HasForeignKey(d => d.RequestingOfficeId)
+                .HasConstraintName("FK75F21864251B5D6C");
+        });
+
+        modelBuilder.Entity<Ppmpcatalogue>(entity =>
+        {
+            entity.HasKey(e => e.PpmpcatalogueId).HasName("PK__PPMPCata__5036F51751015EE3");
+
+            entity.ToTable("PPMPCatalogues");
+
+            entity.Property(e => e.PpmpcatalogueId).HasColumnName("PPMPCatalogueId");
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Catalogue).WithMany(p => p.Ppmpcatalogues)
+                .HasForeignKey(d => d.CatalogueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCCA15ADD6686F299");
+
+            entity.HasOne(d => d.Ppmp).WithMany(p => p.Ppmpcatalogues)
+                .HasForeignKey(d => d.Ppmpid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCCA15ADD597D4FBB");
+        });
+
+        modelBuilder.Entity<Ppmpsupplementary>(entity =>
+        {
+            entity.HasKey(e => e.PpmpsupplementaryId).HasName("PK__PPMPSupp__6D54EC755C73118F");
+
+            entity.ToTable("PPMPSupplementaries");
+
+            entity.Property(e => e.PpmpsupplementaryId).HasColumnName("PPMPSupplementaryId");
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Ppmp).WithMany(p => p.Ppmpsupplementaries)
+                .HasForeignKey(d => d.Ppmpid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKF25AB4FE597D4FBB");
+
+            entity.HasOne(d => d.Supplementary).WithMany(p => p.Ppmpsupplementaries)
+                .HasForeignKey(d => d.SupplementaryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKF25AB4FE366CDA2C");
         });
 
         modelBuilder.Entity<SsAccountCode>(entity =>
@@ -240,7 +320,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsReferenceTable>(entity =>
         {
-            entity.HasKey(e => e.ReferenceTableId).HasName("PK__SS_Refer__65F2CF6FB04FE3BE");
+            entity.HasKey(e => e.ReferenceTableId).HasName("PK_SS_ReferenceTables");
 
             entity.ToTable("SS_ReferenceTable");
 
@@ -319,7 +399,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsSupplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B41D945853");
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B4535CB4E9");
 
             entity.ToTable("SS_Suppliers");
 
@@ -522,7 +602,7 @@ public partial class ISenProContext : DbContext
         {
             entity.HasKey(e => e.RoleId);
 
-            entity.ToTable("UM_Role", tb => tb.HasTrigger("trg_UM_Role_Changes"));
+            entity.ToTable("UM_Role");
 
             entity.Property(e => e.Code)
                 .HasMaxLength(20)
@@ -584,6 +664,11 @@ public partial class ISenProContext : DbContext
             entity.ToTable("UM_WorkFlow");
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Module).WithMany(p => p.UmWorkFlows)
+                .HasForeignKey(d => d.ModuleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UM_WorkFlows_UM_Modules");
         });
 
         modelBuilder.Entity<UmWorkStep>(entity =>

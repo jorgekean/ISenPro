@@ -7,6 +7,7 @@ using Service.Dto.UserManagement;
 using Service.Enums;
 using Service.Helpers;
 using Service.UserManagement.Interface;
+using EF.Models;
 
 namespace API.Controllers.UserManagement
 {

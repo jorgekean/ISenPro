@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
 using Service.UserManagement.Interface;
+using EF.Models;
 
 namespace API.Controllers.UserManagement
 {

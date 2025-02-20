@@ -6,8 +6,7 @@ namespace Service
 {
     using EF;
     using EF.Models;
-    using EF.Models.SystemSetup;
-    using Microsoft.EntityFrameworkCore;
+       using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;

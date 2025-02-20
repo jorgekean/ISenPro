@@ -91,5 +91,8 @@
     <Build Include="dbo\Tables\UM_PolicyModuleControls.sql" />
     <Build Include="dbo\Tables\UM_WorkStepApprover.sql" />
     <Build Include="dbo\Tables\SS_SupplierContactPerson.sql" />
+    <Build Include="dbo\Tables\PPMPSupplementaries.sql" />
+    <Build Include="dbo\Tables\PPMPs.sql" />
+    <Build Include="dbo\Tables\PPMPCatalogues.sql" />
   </ItemGroup>
 </Project>

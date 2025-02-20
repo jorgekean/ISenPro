@@ -1,4 +1,5 @@
-﻿using EF.Models.UserManagement;
+﻿using EF.Models;
+using EF.Models.UserManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
