@@ -117,12 +117,12 @@ namespace Service.UserManagement
                 })
             };
 
-            if (entity.ModuleId.HasValue)
+            if (entity.ModuleId > 0)
             {
-                var module = _context.UmModules.FirstOrDefault(x => x.ModuleId == entity.ModuleId.Value);
+                var module = _context.UmModules.FirstOrDefault(x => x.ModuleId == entity.ModuleId);
 
                 dto.ModuleName = module != null ? module.Name : string.Empty;
-                dto.ModuleId = entity.ModuleId.Value;
+                dto.ModuleId = entity.ModuleId;
             }
 
             return dto;
@@ -136,7 +136,7 @@ namespace Service.UserManagement
                 Code = dto.Code,
                 Name = dto.Name,
                 Description = dto.Description,
-                ModuleId = dto.ModuleId,
+                ModuleId = dto.ModuleId.GetValueOrDefault(),
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CreatedByUserId = 1

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EF.Models.SystemSetup;
 using Microsoft.EntityFrameworkCore;
 
 namespace EF.Models;
@@ -83,9 +84,7 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
-    public virtual DbSet<SsSupplierContactPerson> SsSupplierContactPeople { get; set; }
-
-    public virtual DbSet<SsItemStatus> SsItemStatuses { get; set; }
+            public virtual DbSet<SsItemStatus> SsItemStatuses { get; set; }
 
     public virtual DbSet<SsModeOfProcurement> SsModeOfProcurements { get; set; }
 
