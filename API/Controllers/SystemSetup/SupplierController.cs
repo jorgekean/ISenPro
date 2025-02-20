@@ -1,5 +1,5 @@
 ﻿using API.Dto;
-
+using EF.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;

@@ -1,5 +1,6 @@
 ﻿using API.Dto;
 using Azure;
+using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
