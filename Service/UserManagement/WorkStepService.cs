@@ -130,6 +130,7 @@ namespace Service.UserManagement
                 Name = dto.Name,
                 Description = dto.Description,
                 CanModify = dto.CanModify,
+                IsOfficeLevel = dto.IsOfficeLevel,
                 IsLastStep = dto.IsLastStep,
                 RequiredApprover = dto.RequiredApprover,
                 Sequence = dto.Sequence,

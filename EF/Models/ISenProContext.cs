@@ -83,6 +83,15 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
+    public virtual DbSet<SsSupplierContactPerson> SsSupplierContactPeople { get; set; }
+
+    public virtual DbSet<SsItemStatus> SsItemStatuses { get; set; }
+
+    public virtual DbSet<SsModeOfProcurement> SsModeOfProcurements { get; set; }
+
+    public virtual DbSet<SsMopDetail> SsMopDetails { get; set; }
+
+    public virtual DbSet<SsSubStatus> SsSubStatuses { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
@@ -702,6 +711,52 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.WorkstepId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
+        });
+
+        modelBuilder.Entity<SsItemStatus>(entity =>
+        {
+            entity.HasKey(e => e.ItemStatusId);
+
+            entity.ToTable("SS_ItemStatus");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<SsModeOfProcurement>(entity =>
+        {
+            entity.HasKey(e => e.ModeOfProcurementId);
+
+            entity.ToTable("SS_ModeOfProcurement");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<SsMopDetail>(entity =>
+        {
+            entity.HasKey(e => e.MopDetailId);
+
+            entity.ToTable("SS_MopDetail");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ModeOfProcurement).WithMany(p => p.SsMopDetails)
+                .HasForeignKey(d => d.ModeOfProcurementId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_ModeOfProcurement_SS_MopDetail");
+        });
+
+        modelBuilder.Entity<SsSubStatus>(entity =>
+        {
+            entity.HasKey(e => e.SubStatusId);
+
+            entity.ToTable("SS_SubStatus");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ItemStatus).WithMany(p => p.SsSubStatuses)
+                .HasForeignKey(d => d.ItemStatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_ItemStatus_SS_SubStatus");
         });
 
         OnModelCreatingPartial(modelBuilder);

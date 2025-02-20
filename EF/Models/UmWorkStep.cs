@@ -19,6 +19,8 @@ public partial class UmWorkStep
 
     public bool? CanModify { get; set; }
 
+    public bool? IsOfficeLevel { get; set; }
+
     public int WorkflowId { get; set; }
 
     public bool IsActive { get; set; }
