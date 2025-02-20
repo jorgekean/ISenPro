@@ -18,4 +18,21 @@ namespace Service.Dto
 
         public string CreatedDateStr => CreatedDate.ToString("d", CultureInfo.InvariantCulture);
     }
+
+    public class TransactionBaseDto : BaseDto
+    {
+        public bool IsSubmitted { get; set; }
+
+        public DateTime SubmittedDate { get; set; }
+
+        public int SubmittedBy { get; set; }
+        public bool IsDeleted { get; set; }
+
+        public DateTime DeletedDate { get; set; }
+
+        public int DeletedBy { get; set; }
+
+
+
+    }
 }
