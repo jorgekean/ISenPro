@@ -6,6 +6,8 @@ using Service.SystemSetup;
 using Service.SystemSetup.Interface;
 using Serilog;
 using StackExchange.Redis;
+using Service.Transaction.Interface;
+using Service.Transaction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +79,10 @@ builder.Services.AddScoped<IReferenceTableService, ReferenceTableService>();
 builder.Services.AddScoped<IWorkFlowService, WorkFlowService>();
 builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 
+#endregion
+
+#region Transaction
+builder.Services.AddScoped<IPpmpService, PpmpService>();
 #endregion
 
 #endregion
