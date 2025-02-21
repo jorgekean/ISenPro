@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EF.Models.SystemSetup;
+namespace EF.Models;
 
 public partial class SsMopDetail
 {

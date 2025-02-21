@@ -27,9 +27,15 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
 
+    public virtual DbSet<SsItemStatus> SsItemStatuses { get; set; }
+
     public virtual DbSet<SsItemType> SsItemTypes { get; set; }
 
     public virtual DbSet<SsMajorCategory> SsMajorCategories { get; set; }
+
+    public virtual DbSet<SsModeOfProcurement> SsModeOfProcurements { get; set; }
+
+    public virtual DbSet<SsMopDetail> SsMopDetails { get; set; }
 
     public virtual DbSet<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; }
 
@@ -40,6 +46,8 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<SsSignatory> SsSignatories { get; set; }
 
     public virtual DbSet<SsSubCategory> SsSubCategories { get; set; }
+
+    public virtual DbSet<SsSubStatus> SsSubStatuses { get; set; }
 
     public virtual DbSet<SsSupplementaryCatalogue> SsSupplementaryCatalogues { get; set; }
 
@@ -249,6 +257,15 @@ public partial class ISenProContext : DbContext
                 .HasConstraintName("FK_SS_AccountCode_SS_ItemType");
         });
 
+        modelBuilder.Entity<SsItemStatus>(entity =>
+        {
+            entity.HasKey(e => e.ItemStatusId);
+
+            entity.ToTable("SS_ItemStatus");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<SsItemType>(entity =>
         {
             entity.HasKey(e => e.ItemTypeId);
@@ -271,6 +288,29 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.AccountCode).WithMany(p => p.SsMajorCategories)
                 .HasForeignKey(d => d.AccountCodeId)
                 .HasConstraintName("FK_SS_MajorCategory_SS_AccountCode");
+        });
+
+        modelBuilder.Entity<SsModeOfProcurement>(entity =>
+        {
+            entity.HasKey(e => e.ModeOfProcurementId);
+
+            entity.ToTable("SS_ModeOfProcurement");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<SsMopDetail>(entity =>
+        {
+            entity.HasKey(e => e.MopDetailId);
+
+            entity.ToTable("SS_MopDetail");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ModeOfProcurement).WithMany(p => p.SsMopDetails)
+                .HasForeignKey(d => d.ModeOfProcurementId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_ModeOfProcurement_SS_MopDetail");
         });
 
         modelBuilder.Entity<SsPsdbmcatalogue>(entity =>
@@ -364,6 +404,20 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.MajorCategory).WithMany(p => p.SsSubCategories)
                 .HasForeignKey(d => d.MajorCategoryId)
                 .HasConstraintName("FK_SS_SubCategory_SS_MajorCategory");
+        });
+
+        modelBuilder.Entity<SsSubStatus>(entity =>
+        {
+            entity.HasKey(e => e.SubStatusId);
+
+            entity.ToTable("SS_SubStatus");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ItemStatus).WithMany(p => p.SsSubStatuses)
+                .HasForeignKey(d => d.ItemStatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_ItemStatus_SS_SubStatus");
         });
 
         modelBuilder.Entity<SsSupplementaryCatalogue>(entity =>
