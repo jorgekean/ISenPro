@@ -98,5 +98,6 @@
     <Build Include="dbo\Tables\PPMPSupplementaries.sql" />
     <Build Include="dbo\Tables\PPMPs.sql" />
     <Build Include="dbo\Tables\PPMPCatalogues.sql" />
+    <Build Include="dbo\Tables\TransactionStatuses.sql" />
   </ItemGroup>
 </Project>
