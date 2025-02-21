@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using EF.Models.SystemSetup;
 using Microsoft.EntityFrameworkCore;
 
 namespace EF.Models;
@@ -50,6 +49,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<SsUnitOfMeasurement> SsUnitOfMeasurements { get; set; }
 
+    public virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
+
     public virtual DbSet<UmBureau> UmBureaus { get; set; }
 
     public virtual DbSet<UmControl> UmControls { get; set; }
@@ -84,13 +85,6 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
-            public virtual DbSet<SsItemStatus> SsItemStatuses { get; set; }
-
-    public virtual DbSet<SsModeOfProcurement> SsModeOfProcurements { get; set; }
-
-    public virtual DbSet<SsMopDetail> SsMopDetails { get; set; }
-
-    public virtual DbSet<SsSubStatus> SsSubStatuses { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
@@ -443,6 +437,20 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(200);
         });
 
+        modelBuilder.Entity<TransactionStatus>(entity =>
+        {
+            entity.HasKey(e => e.TransactionStatusId).HasName("PK__Transact__57B5E1832ACC04F9");
+
+            entity.HasIndex(e => new { e.TransactionId, e.WorkstepId }, "NonClusteredIndex-20201119-202802");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(200);
+
+            entity.HasOne(d => d.Workstep).WithMany(p => p.TransactionStatuses)
+                .HasForeignKey(d => d.WorkstepId)
+                .HasConstraintName("FK955A368C57BC1BE3");
+        });
+
         modelBuilder.Entity<UmBureau>(entity =>
         {
             entity.HasKey(e => e.BureauId);
@@ -710,52 +718,6 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.WorkstepId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
-        });
-
-        modelBuilder.Entity<SsItemStatus>(entity =>
-        {
-            entity.HasKey(e => e.ItemStatusId);
-
-            entity.ToTable("SS_ItemStatus");
-
-            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-        });
-
-        modelBuilder.Entity<SsModeOfProcurement>(entity =>
-        {
-            entity.HasKey(e => e.ModeOfProcurementId);
-
-            entity.ToTable("SS_ModeOfProcurement");
-
-            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-        });
-
-        modelBuilder.Entity<SsMopDetail>(entity =>
-        {
-            entity.HasKey(e => e.MopDetailId);
-
-            entity.ToTable("SS_MopDetail");
-
-            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-            entity.HasOne(d => d.ModeOfProcurement).WithMany(p => p.SsMopDetails)
-                .HasForeignKey(d => d.ModeOfProcurementId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SS_ModeOfProcurement_SS_MopDetail");
-        });
-
-        modelBuilder.Entity<SsSubStatus>(entity =>
-        {
-            entity.HasKey(e => e.SubStatusId);
-
-            entity.ToTable("SS_SubStatus");
-
-            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-            entity.HasOne(d => d.ItemStatus).WithMany(p => p.SsSubStatuses)
-                .HasForeignKey(d => d.ItemStatusId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SS_ItemStatus_SS_SubStatus");
         });
 
         OnModelCreatingPartial(modelBuilder);

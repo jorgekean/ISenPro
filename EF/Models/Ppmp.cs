@@ -29,21 +29,21 @@ public partial class Ppmp
 
     public bool IsSubmitted { get; set; }
 
-    public long SubmittedByUserId { get; set; }
+    public int? SubmittedByUserId { get; set; }
 
-    public DateTime SubmittedDate { get; set; }
+    public DateTime? SubmittedDate { get; set; }
 
     public bool IsActive { get; set; }
 
-    public long CreatedByUserId { get; set; }
+    public int CreatedByUserId { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
-    public long UpdatedByUserId { get; set; }
+    public int? UpdatedByUserId { get; set; }
 
-    public DateTime UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
-    public long? DeletedByUserId { get; set; }
+    public int? DeletedByUserId { get; set; }
 
     public DateTime? DeletedDate { get; set; }
 

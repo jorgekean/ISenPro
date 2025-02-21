@@ -32,7 +32,9 @@ namespace Service.Dto
 
         public int DeletedBy { get; set; }
 
+        public DateTime UpdatedDate { get; set; }
 
+        public int Updatedby { get; set; }
 
     }
 }

@@ -11,18 +11,20 @@
     [AdditionalTenPercent]     DECIMAL (19, 5) NULL,
     [GrandTotalAmount]         DECIMAL (19, 5) NULL,
     [IsSubmitted]              BIT             NOT NULL,
-    [SubmittedByUserId]        BIGINT          NOT NULL,
-    [SubmittedDate]            DATETIME        NOT NULL,
+    [SubmittedByUserId]        INT             NULL,
+    [SubmittedDate]            DATETIME        NULL,
     [IsActive]                 BIT             NOT NULL,
-    [CreatedByUserId]          BIGINT          NOT NULL,
+    [CreatedByUserId]          INT             NOT NULL,
     [CreatedDate]              DATETIME        NOT NULL,
-    [UpdatedByUserId]          BIGINT          NOT NULL,
-    [UpdatedDate]              DATETIME        NOT NULL,
-    [DeletedByUserId]          BIGINT          NULL,
+    [UpdatedByUserId]          INT             NULL,
+    [UpdatedDate]              DATETIME        NULL,
+    [DeletedByUserId]          INT             NULL,
     [DeletedDate]              DATETIME        NULL,
     [RequestingOfficeId]       INT             NULL,
     [Status]                   VARCHAR (50)    NOT NULL,
     CONSTRAINT [PK__PPMPs__4DF9D7C73A1DF98B] PRIMARY KEY CLUSTERED ([PPMPId] ASC),
     CONSTRAINT [FK75F21864251B5D6C] FOREIGN KEY ([RequestingOfficeId]) REFERENCES [dbo].[UM_Department] ([DepartmentId])
 );
+
+
 
