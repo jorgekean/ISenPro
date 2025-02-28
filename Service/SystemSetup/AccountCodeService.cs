@@ -3,6 +3,7 @@ using EF.Models;
 
 using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
+using Service.Cache;
 using Service.Dto.SystemSetup;
 using Service.Dto.UserManagement;
 using Service.Service;
@@ -19,8 +20,11 @@ namespace Service.SystemSetup
 {
     public class AccountCodeService : BaseService<SsAccountCode, AccountCodeDto>, IAccountCodeService
     {
-        public AccountCodeService(ISenProContext context) : base(context)
+        private readonly IGenericCacheService _cacheService;
+        public AccountCodeService(ISenProContext context,
+             IGenericCacheService cacheService) : base(context)
         {
+            _cacheService = cacheService;
         }
 
         public Task<List<ItemTypeDto>> GetItemTypes()
@@ -105,5 +109,37 @@ namespace Service.SystemSetup
             };
             return entity;
         }
+
+        #region overriden because of caching
+        public override Task<object> AddAsync(AccountCodeDto dto)
+        {
+            var result = base.AddAsync(dto);
+
+            // clear cached items
+            _cacheService.Remove("CachedAccountCodes");
+
+            return result;
+        }
+
+        public override Task UpdateAsync(AccountCodeDto dto)
+        {
+            var result = base.UpdateAsync(dto);
+
+            // clear cached items
+            _cacheService.Remove("CachedAccountCodes");
+
+            return result;
+        }
+
+        public override Task DeleteAsync(int id)
+        {
+            var result = base.DeleteAsync(id);
+
+            // clear cached items
+            _cacheService.Remove("CachedAccountCodes");
+
+            return result;
+        }
+        #endregion
     }
 }

@@ -4,6 +4,7 @@ using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Service.Cache;
 using Service.Dto.SystemSetup;
 using Service.Dto.UserManagement;
 using Service.Service;
@@ -21,8 +22,11 @@ namespace Service.SystemSetup
 {
     public class SupplementaryCatalogueService : BaseService<SsSupplementaryCatalogue, SupplementaryCatalogueDto>, ISupplementaryCatalogueService
     {
-        public SupplementaryCatalogueService(ISenProContext context) : base(context)
+        private readonly IGenericCacheService _cacheService;
+        public SupplementaryCatalogueService(ISenProContext context,
+            IGenericCacheService cacheService) : base(context)
         {
+            _cacheService = cacheService;
         }
 
         public Task<List<UnitOfMeasurementDto>> GetUnitOfMeasurements()
@@ -158,5 +162,37 @@ namespace Service.SystemSetup
             var entities = await query.Where(e => e.IsActive && e.IsCurrent.HasValue && e.IsCurrent.Value).ToListAsync();
             return entities.Select(MapToDto).ToList();
         }
+
+        #region overriden because of caching
+        public override Task<object> AddAsync(SupplementaryCatalogueDto dto)
+        {
+            var result = base.AddAsync(dto);
+
+            // clear cached items
+            _cacheService.Remove("CachedSupplementaryCatalogue");
+
+            return result;
+        }
+
+        public override Task UpdateAsync(SupplementaryCatalogueDto dto)
+        {
+            var result = base.UpdateAsync(dto);
+
+            // clear cached items
+            _cacheService.Remove("CachedSupplementaryCatalogue");
+
+            return result;
+        }
+
+        public override Task DeleteAsync(int id)
+        {
+            var result = base.DeleteAsync(id);
+
+            // clear cached items
+            _cacheService.Remove("CachedSupplementaryCatalogue");
+
+            return result;
+        }
+        #endregion
     }
 }

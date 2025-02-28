@@ -50,13 +50,6 @@ namespace Service
                 return entity != null ? MapToDto(entity) : null;
             }
 
-            //public virtual async Task AddAsync(TDto dto)
-            //{
-            //    var entity = MapToEntity(dto);
-            //    await _dbSet.AddAsync(entity);
-            //    await _context.SaveChangesAsync();
-            //}
-
             public virtual async Task<object> AddAsync(TDto dto)
             {
                 var entity = MapToEntity(dto);

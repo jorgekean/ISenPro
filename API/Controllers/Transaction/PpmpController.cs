@@ -151,41 +151,6 @@ namespace API.Controllers.Transaction
             }
 
             return BadRequest();
-        }
-
-        [HttpGet("psdbmcatalogues")]
-        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBCatalogues()
-        {
-            try
-            {
-                var result = await _cachedItems.PSDBMCatalogues;
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
-
-            return BadRequest();
-        }
-
-        [HttpGet("supplementarycatalogues")]
-        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBSupplementaryCatalogues()
-        {
-            try
-            {
-                var result = await _cachedItems.SupplementaryCatalogues;
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
-
-            return BadRequest();
-        }
-
+        }       
     }
 }
