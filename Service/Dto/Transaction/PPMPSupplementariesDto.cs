@@ -10,7 +10,7 @@ namespace Service.Dto.Transaction
 {
     public class PPMPSupplementariesDto : TransactionBaseDto
     {
-        public int PpmpsupplementaryId { get; set; }
+        public int Id { get; set; }
 
         public int Ppmpid { get; set; }
 

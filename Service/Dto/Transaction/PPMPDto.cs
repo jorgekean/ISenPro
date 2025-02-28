@@ -10,7 +10,7 @@ namespace Service.Dto.Transaction
 {
     public class PPMPDto : TransactionBaseDto
     {
-        public int Ppmpid { get; set; }
+        public int Id { get; set; }
 
         public string Ppmpno { get; set; } = null!;
 

@@ -10,7 +10,7 @@ namespace Service.Dto.Transaction
 {
     public class PPMPCatalogueDto : TransactionBaseDto
     {
-        public int PpmpcatalogueId { get; set; }
+        public int Id { get; set; }
 
         public int Ppmpid { get; set; }
 

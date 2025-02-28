@@ -94,14 +94,14 @@ namespace API.Controllers.Transaction
                 return BadRequest(new { message = ex.Message });
             }
 
-            return CreatedAtAction("GetById", new { id = model.Ppmpid }, model);
+            return CreatedAtAction("GetById", new { id = model.Id }, model);
         }
 
         // PUT: api/ppmps/5        
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, PPMPDto model)
         {
-            if (id != model.Ppmpid)
+            if (id != model.Id)
             {
                 return BadRequest();
             }

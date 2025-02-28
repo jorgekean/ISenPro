@@ -23,7 +23,7 @@ namespace Service.Transaction
 
         protected override IQueryable<Ppmp> IncludeNavigationProperties(IQueryable<Ppmp> query)
         {
-            return query.Include(o => o.RequestingOffice).Include(i => i.Ppmpcatalogues).Include(i => i.Ppmpsupplementaries);
+            return query.Include(o => o.RequestingOffice);//.Include(i => i.Ppmpcatalogues).Include(i => i.Ppmpsupplementaries);
         }
 
         protected override IQueryable<Ppmp> ApplySearchFilter(IQueryable<Ppmp> query, string searchQuery)
@@ -32,11 +32,103 @@ namespace Service.Transaction
                              .Any(value => value != null && value.Contains(searchQuery)));
         }
 
+        public override async Task<PPMPDto> GetByIdAsync(int id)
+        {
+            var model = await base.GetByIdAsync(id);
+
+            var psdbms = _context.Ppmpcatalogues
+                         .Include(pc => pc.Catalogue)
+                             .ThenInclude(c => c.MajorCategory)
+                         .Include(pc => pc.Catalogue)
+                             .ThenInclude(c => c.UnitOfMeasurement)
+                         .Include(pc => pc.Catalogue)
+                             .ThenInclude(c => c.AccountCode)
+                         .Where(x => x.Ppmpid == id && x.IsActive)
+                         .ToList();
+
+            var supps = _context.Ppmpsupplementaries
+                         .Include(pc => pc.Supplementary)
+                             .ThenInclude(c => c.MajorCategory)
+                         .Include(pc => pc.Supplementary)
+                             .ThenInclude(c => c.UnitOfMeasurement)
+                         .Include(pc => pc.Supplementary)
+                             .ThenInclude(c => c.AccountCode)
+                         .Where(x => x.Ppmpid == id && x.IsActive)
+                         .ToList();
+
+            model.Ppmpcatalogues = psdbms.Select(x => new PPMPCatalogueDto
+            {
+                Id = x.PpmpcatalogueId,
+                Ppmpid = x.Ppmpid,                
+                CatalogueId = x.CatalogueId,
+                FirstQuarter = x.FirstQuarter,
+                SecondQuarter = x.SecondQuarter,
+                ThirdQuarter = x.ThirdQuarter,
+                FourthQuarter = x.FourthQuarter,
+                UnitPrice = x.UnitPrice,
+                Amount = x.Amount,
+                IsActive = x.IsActive,
+                CreatedDate = x.CreatedDate,
+                CreatedBy = x.CreatedByUserId,
+                UpdatedDate = x.UpdatedDate,
+                Updatedby = x.UpdatedByUserId,
+                DeletedDate = x.DeletedDate,
+                DeletedBy = x.DeletedByUserId,
+                Description = x.Description,
+                Remarks = x.Remarks,
+
+                Catalogue = new PSDBMCatalogueDto
+                {
+                    Id = x.Catalogue.PsdbmcatalogueId,
+                    Code = x.Catalogue.Code,
+                    Description = x.Catalogue.Description,
+                    MajorCategoryName = x.Catalogue.MajorCategory != null ? x.Catalogue.MajorCategory.Name : "",
+                    AccountCodeDescription = x.Catalogue.AccountCode != null ? x.Catalogue.AccountCode.Description : "",
+                    UnitOfMeasurementCode = x.Catalogue.UnitOfMeasurement != null ? x.Catalogue.UnitOfMeasurement.Code : "",
+                },
+
+            }).ToList();
+
+            model.Ppmpsupplementaries = supps.Select(x => new PPMPSupplementariesDto
+            {
+                Id = x.PpmpsupplementaryId,
+                Ppmpid = x.Ppmpid,
+                SupplementaryId = x.SupplementaryId,
+                FirstQuarter = x.FirstQuarter,
+                SecondQuarter = x.SecondQuarter,
+                ThirdQuarter = x.ThirdQuarter,
+                FourthQuarter = x.FourthQuarter,
+                UnitPrice = x.UnitPrice,
+                Amount = x.Amount,
+                IsActive = x.IsActive,
+                CreatedDate = x.CreatedDate,
+                CreatedBy = x.CreatedByUserId,
+                UpdatedDate = x.UpdatedDate,
+                Updatedby = x.UpdatedByUserId,
+                DeletedDate = x.DeletedDate,
+                DeletedBy = x.DeletedByUserId,
+                Description = x.Description,
+                Remarks = x.Remarks,
+
+                Supplementary = new SupplementaryCatalogueDto
+                {
+                    Id = x.Supplementary.SupplementaryCatalogueId,
+                    Code = x.Supplementary.Code,
+                    Description = x.Supplementary.Description,
+                    MajorCategoryName = x.Supplementary.MajorCategory != null ? x.Supplementary.MajorCategory.Name : "",
+                    AccountCodeDescription = x.Supplementary.AccountCode != null ? x.Supplementary.AccountCode.Description : "",
+                    UnitOfMeasurementCode = x.Supplementary.UnitOfMeasurement != null ? x.Supplementary.UnitOfMeasurement.Code : "",
+                },
+            }).ToList();
+
+            return model;
+        }
+
         protected override PPMPDto MapToDto(Ppmp entity)
         {
             var dto = new PPMPDto
             {
-                Ppmpid = entity.Ppmpid,
+                Id = entity.Ppmpid,
                 BudgetYear = entity.BudgetYear,
                 Remarks = entity.Remarks,
                 Status = entity.Status,
@@ -64,7 +156,8 @@ namespace Service.Transaction
                     Code = entity.RequestingOffice.Code,
                     Description = entity.RequestingOffice.Description,
                 } : null,
-                
+
+
             };
             return dto;
         }
@@ -73,7 +166,7 @@ namespace Service.Transaction
         {
             var entity = new Ppmp
             {
-                Ppmpid = dto.Ppmpid,
+                Ppmpid = dto.Id,
                 Ppmpno = dto.Ppmpno,
                 BudgetYear = dto.BudgetYear,
                 Remarks = dto.Remarks,
@@ -99,7 +192,7 @@ namespace Service.Transaction
 
                 Ppmpcatalogues = dto.Ppmpcatalogues.Select(x => new Ppmpcatalogue
                 {
-                    PpmpcatalogueId = x.PpmpcatalogueId,
+                    PpmpcatalogueId = x.Id,
                     Ppmpid = x.Ppmpid,
                     CatalogueId = x.CatalogueId,
                     FirstQuarter = x.FirstQuarter,
@@ -116,12 +209,12 @@ namespace Service.Transaction
                     DeletedDate = x.DeletedDate,
                     DeletedByUserId = x.DeletedBy,
                     Description = x.Description,
-                    Remarks = x.Remarks                    
+                    Remarks = x.Remarks
                 }).ToList(),
 
                 Ppmpsupplementaries = dto.Ppmpsupplementaries.Select(x => new Ppmpsupplementary
                 {
-                    PpmpsupplementaryId = x.PpmpsupplementaryId,
+                    PpmpsupplementaryId = x.Id,
                     Ppmpid = x.Ppmpid,
                     SupplementaryId = x.SupplementaryId,
                     FirstQuarter = x.FirstQuarter,
