@@ -148,5 +148,16 @@ namespace Service.SystemSetup
 
             return entity;
         }
+
+        /// <summary>
+        /// Get Current Catalogue
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<PSDBMCatalogueDto>> GetAllCurrent()
+        {
+            var query = IncludeNavigationProperties(_dbSet);
+            var entities = await query.Where(e => e.IsActive && e.IsCurrent.HasValue && e.IsCurrent.Value).ToListAsync();
+            return entities.Select(MapToDto).ToList();
+        }
     }
 }

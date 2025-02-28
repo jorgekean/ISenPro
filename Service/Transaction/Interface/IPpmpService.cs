@@ -7,5 +7,7 @@ namespace Service.Transaction.Interface
     public interface IPpmpService : IBaseService<Ppmp, PPMPDto>
     {
         // Additional methods specific to this service
+
+        IList<int> GetBudgetYears();
     }
 }

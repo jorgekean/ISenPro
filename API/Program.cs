@@ -8,6 +8,7 @@ using Serilog;
 using StackExchange.Redis;
 using Service.Transaction.Interface;
 using Service.Transaction;
+using Service.Cache;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,14 @@ builder.Services.AddSingleton(sp => new { ConnectionString = connectionString })
 // Add DbContext to the DI container
 builder.Services.AddDbContext<ISenProContext>(options =>
     options.UseSqlServer(connectionString));
+#endregion
+
+
+#region MemoryCache
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<IGenericCacheService, GenericCacheService>();
+
+builder.Services.AddScoped<CachedItems>();
 #endregion
 
 #region Services

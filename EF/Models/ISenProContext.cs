@@ -93,6 +93,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
+    public virtual DbSet<VPsdbmcatalogue> VPsdbmcatalogues { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
@@ -772,6 +774,19 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.WorkstepId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
+        });
+
+        modelBuilder.Entity<VPsdbmcatalogue>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_PSDBMCatalogue");
+
+            entity.Property(e => e.AccountCode).HasMaxLength(100);
+            entity.Property(e => e.ItemCode).HasMaxLength(50);
+            entity.Property(e => e.Productcategory).HasMaxLength(200);
+            entity.Property(e => e.UnitOfMeasurement).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
         });
 
         OnModelCreatingPartial(modelBuilder);

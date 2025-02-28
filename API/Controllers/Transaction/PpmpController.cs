@@ -8,6 +8,7 @@ using Service.Transaction.Interface;
 using Service.Dto.Transaction;
 using Microsoft.EntityFrameworkCore;
 using Service.SystemSetup;
+using Service.Cache;
 
 namespace API.Controllers.Transaction
 {
@@ -16,14 +17,18 @@ namespace API.Controllers.Transaction
     public class PpmpController : ControllerBase
     {
         private readonly IPpmpService _ppmpService;
+        private readonly CachedItems _cachedItems;
+
         private readonly ILogger<PpmpController> _logger;
 
-        public PpmpController(IPpmpService ppmpService, ILogger<PpmpController> logger)
+        public PpmpController(IPpmpService ppmpService, ILogger<PpmpController> logger, CachedItems cachedItems)
         {
+            _cachedItems = cachedItems;
             _ppmpService = ppmpService;
             _logger = logger;
         }
 
+        #region CRUD
         // GET: api/ppmps
         [HttpGet]
         public async Task<ActionResult<PaginatedResponse<PPMPDto>>> GetAll([FromQuery] PagingParameters pagingParameters)
@@ -128,5 +133,59 @@ namespace API.Controllers.Transaction
 
             return NoContent();
         }
+
+        #endregion
+
+        [HttpGet("budgetyears")]
+        public async Task<ActionResult<IList<int>>> GetBudgetYears()
+        {
+            try
+            {
+                var result = _ppmpService.GetBudgetYears();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpGet("psdbmcatalogues")]
+        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBCatalogues()
+        {
+            try
+            {
+                var result = await _cachedItems.PSDBMCatalogues;
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpGet("supplementarycatalogues")]
+        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBSupplementaryCatalogues()
+        {
+            try
+            {
+                var result = await _cachedItems.SupplementaryCatalogues;
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
+            return BadRequest();
+        }
+
     }
 }

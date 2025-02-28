@@ -64,6 +64,7 @@ namespace Service.Transaction
                     Code = entity.RequestingOffice.Code,
                     Description = entity.RequestingOffice.Description,
                 } : null,
+                
             };
             return dto;
         }
@@ -98,6 +99,13 @@ namespace Service.Transaction
             };
 
             return entity;
+        }
+
+        public IList<int> GetBudgetYears()
+        {
+            // to do
+
+            return [2023, 2024, 2025, 2026];
         }
     }
 }
