@@ -36,10 +36,10 @@ namespace Service.Dto.Transaction
 
         public string Status { get; set; } = null!;
 
-        public virtual IEnumerable<PPMPCatalogueDto> Ppmpcatalogues { get; set; } = new List<PPMPCatalogueDto>();
+        public IEnumerable<PPMPCatalogueDto> Ppmpcatalogues { get; set; } = new List<PPMPCatalogueDto>();
 
-        public virtual IEnumerable<PPMPSupplementariesDto> Ppmpsupplementaries { get; set; } = new List<PPMPSupplementariesDto>();
+        public IEnumerable<PPMPSupplementariesDto> Ppmpsupplementaries { get; set; } = new List<PPMPSupplementariesDto>();
 
-        public virtual DepartmentDto? RequestingOffice { get; set; }
+        public DepartmentDto? RequestingOffice { get; set; } = null!;
     }
 }

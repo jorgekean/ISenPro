@@ -31,13 +31,13 @@ public partial class Ppmpsupplementary
 
     public DateTime CreatedDate { get; set; }
 
-    public int UpdatedByUserId { get; set; }
+    public int? UpdatedByUserId { get; set; }
 
-    public DateTime UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
-    public int DeletedByUserId { get; set; }
+    public int? DeletedByUserId { get; set; }
 
-    public DateTime DeletedDate { get; set; }
+    public DateTime? DeletedDate { get; set; }
 
     public int SupplementaryId { get; set; }
 

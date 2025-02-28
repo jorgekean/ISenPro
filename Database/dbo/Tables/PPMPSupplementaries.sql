@@ -12,15 +12,17 @@
     [IsActive]            BIT             NOT NULL,
     [CreatedByUserId]     INT             NOT NULL,
     [CreatedDate]         DATETIME        NOT NULL,
-    [UpdatedByUserId]     INT             NOT NULL,
-    [UpdatedDate]         DATETIME        NOT NULL,
-    [DeletedByUserId]     INT             NOT NULL,
-    [DeletedDate]         DATETIME        NOT NULL,
+    [UpdatedByUserId]     INT             NULL,
+    [UpdatedDate]         DATETIME        NULL,
+    [DeletedByUserId]     INT             NULL,
+    [DeletedDate]         DATETIME        NULL,
     [SupplementaryId]     INT             NOT NULL,
     CONSTRAINT [PK__PPMPSupp__6D54EC755C73118F] PRIMARY KEY CLUSTERED ([PPMPSupplementaryId] ASC),
     CONSTRAINT [FKF25AB4FE366CDA2C] FOREIGN KEY ([SupplementaryId]) REFERENCES [dbo].[SS_SupplementaryCatalogue] ([SupplementaryCatalogueId]),
     CONSTRAINT [FKF25AB4FE597D4FBB] FOREIGN KEY ([PPMPId]) REFERENCES [dbo].[PPMPs] ([PPMPId])
 );
+
+
 
 
 

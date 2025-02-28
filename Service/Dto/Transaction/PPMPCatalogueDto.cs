@@ -32,8 +32,8 @@ namespace Service.Dto.Transaction
 
         public int CatalogueId { get; set; }
 
-        public PSDBMCatalogueDto Catalogue { get; set; } = null!;
+        public PSDBMCatalogueDto? Catalogue { get; set; } = null!;
 
-        public PPMPDto Ppmp { get; set; } = null!;
+        public PPMPDto? Ppmp { get; set; } = null!;
     }
 }

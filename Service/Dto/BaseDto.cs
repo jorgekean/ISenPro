@@ -23,18 +23,18 @@ namespace Service.Dto
     {
         public bool IsSubmitted { get; set; }
 
-        public DateTime SubmittedDate { get; set; }
+        public DateTime? SubmittedDate { get; set; }
 
-        public int SubmittedBy { get; set; }
+        public int? SubmittedBy { get; set; }
         public bool IsDeleted { get; set; }
 
-        public DateTime DeletedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
 
-        public int DeletedBy { get; set; }
+        public int? DeletedBy { get; set; }
 
-        public DateTime UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
 
-        public int Updatedby { get; set; }
+        public int? Updatedby { get; set; }
 
     }
 }

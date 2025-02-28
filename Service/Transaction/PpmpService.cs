@@ -95,7 +95,51 @@ namespace Service.Transaction
                 TotalAmount = dto.TotalAmount,
                 GrandTotalAmount = dto.GrandTotalAmount,
                 ProjectAmount = dto.ProjectAmount,
-                RequestingOfficeId = dto.RequestingOfficeId
+                RequestingOfficeId = dto.RequestingOfficeId,
+
+                Ppmpcatalogues = dto.Ppmpcatalogues.Select(x => new Ppmpcatalogue
+                {
+                    PpmpcatalogueId = x.PpmpcatalogueId,
+                    Ppmpid = x.Ppmpid,
+                    CatalogueId = x.CatalogueId,
+                    FirstQuarter = x.FirstQuarter,
+                    SecondQuarter = x.SecondQuarter,
+                    ThirdQuarter = x.ThirdQuarter,
+                    FourthQuarter = x.FourthQuarter,
+                    UnitPrice = x.UnitPrice,
+                    Amount = x.Amount,
+                    IsActive = x.IsActive,
+                    CreatedDate = x.CreatedDate,
+                    CreatedByUserId = x.CreatedBy,
+                    UpdatedDate = x.UpdatedDate,
+                    UpdatedByUserId = x.Updatedby,
+                    DeletedDate = x.DeletedDate,
+                    DeletedByUserId = x.DeletedBy,
+                    Description = x.Description,
+                    Remarks = x.Remarks                    
+                }).ToList(),
+
+                Ppmpsupplementaries = dto.Ppmpsupplementaries.Select(x => new Ppmpsupplementary
+                {
+                    PpmpsupplementaryId = x.PpmpsupplementaryId,
+                    Ppmpid = x.Ppmpid,
+                    SupplementaryId = x.SupplementaryId,
+                    FirstQuarter = x.FirstQuarter,
+                    SecondQuarter = x.SecondQuarter,
+                    ThirdQuarter = x.ThirdQuarter,
+                    FourthQuarter = x.FourthQuarter,
+                    UnitPrice = x.UnitPrice,
+                    Amount = x.Amount,
+                    IsActive = x.IsActive,
+                    CreatedDate = x.CreatedDate,
+                    CreatedByUserId = x.CreatedBy,
+                    UpdatedDate = x.UpdatedDate,
+                    UpdatedByUserId = x.Updatedby,
+                    DeletedDate = x.DeletedDate,
+                    DeletedByUserId = x.DeletedBy,
+                    Description = x.Description,
+                    Remarks = x.Remarks
+                }).ToList(),
             };
 
             return entity;

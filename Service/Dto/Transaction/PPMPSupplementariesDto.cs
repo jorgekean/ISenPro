@@ -32,8 +32,8 @@ namespace Service.Dto.Transaction
 
         public int SupplementaryId { get; set; }
 
-        public virtual PPMPDto Ppmp { get; set; } = null!;
+        public  PPMPDto? Ppmp { get; set; } = null!;
 
-        public virtual SupplementaryCatalogueDto Supplementary { get; set; } = null!;
+        public  SupplementaryCatalogueDto? Supplementary { get; set; } = null!;
     }
 }
