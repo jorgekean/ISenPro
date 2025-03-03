@@ -1,6 +1,7 @@
 ﻿using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
+using Service.Cache;
 using Service.Dto.SystemSetup;
 using Service.Dto.Transaction;
 using Service.Dto.UserManagement;
@@ -17,8 +18,11 @@ namespace Service.Transaction
 {
     public class PpmpService : BaseService<Ppmp, PPMPDto>, IPpmpService
     {
-        public PpmpService(ISenProContext context) : base(context)
+        private readonly CachedItems _cachedItems;
+        public PpmpService(ISenProContext context,
+            CachedItems cachedItems) : base(context)
         {
+            _cachedItems = cachedItems;
         }
 
         protected override IQueryable<Ppmp> IncludeNavigationProperties(IQueryable<Ppmp> query)
@@ -59,7 +63,7 @@ namespace Service.Transaction
             model.Ppmpcatalogues = psdbms.Select(x => new PPMPCatalogueDto
             {
                 Id = x.PpmpcatalogueId,
-                Ppmpid = x.Ppmpid,                
+                Ppmpid = x.Ppmpid,
                 CatalogueId = x.CatalogueId,
                 FirstQuarter = x.FirstQuarter,
                 SecondQuarter = x.SecondQuarter,
@@ -124,6 +128,135 @@ namespace Service.Transaction
             return model;
         }
 
+        // Expect to received the updated/added ppmpcatalogues and ppmpsupplementaries ONLY
+        public override async Task UpdateAsync(PPMPDto dto)
+        {
+            var entity = MapToEntity(dto);
+
+            // update the PPMP model
+            _dbSet.Update(entity);
+
+            #region PPMP Catalogues
+            // Get a list of IDs from the DTO for records that are NOT new.
+            var existingIds = dto.Ppmpcatalogues
+                                 .Where(item => item.Id != 0)
+                                 .Select(item => item.Id)
+                                 .ToList();
+
+            // Load all existing Ppmpcatalogues in one go.
+            var existingCatalogues = await _context.Ppmpcatalogues
+                .Where(c => existingIds.Contains(c.PpmpcatalogueId))
+                .ToDictionaryAsync(c => c.PpmpcatalogueId);           
+
+            foreach (var item in dto.Ppmpcatalogues)
+            {
+                if (item.Id != 0 && existingCatalogues.TryGetValue(item.Id, out var catalogue))
+                {
+                    // Existing record: update its properties.
+                    catalogue.Ppmpid = dto.Id;
+                    catalogue.CatalogueId = item.CatalogueId;
+                    catalogue.FirstQuarter = item.FirstQuarter;
+                    catalogue.SecondQuarter = item.SecondQuarter;
+                    catalogue.ThirdQuarter = item.ThirdQuarter;
+                    catalogue.FourthQuarter = item.FourthQuarter;
+                    catalogue.UnitPrice = item.UnitPrice;
+                    catalogue.Amount = item.Amount;
+                    catalogue.IsActive = item.IsActive;
+                    catalogue.CreatedDate = item.CreatedDate;
+                    catalogue.CreatedByUserId = item.CreatedBy;
+                    catalogue.UpdatedDate = item.UpdatedDate;
+                    catalogue.UpdatedByUserId = item.Updatedby;
+                    catalogue.DeletedDate = item.DeletedDate;
+                    catalogue.DeletedByUserId = item.DeletedBy;
+                    catalogue.Description = item.Description;
+                    catalogue.Remarks = item.Remarks;
+                }
+                else
+                {
+                    // New record: create a new instance and add it to the context.
+                    catalogue = new Ppmpcatalogue
+                    {
+                        Ppmpid = dto.Id,
+                        CatalogueId = item.CatalogueId,
+                        FirstQuarter = item.FirstQuarter,
+                        SecondQuarter = item.SecondQuarter,
+                        ThirdQuarter = item.ThirdQuarter,
+                        FourthQuarter = item.FourthQuarter,
+                        UnitPrice = item.UnitPrice,
+                        Amount = item.Amount,
+                        IsActive = true,
+                        CreatedDate = DateTime.Now,
+                        CreatedByUserId = 1, // TO DO: Use the current user's id
+                        Description = item.Description,
+                        Remarks = item.Remarks
+                    };
+                    _context.Ppmpcatalogues.Add(catalogue);
+                }
+            }
+            #endregion
+
+            #region PPMP Supplementaries
+            // Get a list of IDs from the DTO for records that are NOT new.
+            var existingSuppIds = dto.Ppmpsupplementaries
+                                 .Where(item => item.Id != 0)
+                                 .Select(item => item.Id)
+                                 .ToList();
+
+            // Load all existing PpmpSupplementaries in one go.
+            var existingSupps = await _context.Ppmpsupplementaries
+                .Where(c => existingSuppIds.Contains(c.PpmpsupplementaryId))
+                .ToDictionaryAsync(c => c.PpmpsupplementaryId);
+
+            foreach (var item in dto.Ppmpsupplementaries)
+            {
+                if (item.Id != 0 && existingSupps.TryGetValue(item.Id, out var supplementary))
+                {
+                    // Existing record: update its properties.
+                    supplementary.Ppmpid = dto.Id;
+                    supplementary.SupplementaryId = item.SupplementaryId;
+                    supplementary.FirstQuarter = item.FirstQuarter;
+                    supplementary.SecondQuarter = item.SecondQuarter;
+                    supplementary.ThirdQuarter = item.ThirdQuarter;
+                    supplementary.FourthQuarter = item.FourthQuarter;
+                    supplementary.UnitPrice = item.UnitPrice;
+                    supplementary.Amount = item.Amount;
+                    supplementary.IsActive = item.IsActive;
+                    supplementary.CreatedDate = item.CreatedDate;
+                    supplementary.CreatedByUserId = item.CreatedBy;
+                    supplementary.UpdatedDate = item.UpdatedDate;
+                    supplementary.UpdatedByUserId = item.Updatedby;
+                    supplementary.DeletedDate = item.DeletedDate;
+                    supplementary.DeletedByUserId = item.DeletedBy;
+                    supplementary.Description = item.Description;
+                    supplementary.Remarks = item.Remarks;
+                }
+                else
+                {
+                    // New record: create a new instance and add it to the context.
+                    supplementary = new Ppmpsupplementary
+                    {
+                        Ppmpid = dto.Id,
+                        SupplementaryId = item.SupplementaryId,
+                        FirstQuarter = item.FirstQuarter,
+                        SecondQuarter = item.SecondQuarter,
+                        ThirdQuarter = item.ThirdQuarter,
+                        FourthQuarter = item.FourthQuarter,
+                        UnitPrice = item.UnitPrice,
+                        Amount = item.Amount,
+                        IsActive = true,
+                        CreatedDate = DateTime.Now,
+                        CreatedByUserId = 1, // TO DO: Use the current user's id
+                        Description = item.Description,
+                        Remarks = item.Remarks
+                    };
+                    _context.Ppmpsupplementaries.Add(supplementary);
+                }
+            }
+            #endregion
+
+            await _context.SaveChangesAsync();
+        }
+
         protected override PPMPDto MapToDto(Ppmp entity)
         {
             var dto = new PPMPDto
@@ -145,10 +278,10 @@ namespace Service.Transaction
                 IsSubmitted = entity.IsSubmitted,
                 Ppmpno = entity.Ppmpno,
                 RequestingOfficeId = entity.RequestingOfficeId,
-                SubmittedBy = entity.SubmittedByUserId.GetValueOrDefault(),
-                SubmittedDate = entity.SubmittedDate.GetValueOrDefault(),
-                DeletedBy = entity.DeletedByUserId.GetValueOrDefault(),
-                DeletedDate = entity.DeletedDate.GetValueOrDefault(),
+                SubmittedBy = entity.SubmittedByUserId,
+                SubmittedDate = entity.SubmittedDate,
+                DeletedBy = entity.DeletedByUserId,
+                DeletedDate = entity.DeletedDate,
                 IsDeleted = entity.DeletedDate.HasValue,
                 RequestingOffice = entity.RequestingOffice != null ? new DepartmentDto
                 {
@@ -190,7 +323,8 @@ namespace Service.Transaction
                 ProjectAmount = dto.ProjectAmount,
                 RequestingOfficeId = dto.RequestingOfficeId,
 
-                Ppmpcatalogues = dto.Ppmpcatalogues.Select(x => new Ppmpcatalogue
+                // Populate PpmpCatalogues for Create ONLY(has PPmpId)
+                Ppmpcatalogues = dto.Id == 0 ? dto.Ppmpcatalogues.Select(x => new Ppmpcatalogue
                 {
                     PpmpcatalogueId = x.Id,
                     Ppmpid = x.Ppmpid,
@@ -210,9 +344,9 @@ namespace Service.Transaction
                     DeletedByUserId = x.DeletedBy,
                     Description = x.Description,
                     Remarks = x.Remarks
-                }).ToList(),
+                }).ToList() : [],
 
-                Ppmpsupplementaries = dto.Ppmpsupplementaries.Select(x => new Ppmpsupplementary
+                Ppmpsupplementaries = dto.Id == 0 ? dto.Ppmpsupplementaries.Select(x => new Ppmpsupplementary
                 {
                     PpmpsupplementaryId = x.Id,
                     Ppmpid = x.Ppmpid,
@@ -232,7 +366,7 @@ namespace Service.Transaction
                     DeletedByUserId = x.DeletedBy,
                     Description = x.Description,
                     Remarks = x.Remarks
-                }).ToList(),
+                }).ToList() : [],
             };
 
             return entity;
