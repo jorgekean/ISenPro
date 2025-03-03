@@ -107,9 +107,17 @@ namespace Service.UserManagement
             return entity;
         }
 
-        public async Task<IEnumerable<PageDto>> GetAllPagesAsync()
+        public async Task<IEnumerable<PageDto>> GetAllPagesAsync(int moduleId)
         {
-            var entities = await _context.UmPages.ToListAsync();
+            var existingPageIds = _context.UmModules.Where(x => x.IsActive).Select(x => x.PageId).Distinct().ToList();
+            var currentPageId = 0;
+
+            if (moduleId != 0)
+            {
+                currentPageId = _context.UmModules.FirstOrDefault(x => x.ModuleId == moduleId).PageId;
+            }
+
+            var entities = await _context.UmPages.Where(x => !existingPageIds.Contains(x.PageId) || x.PageId == currentPageId).ToListAsync();
 
             return entities.Select(s => new PageDto
             {

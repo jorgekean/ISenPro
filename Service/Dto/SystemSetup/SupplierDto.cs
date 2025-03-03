@@ -13,6 +13,8 @@ namespace Service.Dto.SystemSetup
 
         public bool Blacklist { get; set; }
 
+        public string? IsBlacklisted { get; set; }
+
         public string? CompanyName { get; set; }
 
         public string? Address { get; set; }

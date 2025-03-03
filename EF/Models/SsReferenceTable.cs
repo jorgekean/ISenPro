@@ -26,4 +26,10 @@ public partial class SsReferenceTable
     public virtual ICollection<SsSignatory> SsSignatoryReportSections { get; set; } = new List<SsSignatory>();
 
     public virtual ICollection<SsSignatory> SsSignatorySignatoryDesignations { get; set; } = new List<SsSignatory>();
+
+    public virtual ICollection<SsSignatory> SsSignatorySignatoryOffices { get; set; } = new List<SsSignatory>();
+
+    public virtual ICollection<UmPerson> UmPersonEmployeeStatusNavigations { get; set; } = new List<UmPerson>();
+
+    public virtual ICollection<UmPerson> UmPersonEmployeeTitleNavigations { get; set; } = new List<UmPerson>();
 }

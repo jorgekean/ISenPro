@@ -10,8 +10,8 @@
     [Thumbnail]       NVARCHAR (MAX) NULL,
     [Remarks]         NVARCHAR (MAX) NULL,
     [Designation]     NVARCHAR (200) NULL,
-    [EmployeeTitle]   NVARCHAR (50)  NULL,
-    [EmployeeStatus]  NVARCHAR (50)  NULL,
+    [EmployeeTitle]   INT  NULL,
+    [EmployeeStatus]  INT  NULL,
     [IsActive]        BIT            NOT NULL,
     [CreatedByUserId] INT            NOT NULL,
     [CreatedDate]     DATETIME       NOT NULL,
@@ -19,7 +19,9 @@
     [SectionId]       INT            NULL,
     CONSTRAINT [PK_UM_Person] PRIMARY KEY CLUSTERED ([PersonId] ASC),
     CONSTRAINT [FK_UM_Person_UM_Department] FOREIGN KEY ([DepartmentId]) REFERENCES [dbo].[UM_Department] ([DepartmentId]),
-    CONSTRAINT [FK_UM_Person_UM_Section] FOREIGN KEY ([SectionId]) REFERENCES [dbo].[UM_Section] ([SectionId])
+    CONSTRAINT [FK_UM_Person_UM_Section] FOREIGN KEY ([SectionId]) REFERENCES [dbo].[UM_Section] ([SectionId]),
+    CONSTRAINT [FK_UM_Person_SS_Reference_Employee_Title] FOREIGN KEY ([EmployeeTitle]) REFERENCES [dbo].[SS_ReferenceTable] (ReferenceTableId),
+    CONSTRAINT [FK_UM_Person_SS_Reference_Employee_Status] FOREIGN KEY ([EmployeeStatus]) REFERENCES [dbo].[SS_ReferenceTable] (ReferenceTableId)
 );
 
 

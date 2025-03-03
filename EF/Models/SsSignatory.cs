@@ -36,4 +36,6 @@ public partial class SsSignatory
     public virtual SsReferenceTable? ReportSection { get; set; }
 
     public virtual SsReferenceTable? SignatoryDesignation { get; set; }
+
+    public virtual SsReferenceTable? SignatoryOffice { get; set; }
 }

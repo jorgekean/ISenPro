@@ -15,6 +15,6 @@
     CONSTRAINT [PK_SS_Signatories] PRIMARY KEY CLUSTERED ([SignatoryId] ASC),
 	CONSTRAINT [FK_SS_Signatories_SS_Person] FOREIGN KEY ([PersonId]) REFERENCES [dbo].[UM_Person] (PersonId),
 	CONSTRAINT [FK_SS_Signatories_SS_Reference_Signatory_Designation] FOREIGN KEY ([SignatoryDesignationId]) REFERENCES [dbo].[SS_ReferenceTable] (ReferenceTableId),
-	CONSTRAINT [FK_SS_Signatories_SS_Reference_Signatory_Office] FOREIGN KEY ([SignatoryDesignationId]) REFERENCES [dbo].[SS_ReferenceTable] (ReferenceTableId),
+	CONSTRAINT [FK_SS_Signatories_SS_Reference_Signatory_Office] FOREIGN KEY ([SignatoryOfficeId]) REFERENCES [dbo].[SS_ReferenceTable] (ReferenceTableId),
 	CONSTRAINT [FK_SS_Signatories_SS_Reference_Report_Section] FOREIGN KEY ([ReportSectionId]) REFERENCES [dbo].[SS_ReferenceTable] (ReferenceTableId),
 );

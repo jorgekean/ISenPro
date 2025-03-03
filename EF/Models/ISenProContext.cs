@@ -99,7 +99,7 @@ public partial class ISenProContext : DbContext
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD1A331309");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD9A277DAF");
 
             entity.ToTable("ChangeDetailsTable");
 
@@ -111,12 +111,12 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.ChangeDetailsTables)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChangeDet__Chang__5AEE82B9");
+                .HasConstraintName("FK__ChangeDet__Chang__619B8048");
         });
 
         modelBuilder.Entity<ChangeTrackingTable>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B7EDE63023");
+            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B79B51F191");
 
             entity.ToTable("ChangeTrackingTable");
 
@@ -133,7 +133,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRole>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7F73B0AF9");
+            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7A94B4D02");
 
             entity.ToTable("CT_UM_Role");
 
@@ -150,7 +150,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRoleDetail>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD248F3172");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD531C5CC8");
 
             entity.ToTable("CT_UM_Role_Details");
 
@@ -162,7 +162,7 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.CtUmRoleDetails)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CT_UM_Rol__Chang__5BE2A6F2");
+                .HasConstraintName("FK__CT_UM_Rol__Chang__628FA481");
         });
 
         modelBuilder.Entity<Ppmp>(entity =>
@@ -391,6 +391,10 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.SignatoryDesignation).WithMany(p => p.SsSignatorySignatoryDesignations)
                 .HasForeignKey(d => d.SignatoryDesignationId)
                 .HasConstraintName("FK_SS_Signatories_SS_Reference_Signatory_Designation");
+
+            entity.HasOne(d => d.SignatoryOffice).WithMany(p => p.SsSignatorySignatoryOffices)
+                .HasForeignKey(d => d.SignatoryOfficeId)
+                .HasConstraintName("FK_SS_Signatories_SS_Reference_Signatory_Office");
         });
 
         modelBuilder.Entity<SsSubCategory>(entity =>
@@ -457,7 +461,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsSupplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B4535CB4E9");
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B41D945853");
 
             entity.ToTable("SS_Suppliers");
 
@@ -616,8 +620,6 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Designation).HasMaxLength(200);
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.EmployeeStatus).HasMaxLength(50);
-            entity.Property(e => e.EmployeeTitle).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.MiddleName).HasMaxLength(100);
@@ -625,6 +627,14 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Department).WithMany(p => p.UmPeople)
                 .HasForeignKey(d => d.DepartmentId)
                 .HasConstraintName("FK_UM_Person_UM_Department");
+
+            entity.HasOne(d => d.EmployeeStatusNavigation).WithMany(p => p.UmPersonEmployeeStatusNavigations)
+                .HasForeignKey(d => d.EmployeeStatus)
+                .HasConstraintName("FK_UM_Person_SS_Reference_Employee_Status");
+
+            entity.HasOne(d => d.EmployeeTitleNavigation).WithMany(p => p.UmPersonEmployeeTitleNavigations)
+                .HasForeignKey(d => d.EmployeeTitle)
+                .HasConstraintName("FK_UM_Person_SS_Reference_Employee_Title");
 
             entity.HasOne(d => d.Section).WithMany(p => p.UmPeople)
                 .HasForeignKey(d => d.SectionId)

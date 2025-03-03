@@ -139,6 +139,7 @@ namespace Service.SystemSetup
                 Id = entity.SupplierId,
                 CompanyName = entity.CompanyName ?? string.Empty,
                 Blacklist = entity.Blacklist,
+                IsBlacklisted = entity.Blacklist ? "Yes" : "No",
                 Address = entity.Address ?? string.Empty,
                 EmailAddress = entity.EmailAddress ?? string.Empty,
                 Remarks = entity.Remarks ?? string.Empty,

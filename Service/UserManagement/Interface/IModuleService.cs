@@ -7,7 +7,7 @@ namespace Service.UserManagement.Interface
     public interface IModuleService : IBaseService<UmModule, ModuleDto>
     {
         // Additional methods specific
-        Task<IEnumerable<PageDto>> GetAllPagesAsync();
+        Task<IEnumerable<PageDto>> GetAllPagesAsync(int moduleId);
         Task<IEnumerable<ControlDto>> GetAllControlsAsync();
 
         Task<List<ModuleDto>> GetTransactionAndMonitoringModules();

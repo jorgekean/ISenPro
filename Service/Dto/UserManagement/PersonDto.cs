@@ -1,4 +1,5 @@
 ﻿using Service.Dto;
+using Service.Dto.SystemSetup;
 using System;
 using System.Collections.Generic;
 
@@ -28,9 +29,13 @@ public class PersonDto : BaseDto
 
     public string? Designation { get; set; }
 
-    public string? EmployeeTitle { get; set; }
+    public int? EmployeeTitle { get; set; }
 
-    public string? EmployeeStatus { get; set; }   
+    public string? EmployeeTitleLabel { get; set; }
+
+    public int? EmployeeStatus { get; set; }
+
+    public string? EmployeeStatusLabel { get; set; }
 
     public int? DepartmentId { get; set; }
 
@@ -40,6 +45,9 @@ public class PersonDto : BaseDto
 
     public SectionDto? Section { get; set; }
 
+    public ReferenceTableDto? EmployeeStatusNavigation { get; set; }
+
+    public ReferenceTableDto? EmployeeTitleNavigation { get; set; }
 
     public int? DivisionId { get; set; }
     public int? BureauId { get; set; }

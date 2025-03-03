@@ -27,10 +27,11 @@ namespace API.Controllers.UserManagement
             try
             {
                 var paginatedResult = await _personService.GetPagedAndFilteredAsync(pagingParameters);
+                var empStatuses = paginatedResult.Data.Select(x => x.EmployeeStatusLabel).ToList();
 
                 var response = new PaginatedResponse<PersonDto>
                 {
-                    Items = paginatedResult.Data,
+                    Items = paginatedResult.Data.OrderBy(x => x.FullName),
                     TotalCount = paginatedResult.TotalRecords,
                     PageNumber = pagingParameters.PageNumber,
                     PageSize = pagingParameters.PageSize

@@ -162,11 +162,11 @@ namespace API.Controllers.UserManagement
 
         // GET: api/Modules/pages
         [HttpGet("pages")]
-        public async Task<ActionResult<IEnumerable<PageDto>>> GetPages()
+        public async Task<ActionResult<IEnumerable<PageDto>>> GetPages([FromQuery] int moduleId)
         {
             try
             {
-                var pages = await _moduleService.GetAllPagesAsync();
+                var pages = await _moduleService.GetAllPagesAsync(moduleId);
 
                 if (pages == null || !pages.Any())
                 {

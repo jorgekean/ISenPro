@@ -139,7 +139,7 @@ namespace Service.SystemSetup
             entity.ItemTypeId = dto.ItemTypeId;
             entity.AccountCodeId = dto.AccountCodeId;
             entity.MajorCategoryId = dto.MajorCategoryId;
-            entity.SubCategoryId = dto.SubCategoryId;
+            entity.SubCategoryId = dto.SubCategoryId == 0 || dto.SubCategoryId == null ? null : dto.SubCategoryId.Value;
             entity.UnitOfMeasurementId = dto.UnitOfMeasurementId;
             entity.UnitPrice = dto.UnitPrice;
             entity.Remarks = dto.Remarks;

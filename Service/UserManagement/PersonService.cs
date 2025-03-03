@@ -22,7 +22,7 @@ namespace Service.UserManagement
 
         protected override IQueryable<UmPerson> IncludeNavigationProperties(IQueryable<UmPerson> query)
         {
-            return query.Include(o => o.Department).ThenInclude(s => s.Bureau).Include(o => o.Section);
+            return query.Include(o => o.Department).ThenInclude(s => s.Bureau).Include(o => o.Section).Include(x => x.EmployeeStatusNavigation).Include(x => x.EmployeeStatusNavigation);
         }
 
         protected override IQueryable<UmPerson> ApplySearchFilter(IQueryable<UmPerson> query, string searchQuery)
@@ -70,7 +70,9 @@ namespace Service.UserManagement
                 ContactNo = entity.ContactNo,
                 Email = entity.Email,
                 EmployeeStatus = entity.EmployeeStatus,
+                EmployeeStatusLabel = entity.EmployeeStatusNavigation?.Name,
                 EmployeeTitle = entity.EmployeeTitle,
+                EmployeeTitleLabel = entity.EmployeeTitleNavigation?.Name,
                 IsHeadOfOffice = entity.IsHeadOfOffice,
                 Remarks = entity.Remarks,
                 SectionId = entity.SectionId,
