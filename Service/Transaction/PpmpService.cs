@@ -1,5 +1,6 @@
 ﻿using EF.Models;
 using EF.Models.UserManagement;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Cache;
 using Service.Dto.SystemSetup;
@@ -10,6 +11,7 @@ using Service.SystemSetup.Interface;
 using Service.Transaction.Interface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -128,6 +130,13 @@ namespace Service.Transaction
             return model;
         }
 
+        public override async Task<object> AddAsync(PPMPDto dto)
+        {
+            dto.Ppmpno = GeneratePppmpNo(dto.BudgetYear);
+
+            return await base.AddAsync(dto);
+        }
+
         // Expect to received the updated/added ppmpcatalogues and ppmpsupplementaries ONLY
         public override async Task UpdateAsync(PPMPDto dto)
         {
@@ -146,7 +155,7 @@ namespace Service.Transaction
             // Load all existing Ppmpcatalogues in one go.
             var existingCatalogues = await _context.Ppmpcatalogues
                 .Where(c => existingIds.Contains(c.PpmpcatalogueId))
-                .ToDictionaryAsync(c => c.PpmpcatalogueId);           
+                .ToDictionaryAsync(c => c.PpmpcatalogueId);
 
             foreach (var item in dto.Ppmpcatalogues)
             {
@@ -378,5 +387,35 @@ namespace Service.Transaction
 
             return [2023, 2024, 2025, 2026];
         }
+
+        #region private methods
+
+        private string GeneratePppmpNo(short budgetYear)
+        {
+            // Retrieve the last PPMP record for the given budget year
+            var ppmpLastRecord = _context.Ppmps
+                .Where(ppmp => ppmp.BudgetYear == budgetYear)
+                .OrderByDescending(ppmp => ppmp.Ppmpid)
+                .FirstOrDefault();
+
+            string referenceNo = ppmpLastRecord?.Ppmpno ?? $"PPMP-{budgetYear}-0000";
+
+            // Split reference number
+            var splitReferenceNo = referenceNo.Split('-');
+
+            // Ensure the year is up-to-date
+            splitReferenceNo[1] = budgetYear.ToString(CultureInfo.InvariantCulture);
+
+            // Increment the series number or reset if it's a new year
+            int seriesNumber = (splitReferenceNo[1] == budgetYear.ToString(CultureInfo.InvariantCulture))
+                ? int.Parse(splitReferenceNo[2]) + 1
+                : 1;
+
+            splitReferenceNo[2] = seriesNumber.ToString("D4"); // Ensures 4-digit formatting
+
+            return string.Join("-", splitReferenceNo);
+        }
+
+        #endregion
     }
 }
