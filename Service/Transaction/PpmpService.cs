@@ -42,23 +42,11 @@ namespace Service.Transaction
         {
             var model = await base.GetByIdAsync(id);
 
-            var psdbms = _context.Ppmpcatalogues
-                         .Include(pc => pc.Catalogue)
-                             .ThenInclude(c => c.MajorCategory)
-                         .Include(pc => pc.Catalogue)
-                             .ThenInclude(c => c.UnitOfMeasurement)
-                         .Include(pc => pc.Catalogue)
-                             .ThenInclude(c => c.AccountCode)
+            var psdbms = _context.VPpmpPsdbmcatalogues
                          .Where(x => x.Ppmpid == id && x.IsActive)
                          .ToList();
 
-            var supps = _context.Ppmpsupplementaries
-                         .Include(pc => pc.Supplementary)
-                             .ThenInclude(c => c.MajorCategory)
-                         .Include(pc => pc.Supplementary)
-                             .ThenInclude(c => c.UnitOfMeasurement)
-                         .Include(pc => pc.Supplementary)
-                             .ThenInclude(c => c.AccountCode)
+            var supps = _context.VPpmpSupplementaryCatalogues
                          .Where(x => x.Ppmpid == id && x.IsActive)
                          .ToList();
 
@@ -85,12 +73,12 @@ namespace Service.Transaction
 
                 Catalogue = new PSDBMCatalogueDto
                 {
-                    Id = x.Catalogue.PsdbmcatalogueId,
-                    Code = x.Catalogue.Code,
-                    Description = x.Catalogue.Description,
-                    MajorCategoryName = x.Catalogue.MajorCategory != null ? x.Catalogue.MajorCategory.Name : "",
-                    AccountCodeDescription = x.Catalogue.AccountCode != null ? x.Catalogue.AccountCode.Description : "",
-                    UnitOfMeasurementCode = x.Catalogue.UnitOfMeasurement != null ? x.Catalogue.UnitOfMeasurement.Code : "",
+                    Id = x.CatalogueId,
+                    Code = x.CatalogueCode,
+                    Description = x.Description,
+                    MajorCategoryName = x.MajorCategoryName,
+                    AccountCodeDescription = x.AccountCodeDescription,
+                    UnitOfMeasurementCode = x.UnitOfMeasurementCode
                 },
 
             }).ToList();
@@ -118,12 +106,12 @@ namespace Service.Transaction
 
                 Supplementary = new SupplementaryCatalogueDto
                 {
-                    Id = x.Supplementary.SupplementaryCatalogueId,
-                    Code = x.Supplementary.Code,
-                    Description = x.Supplementary.Description,
-                    MajorCategoryName = x.Supplementary.MajorCategory != null ? x.Supplementary.MajorCategory.Name : "",
-                    AccountCodeDescription = x.Supplementary.AccountCode != null ? x.Supplementary.AccountCode.Description : "",
-                    UnitOfMeasurementCode = x.Supplementary.UnitOfMeasurement != null ? x.Supplementary.UnitOfMeasurement.Code : "",
+                    Id = x.SupplementaryId,
+                    Code = x.CatalogueCode,
+                    Description = x.Description,
+                    MajorCategoryName = x.MajorCategoryName,
+                    AccountCodeDescription = x.AccountCodeDescription,
+                    UnitOfMeasurementCode = x.UnitOfMeasurementCode
                 },
             }).ToList();
 

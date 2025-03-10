@@ -93,13 +93,17 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
+    public virtual DbSet<VPpmpPsdbmcatalogue> VPpmpPsdbmcatalogues { get; set; }
+
+    public virtual DbSet<VPpmpSupplementaryCatalogue> VPpmpSupplementaryCatalogues { get; set; }
+
     public virtual DbSet<VPsdbmcatalogue> VPsdbmcatalogues { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD9A277DAF");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD1A331309");
 
             entity.ToTable("ChangeDetailsTable");
 
@@ -111,12 +115,12 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.ChangeDetailsTables)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChangeDet__Chang__619B8048");
+                .HasConstraintName("FK__ChangeDet__Chang__5AEE82B9");
         });
 
         modelBuilder.Entity<ChangeTrackingTable>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B79B51F191");
+            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B7EDE63023");
 
             entity.ToTable("ChangeTrackingTable");
 
@@ -133,7 +137,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRole>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7A94B4D02");
+            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7F73B0AF9");
 
             entity.ToTable("CT_UM_Role");
 
@@ -150,7 +154,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRoleDetail>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD531C5CC8");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD248F3172");
 
             entity.ToTable("CT_UM_Role_Details");
 
@@ -162,7 +166,7 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.CtUmRoleDetails)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CT_UM_Rol__Chang__628FA481");
+                .HasConstraintName("FK__CT_UM_Rol__Chang__5BE2A6F2");
         });
 
         modelBuilder.Entity<Ppmp>(entity =>
@@ -461,7 +465,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsSupplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B41D945853");
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B4535CB4E9");
 
             entity.ToTable("SS_Suppliers");
 
@@ -784,6 +788,42 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.WorkstepId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
+        });
+
+        modelBuilder.Entity<VPpmpPsdbmcatalogue>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_PpmpPSDBMCatalogues");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CatalogueCode).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.MajorCategoryName).HasMaxLength(200);
+            entity.Property(e => e.PpmpcatalogueId).HasColumnName("PPMPCatalogueId");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.UnitOfMeasurementCode).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<VPpmpSupplementaryCatalogue>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_PpmpSupplementaryCatalogues");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CatalogueCode).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.MajorCategoryName).HasMaxLength(200);
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.PpmpsupplementaryId).HasColumnName("PPMPSupplementaryId");
+            entity.Property(e => e.UnitOfMeasurementCode).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<VPsdbmcatalogue>(entity =>
