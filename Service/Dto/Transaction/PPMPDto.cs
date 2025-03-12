@@ -39,6 +39,7 @@ namespace Service.Dto.Transaction
         public IEnumerable<PPMPCatalogueDto> Ppmpcatalogues { get; set; } = new List<PPMPCatalogueDto>();
 
         public IEnumerable<PPMPSupplementariesDto> Ppmpsupplementaries { get; set; } = new List<PPMPSupplementariesDto>();
+        public IEnumerable<PPMPProjectDto> PpmpProjects { get; set; } = new List<PPMPProjectDto>();
 
         public DepartmentDto? RequestingOffice { get; set; } = null!;
     }

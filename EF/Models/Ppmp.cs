@@ -53,6 +53,8 @@ public partial class Ppmp
 
     public virtual ICollection<Ppmpcatalogue> Ppmpcatalogues { get; set; } = new List<Ppmpcatalogue>();
 
+    public virtual ICollection<Ppmpproject> Ppmpprojects { get; set; } = new List<Ppmpproject>();
+
     public virtual ICollection<Ppmpsupplementary> Ppmpsupplementaries { get; set; } = new List<Ppmpsupplementary>();
 
     public virtual UmDepartment? RequestingOffice { get; set; }

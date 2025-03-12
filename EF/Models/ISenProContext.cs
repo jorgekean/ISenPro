@@ -23,6 +23,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<Ppmpcatalogue> Ppmpcatalogues { get; set; }
 
+    public virtual DbSet<Ppmpproject> Ppmpprojects { get; set; }
+
     public virtual DbSet<Ppmpsupplementary> Ppmpsupplementaries { get; set; }
 
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
@@ -222,6 +224,28 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.Ppmpid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKCCA15ADD597D4FBB");
+        });
+
+        modelBuilder.Entity<Ppmpproject>(entity =>
+        {
+            entity.ToTable("PPMPProjects");
+
+            entity.Property(e => e.PpmpprojectId).HasColumnName("PPMPProjectId");
+            entity.Property(e => e.Cost).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.ProjectStatus).HasMaxLength(20);
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.AccountCode).WithMany(p => p.Ppmpprojects)
+                .HasForeignKey(d => d.AccountCodeId)
+                .HasConstraintName("FK_PPMPProjects_PPMPProjects");
+
+            entity.HasOne(d => d.Ppmp).WithMany(p => p.Ppmpprojects)
+                .HasForeignKey(d => d.Ppmpid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PPMPProjects_PPMPs");
         });
 
         modelBuilder.Entity<Ppmpsupplementary>(entity =>

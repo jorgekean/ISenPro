@@ -50,6 +50,10 @@ namespace Service.Transaction
                          .Where(x => x.Ppmpid == id && x.IsActive)
                          .ToList();
 
+            var projects = _context.Ppmpprojects.Include(i => i.AccountCode)
+                         .Where(x => x.Ppmpid == id && x.IsActive)
+                         .ToList();
+
             model.Ppmpcatalogues = psdbms.Select(x => new PPMPCatalogueDto
             {
                 Id = x.PpmpcatalogueId,
@@ -79,7 +83,7 @@ namespace Service.Transaction
                     MajorCategoryName = x.MajorCategoryName,
                     AccountCodeDescription = x.AccountCodeDescription,
                     UnitOfMeasurementCode = x.UnitOfMeasurementCode
-                },
+                }
 
             }).ToList();
 
@@ -113,6 +117,26 @@ namespace Service.Transaction
                     AccountCodeDescription = x.AccountCodeDescription,
                     UnitOfMeasurementCode = x.UnitOfMeasurementCode
                 },
+            }).ToList();
+
+            model.PpmpProjects = projects.Select(x => new PPMPProjectDto
+            {
+                Id = x.PpmpprojectId,
+                Ppmpid = x.Ppmpid,
+                ProjectName = x.ProjectName,
+                Description = x.Description,
+                Quarter = x.Quarter,
+                Cost = x.Cost,
+                ProjectStatus = x.ProjectStatus,
+                IsActive = x.IsActive,
+                CreatedBy = x.CreatedByUserId,
+                CreatedDate = x.CreatedDate,
+                AccountCode = x.AccountCode != null ? new AccountCodeDto
+                {
+                    Code = x.AccountCode.Code,
+                    Description = x.AccountCode.Description,
+                    Id = x.AccountCode.AccountCodeId
+                } : null,
             }).ToList();
 
             return model;
@@ -251,6 +275,57 @@ namespace Service.Transaction
             }
             #endregion
 
+            #region PPMP Projects
+            // Get a list of IDs from the DTO for records that are NOT new.
+            var existingProjectIds = dto.PpmpProjects
+                                 .Where(item => item.Id != 0)
+                                 .Select(item => item.Id)
+                                 .ToList();
+
+            // Load all existing PpmpSupplementaries in one go.
+            var existingProjs = await _context.Ppmpprojects
+                .Where(c => existingProjectIds.Contains(c.PpmpprojectId))
+                .ToDictionaryAsync(c => c.PpmpprojectId);
+
+            foreach (var item in dto.PpmpProjects)
+            {
+                if (item.Id != 0 && existingProjs.TryGetValue(item.Id, out var project))
+                {
+                    // Existing record: update its properties.
+                    project.PpmpprojectId = item.Id;
+                    project.Ppmpid = item.Ppmpid;
+                    project.ProjectName = item.ProjectName;
+                    project.Description = item.Description;
+                    project.Quarter = item.Quarter;
+                    project.Cost = item.Cost;
+                    project.ProjectStatus = item.ProjectStatus;
+                    project.IsActive = item.IsActive;
+                    project.CreatedByUserId = item.CreatedBy;
+                    project.CreatedDate = item.CreatedDate;
+                    project.AccountCodeId = item.AccountCode?.Id;
+                }
+                else
+                {
+                    // New record: create a new instance and add it to the context.
+                    project = new Ppmpproject
+                    {
+                        PpmpprojectId = item.Id,
+                        Ppmpid = item.Ppmpid,
+                        ProjectName = item.ProjectName,
+                        Description = item.Description,
+                        Quarter = item.Quarter,
+                        Cost = item.Cost,
+                        ProjectStatus = item.ProjectStatus,
+                        IsActive = item.IsActive,
+                        CreatedByUserId = item.CreatedBy,
+                        CreatedDate = item.CreatedDate,
+                        AccountCodeId = item.AccountCode?.Id
+                    };
+                    _context.Ppmpprojects.Add(project);
+                }
+            }
+            #endregion
+
             await _context.SaveChangesAsync();
         }
 
@@ -364,6 +439,21 @@ namespace Service.Transaction
                     Description = x.Description,
                     Remarks = x.Remarks
                 }).ToList() : [],
+
+                Ppmpprojects = dto.Id == 0 ? dto.PpmpProjects.Select(x => new Ppmpproject
+                {
+                    PpmpprojectId = x.Id,
+                    Ppmpid = x.Ppmpid,
+                    ProjectName = x.ProjectName,
+                    Description = x.Description,
+                    Quarter = x.Quarter,
+                    Cost = x.Cost,
+                    ProjectStatus = x.ProjectStatus,
+                    IsActive = x.IsActive,
+                    CreatedByUserId = x.CreatedBy,
+                    CreatedDate = x.CreatedDate,
+                    AccountCodeId = x.AccountCode?.Id
+                }).ToList() : []
             };
 
             return entity;

@@ -21,6 +21,8 @@ public partial class SsAccountCode
 
     public virtual SsItemType? ItemType { get; set; }
 
+    public virtual ICollection<Ppmpproject> Ppmpprojects { get; set; } = new List<Ppmpproject>();
+
     public virtual ICollection<SsMajorCategory> SsMajorCategories { get; set; } = new List<SsMajorCategory>();
 
     public virtual ICollection<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; } = new List<SsPsdbmcatalogue>();

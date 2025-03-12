@@ -35,5 +35,6 @@ namespace Service.Dto.Transaction
         public PSDBMCatalogueDto? Catalogue { get; set; } = null!;
 
         public PPMPDto? Ppmp { get; set; } = null!;
+        
     }
 }
