@@ -2,7 +2,7 @@
 CREATE VIEW [dbo].[v_RoleModuleControl]
 AS
 SELECT DISTINCT
-       mc.*, m.Name ModuleName, pm.Description ParentModuleName
+       mc.*, m.Name ModuleName, pm.Description ParentModuleName, pr.RoleId
 FROM dbo.UM_ModuleControl mc
     INNER JOIN dbo.UM_PolicyModuleControls pmc
         ON mc.ModuleControlId = pmc.ModuleControlId
@@ -16,4 +16,3 @@ WHERE pr.IsActive = 1
       AND pmc.IsActive = 1
       AND pr.IsActive = 1
       AND mc.IsChecked = 1 AND mc.IsActive=1
-      --AND pr.RoleId = @roleId

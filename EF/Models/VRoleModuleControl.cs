@@ -22,4 +22,6 @@ public partial class VRoleModuleControl
     public string? ModuleName { get; set; }
 
     public string ParentModuleName { get; set; } = null!;
+
+    public int RoleId { get; set; }
 }
