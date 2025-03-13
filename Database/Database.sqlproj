@@ -101,5 +101,10 @@
     <Build Include="dbo\Tables\PPMPCatalogues.sql" />
     <Build Include="dbo\Tables\TransactionStatuses.sql" />
     <Build Include="dbo\Views\v_PSDBMCatalogue.sql" />
+    <Build Include="dbo\Tables\PPMPProjects.sql" />
+    <Build Include="dbo\Views\v_RoleModuleControl.sql" />
+    <Build Include="dbo\Views\v_PpmpSupplementaryCatalogues.sql" />
+    <Build Include="dbo\Views\v_PpmpPSDBMCatalogues.sql" />
+    <Build Include="dbo\Views\v_ParentModule.sql" />
   </ItemGroup>
 </Project>

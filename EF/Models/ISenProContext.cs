@@ -95,11 +95,15 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
+    public virtual DbSet<VParentModule> VParentModules { get; set; }
+
     public virtual DbSet<VPpmpPsdbmcatalogue> VPpmpPsdbmcatalogues { get; set; }
 
     public virtual DbSet<VPpmpSupplementaryCatalogue> VPpmpSupplementaryCatalogues { get; set; }
 
     public virtual DbSet<VPsdbmcatalogue> VPsdbmcatalogues { get; set; }
+
+    public virtual DbSet<VRoleModuleControl> VRoleModuleControls { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -814,6 +818,20 @@ public partial class ISenProContext : DbContext
                 .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
         });
 
+        modelBuilder.Entity<VParentModule>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_ParentModule");
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(15)
+                .IsUnicode(false);
+            entity.Property(e => e.Name)
+                .HasMaxLength(14)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<VPpmpPsdbmcatalogue>(entity =>
         {
             entity
@@ -861,6 +879,19 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Productcategory).HasMaxLength(200);
             entity.Property(e => e.UnitOfMeasurement).HasMaxLength(100);
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+        });
+
+        modelBuilder.Entity<VRoleModuleControl>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_RoleModuleControl");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.ModuleName).HasMaxLength(100);
+            entity.Property(e => e.ParentModuleName)
+                .HasMaxLength(15)
+                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);
