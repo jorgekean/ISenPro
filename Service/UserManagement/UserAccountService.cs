@@ -108,7 +108,7 @@ namespace Service.UserManagement
                 UserAccountId = dto.Id.GetValueOrDefault(),
                 ExpireDate = dto.ExpireDate,
                 IsAdmin = dto.IsAdmin,
-                Password = dto.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 PersonId = dto.PersonId,
                 RoleId = dto.RoleId,
                 UserId = dto.UserId,
