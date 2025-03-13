@@ -41,6 +41,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<SsPsdbmcatalogue> SsPsdbmcatalogues { get; set; }
 
+    public virtual DbSet<SsPsdbmcatalogueOffice> SsPsdbmcatalogueOffices { get; set; }
+
     public virtual DbSet<SsPurchasingType> SsPurchasingTypes { get; set; }
 
     public virtual DbSet<SsReferenceTable> SsReferenceTables { get; set; }
@@ -379,6 +381,27 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.UnitOfMeasurement).WithMany(p => p.SsPsdbmcatalogues)
                 .HasForeignKey(d => d.UnitOfMeasurementId)
                 .HasConstraintName("FK_SS_PSDBMCatalogue_SS_UnitOfMeasurement");
+        });
+
+        modelBuilder.Entity<SsPsdbmcatalogueOffice>(entity =>
+        {
+            entity.HasKey(e => e.PsdbmcatalogueOfficeId);
+
+            entity.ToTable("SS_PSDBMCatalogueOffice");
+
+            entity.Property(e => e.PsdbmcatalogueOfficeId).HasColumnName("PSDBMCatalogueOfficeId");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.PsdbmcatalogueId).HasColumnName("PSDBMCatalogueId");
+
+            entity.HasOne(d => d.Department).WithMany(p => p.SsPsdbmcatalogueOffices)
+                .HasForeignKey(d => d.DepartmentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_PSDBMCatalogueOffice_UM_Department");
+
+            entity.HasOne(d => d.Psdbmcatalogue).WithMany(p => p.SsPsdbmcatalogueOffices)
+                .HasForeignKey(d => d.PsdbmcatalogueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SS_PSDBMCatalogueOffice_SS_PSDBMCatalogue");
         });
 
         modelBuilder.Entity<SsPurchasingType>(entity =>

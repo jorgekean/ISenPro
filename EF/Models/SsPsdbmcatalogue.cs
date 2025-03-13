@@ -47,6 +47,8 @@ public partial class SsPsdbmcatalogue
 
     public virtual ICollection<Ppmpcatalogue> Ppmpcatalogues { get; set; } = new List<Ppmpcatalogue>();
 
+    public virtual ICollection<SsPsdbmcatalogueOffice> SsPsdbmcatalogueOffices { get; set; } = new List<SsPsdbmcatalogueOffice>();
+
     public virtual SsSubCategory? SubCategory { get; set; }
 
     public virtual SsUnitOfMeasurement? UnitOfMeasurement { get; set; }

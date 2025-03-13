@@ -17,6 +17,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Service.SystemSetup
 {
@@ -83,7 +84,7 @@ namespace Service.SystemSetup
 
         protected override IQueryable<SsPsdbmcatalogue> IncludeNavigationProperties(IQueryable<SsPsdbmcatalogue> query)
         {
-            return query.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory);
+            return query.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory).Include(o => o.SsPsdbmcatalogueOffices);
         }
 
         protected override IQueryable<SsPsdbmcatalogue> ApplySearchFilter(IQueryable<SsPsdbmcatalogue> query, string searchQuery)
@@ -104,6 +105,37 @@ namespace Service.SystemSetup
                             .Any(value => value != null && value.Contains(searchQuery)));
         }
 
+        public override async Task<(IEnumerable<PSDBMCatalogueDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters)
+        {
+            var query = _context.SsPsdbmcatalogues.Where(x => x.IsActive && x.IsCurrent == true);
+
+            if (pagingParameters.Filters != null && pagingParameters.Filters.Any())
+            {
+                // Apply dynamic filters
+                query = ApplyFilters(query, pagingParameters.Filters);
+            }
+
+            if (!string.IsNullOrEmpty(pagingParameters.SearchQuery))
+            {
+                query = ApplySearchFilter(query, pagingParameters.SearchQuery);
+            }
+
+            var totalRecords = await query.CountAsync();
+            var data = await query.Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
+                                  .Take(pagingParameters.PageSize)
+                                  .ToListAsync();
+
+            var dtoData = data.Select(MapToDto).ToList();
+            return (dtoData, totalRecords);
+        }
+
+        public override async Task<PSDBMCatalogueDto> GetByIdAsync(int id)
+        {
+            var entity = await _context.SsPsdbmcatalogues.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory).Include(o => o.SsPsdbmcatalogueOffices).ThenInclude(x => x.Department).ThenInclude(x => x.Bureau).FirstOrDefaultAsync(x => x.PsdbmcatalogueId == id);
+            
+            return entity != null ? MapToDto(entity) : null;
+        }
+
         protected override PSDBMCatalogueDto MapToDto(SsPsdbmcatalogue entity)
         {
             var dto = new PSDBMCatalogueDto
@@ -113,6 +145,7 @@ namespace Service.SystemSetup
                 Description = entity.Description,
                 Remarks = entity.Remarks,
                 UnitPrice = entity.UnitPrice.HasValue ? entity.UnitPrice.Value : 0,
+                CatalogueYearStr = entity.CatalogueYear.HasValue ? entity.CatalogueYear.Value.Year.ToString() : string.Empty,
                 IsActive = entity.IsActive,
                 CreatedDate = entity.CreatedDate,
                 CreatedBy = entity.CreatedByUserId,
@@ -125,14 +158,63 @@ namespace Service.SystemSetup
                 SubCategoryName = entity.SubCategory?.Name,
                 SubCategoryId = entity.SubCategoryId,
                 ItemTypeName = entity.ItemType?.Name,
-                ItemTypeId = entity.ItemTypeId
+                ItemTypeId = entity.ItemTypeId,
+                CatalogueOffices = entity.SsPsdbmcatalogueOffices.Where(x => x.IsActive).Select(x => new PSDBMCatalogueOfficeDto
+                {
+                    PSDBMCatalogueId = x.PsdbmcatalogueId,
+                    DepartmentId = x.DepartmentId,
+                    Department = new DepartmentDto { 
+                        Bureau = new BureauDto { 
+                            Name = x.Department.Bureau.Name
+                        },
+                        Name = x.Department.Name
+                    }
+                }).ToList()
             };
             return dto;
+        }
+
+        public override async Task UpdateAsync(PSDBMCatalogueDto dto)
+        {
+            var entity = MapToEntity(dto);
+
+            // update parent
+            _dbSet.Update(entity);
+
+            #region CatalogueOffices
+
+            // update child roles: delete then insert
+            _context.SsPsdbmcatalogueOffices.RemoveRange(_context.SsPsdbmcatalogueOffices.Where(x => x.PsdbmcatalogueId == entity.PsdbmcatalogueId));
+
+            // loop through dto.WorkStepApprovers
+            dto.CatalogueOffices.ForEach(item =>
+            {
+                var catalogueOffice = new SsPsdbmcatalogueOffice
+                {
+                    DepartmentId = item.DepartmentId.Value,
+                    PsdbmcatalogueId = entity.PsdbmcatalogueId,
+                    CreatedByUserId = entity.CreatedByUserId,
+                    CreatedDate = entity.CreatedDate,
+                    IsActive = item.IsActive
+                };
+                _context.SsPsdbmcatalogueOffices.Add(catalogueOffice);
+            });
+
+            await _context.SaveChangesAsync();
+
+            #endregion
         }
 
         protected override SsPsdbmcatalogue MapToEntity(PSDBMCatalogueDto dto)
         {
             var entity = _dbSet.Find(dto.Id) ?? new SsPsdbmcatalogue();
+
+            var catalogueYear = new DateTime(DateTime.Now.Year, 01, 01);
+
+            if (!string.IsNullOrEmpty(dto.CatalogueYearStr))
+            {
+                catalogueYear = new DateTime(Convert.ToInt32(dto.CatalogueYearStr), 01, 01); 
+            }
 
             entity.Code = dto.Code;
             entity.Description = dto.Description;
@@ -142,6 +224,7 @@ namespace Service.SystemSetup
             entity.SubCategoryId = dto.SubCategoryId == 0 || dto.SubCategoryId == null ? null : dto.SubCategoryId.Value;
             entity.UnitOfMeasurementId = dto.UnitOfMeasurementId;
             entity.UnitPrice = dto.UnitPrice;
+            entity.CatalogueYear = catalogueYear;
             entity.Remarks = dto.Remarks;
 
             if (dto.Id == 0)
@@ -169,16 +252,6 @@ namespace Service.SystemSetup
         public override Task<object> AddAsync(PSDBMCatalogueDto dto)
         {
             var result = base.AddAsync(dto);
-
-            // clear cached items
-            _cacheService.Remove("CachedPSDBMCatalogue");
-
-            return result;
-        }
-
-        public override Task UpdateAsync(PSDBMCatalogueDto dto)
-        {
-            var result =  base.UpdateAsync(dto);
 
             // clear cached items
             _cacheService.Remove("CachedPSDBMCatalogue");
