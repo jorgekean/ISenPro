@@ -9,6 +9,10 @@ using StackExchange.Redis;
 using Service.Transaction.Interface;
 using Service.Transaction;
 using Service.Cache;
+using Service;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +33,38 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader()
                           .AllowAnyMethod());
 });
+
+#region JWT Auth
+var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // Use true in production with HTTPS
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+// Optionally, configure role-based policies.
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    // Add additional policies if needed.
+});
+#endregion
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -94,6 +130,12 @@ builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 builder.Services.AddScoped<IPpmpService, PpmpService>();
 #endregion
 
+#region Authentication
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+#endregion
+
 #endregion
 
 #region Serilog
@@ -103,7 +145,7 @@ var logFilePath = builder.Configuration["Logging:Serilog:LogFilePath"];
 // Configure Serilog for daily rolling files
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Error()  // Log only errors
-    //.WriteTo.Console() // Optional: Logs to the console
+                           //.WriteTo.Console() // Optional: Logs to the console
     .WriteTo.File(
         path: logFilePath ?? "Logs/log-.txt", // Log file name pattern
         rollingInterval: RollingInterval.Day, // Create a new file daily
@@ -140,6 +182,8 @@ app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

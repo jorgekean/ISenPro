@@ -1,4 +1,5 @@
 ﻿using API.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
@@ -8,19 +9,20 @@ using Service.UserManagement.Interface;
 namespace API.Controllers.UserManagement
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class RolesController : ControllerBase
     {
         private readonly IRoleService _roleService;
         private readonly ILogger<RolesController> _logger;
-
+      
         public RolesController(IRoleService roleService, ILogger<RolesController> logger)
         {
             _roleService = roleService;
             _logger = logger;
         }
 
-        // GET: api/Roles
+        // GET: api/Roles        
         [HttpGet]
         public async Task<ActionResult<PaginatedResponse<RoleDto>>> GetRoles([FromQuery] PagingParameters pagingParameters)
         {
