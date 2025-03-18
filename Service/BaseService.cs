@@ -6,7 +6,7 @@ namespace Service
 {
     using EF;
     using EF.Models;
-       using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -122,7 +122,7 @@ namespace Service
                     }
                 }
             }
-          
+
 
             public virtual async Task DeleteAsync(string id)
             {
@@ -144,11 +144,11 @@ namespace Service
                 }
             }
 
-           
+
             public virtual IQueryable<TEntity> ApplyFilters(IQueryable<TEntity> query, List<Filter> filters)
-            {               
+            {
                 return query;
-            }           
+            }
 
 
             public virtual async Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters)
@@ -164,6 +164,43 @@ namespace Service
                 if (!string.IsNullOrEmpty(pagingParameters.SearchQuery))
                 {
                     query = ApplySearchFilter(query, pagingParameters.SearchQuery);
+                }
+
+                // Apply server-side sorting if sort instructions are provided
+                if (pagingParameters.SortBy != null && pagingParameters.SortBy.Any())
+                {
+                    bool firstSort = true;
+                    foreach (var sort in pagingParameters.SortBy)
+                    {
+                        // Use reflection to find the correct property name, ignoring case.
+                        var propertyInfo = typeof(TEntity)
+                            .GetProperties()
+                            .FirstOrDefault(pi => string.Equals(pi.Name, sort.Id, StringComparison.OrdinalIgnoreCase));
+
+                        if (propertyInfo == null)
+                        {
+                            // If no matching property is found, you might choose to skip this sort instruction.
+                            continue;
+                        }
+
+                        // Use the correct property name from the entity.
+                        string propertyName = propertyInfo.Name;
+
+                        if (firstSort)
+                        {
+                            query = sort.Desc
+                                ? query.OrderByDescending(e => EF.Property<object>(e, propertyName))
+                                : query.OrderBy(e => EF.Property<object>(e, propertyName));
+                            firstSort = false;
+                        }
+                        else
+                        {
+                            var orderedQuery = query as IOrderedQueryable<TEntity>;
+                            query = sort.Desc
+                                ? orderedQuery.ThenByDescending(e => EF.Property<object>(e, propertyName))
+                                : orderedQuery.ThenBy(e => EF.Property<object>(e, propertyName));
+                        }
+                    }
                 }
 
                 var totalRecords = await query.CountAsync();

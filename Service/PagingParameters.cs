@@ -11,6 +11,8 @@ namespace Service
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
         public string? SearchQuery { get; set; } = string.Empty;
+        public List<SortParameter>? SortBy { get; set; }
+
 
         public List<Filter> Filters { get; set; } = new List<Filter>();
     }
@@ -25,5 +27,11 @@ namespace Service
     {
         public required string FilterName { get; set; }
         public List<FilterOption> FilterOptions { get; set; } = new List<FilterOption>();
+    }
+
+    public class SortParameter
+    {
+        public string Id { get; set; }
+        public bool Desc { get; set; }
     }
 }
