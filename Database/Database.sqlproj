@@ -106,5 +106,6 @@
     <Build Include="dbo\Views\v_PpmpSupplementaryCatalogues.sql" />
     <Build Include="dbo\Views\v_PpmpPSDBMCatalogues.sql" />
     <Build Include="dbo\Views\v_ParentModule.sql" />
+    <Build Include="dbo\Tables\SS_PSDBMCatalogueOffice.sql" />
   </ItemGroup>
 </Project>

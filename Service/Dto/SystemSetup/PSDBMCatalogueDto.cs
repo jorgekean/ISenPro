@@ -1,4 +1,5 @@
 ﻿
+using EF.Models;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +10,8 @@ namespace Service.Dto.SystemSetup
         public int Id { get; set; }
 
         public DateTime? CatalogueYear { get; set; }
+
+        public string? CatalogueYearStr { get; set; }
 
         public string? Code { get; set; }
 
@@ -49,5 +52,7 @@ namespace Service.Dto.SystemSetup
         public virtual MajorCategoryDto? MajorCategory { get; set; } = null!;
         
         public virtual SubCategoryDto? SubCategory { get; set; } = null!;
+
+        public virtual List<PSDBMCatalogueOfficeDto> CatalogueOffices { get; set; } = new List<PSDBMCatalogueOfficeDto>();
     }
 }

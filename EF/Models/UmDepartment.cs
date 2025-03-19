@@ -27,6 +27,8 @@ public partial class UmDepartment
 
     public virtual ICollection<Ppmp> Ppmps { get; set; } = new List<Ppmp>();
 
+    public virtual ICollection<SsPsdbmcatalogueOffice> SsPsdbmcatalogueOffices { get; set; } = new List<SsPsdbmcatalogueOffice>();
+
     public virtual ICollection<UmPerson> UmPeople { get; set; } = new List<UmPerson>();
 
     public virtual ICollection<UmSection> UmSections { get; set; } = new List<UmSection>();
