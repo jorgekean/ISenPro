@@ -1,12 +1,5 @@
 ﻿using EF.Models;
 using Microsoft.EntityFrameworkCore;
-//using Org.BouncyCastle.Crypto.Generators;
-using Service.Dto.UserManagement;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -19,6 +12,8 @@ namespace Service
         public string RoleCode { get; set; }
         public string RoleName { get; set; }
         public string Department { get; set; }
+
+        public List<string> ModuleNames { get; set; }
 
     }
 
@@ -64,10 +59,16 @@ namespace Service
             var userInfo = await _context.UmUserAccounts
                 .Include(s => s.Person).ThenInclude(t => t.Department)
                 .Include(s => s.Role)
-                .FirstOrDefaultAsync(f=>f.UserAccountId == id);
+                .FirstOrDefaultAsync(f => f.UserAccountId == id);
 
             if (userInfo != null)
             {
+                // distinct module names
+                var moduleNames = _context.VRoleModuleControls
+               .Where(x => x.RoleId == userInfo.RoleId.Value)
+               .GroupBy(x => new { x.RoleId, x.ParentModuleName, x.ModuleName })
+               .Select(s => s.Key.ModuleName.ToLower() ?? "").ToList();
+
                 result = new UserAccountAuthModel
                 {
                     UserAccountId = userInfo.UserAccountId,
@@ -75,7 +76,9 @@ namespace Service
                     Email = userInfo.Person?.Email,
                     RoleCode = userInfo.Role?.Code,
                     RoleName = userInfo.Role?.Name,
-                    Department = userInfo.Person?.Department?.Name
+                    Department = userInfo.Person?.Department?.Name,
+
+                    ModuleNames = moduleNames
                 };
             }
 
