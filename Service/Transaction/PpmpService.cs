@@ -33,10 +33,10 @@ namespace Service.Transaction
         //    return query.Include(o => o.RequestingOffice);//.Include(i => i.Ppmpcatalogues).Include(i => i.Ppmpsupplementaries);
         //}
 
-        protected override IQueryable<Ppmp> ApplySearchFilter(IQueryable<Ppmp> query, string searchQuery)
-        {
-            return query;// no need to apply search filter since we are using dynamic ApplySearchFilter
-        }
+        //protected override IQueryable<Ppmp> ApplySearchFilter(IQueryable<Ppmp> query, string searchQuery)
+        //{
+        //    return query;// no need to apply search filter since we are using dynamic ApplySearchFilter
+        //}
 
         protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {

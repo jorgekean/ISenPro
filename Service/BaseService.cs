@@ -250,7 +250,7 @@ namespace Service
                     foreach (var sort in pagingParameters.SortBy)
                     {
                         // Use reflection to find the correct property name, ignoring case.
-                        var propertyInfo = typeof(TEntity)
+                        var propertyInfo = typeof(TDynamic)
                             .GetProperties()
                             .FirstOrDefault(pi => string.Equals(pi.Name, sort.Id, StringComparison.OrdinalIgnoreCase));
 
@@ -321,7 +321,11 @@ namespace Service
                 return query; // By default, no search filter is applied.
             }
 
-            protected abstract IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string searchQuery);
+            protected virtual IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string searchQuery)
+            {
+                return query; // By default, no search filter is applied.
+            }
+            //protected abstract IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string searchQuery);
 
             protected virtual IQueryable<TDynamic> ApplyDynamicSearchFilter<TDynamic>(IQueryable<TDynamic> query, string searchQuery) where TDynamic : class
             {
