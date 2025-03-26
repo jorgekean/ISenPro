@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Service.Transaction
 {
@@ -27,15 +28,34 @@ namespace Service.Transaction
             _cachedItems = cachedItems;
         }
 
-        protected override IQueryable<Ppmp> IncludeNavigationProperties(IQueryable<Ppmp> query)
-        {
-            return query.Include(o => o.RequestingOffice);//.Include(i => i.Ppmpcatalogues).Include(i => i.Ppmpsupplementaries);
-        }
+        //protected override IQueryable<Ppmp> IncludeNavigationProperties(IQueryable<Ppmp> query)
+        //{
+        //    return query.Include(o => o.RequestingOffice);//.Include(i => i.Ppmpcatalogues).Include(i => i.Ppmpsupplementaries);
+        //}
 
         protected override IQueryable<Ppmp> ApplySearchFilter(IQueryable<Ppmp> query, string searchQuery)
         {
-            return query.Where(p => new[] { p.BudgetYear.ToString(), p.Remarks, p.Status }
+            return query;// no need to apply search filter since we are using dynamic ApplySearchFilter
+        }
+
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
+        {
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VPpmpindex))
+            {
+                var typedQuery = query as IQueryable<VPpmpindex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    typedQuery = typedQuery.Where(p => new[] { p.BudgetYear.ToString(), p.Remarks, p.Status, p.Ppmpno, p.OfficeName, p.PreparedBy }
                              .Any(value => value != null && value.Contains(searchQuery)));
+                }
+
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
+            }
+
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
+            return query;
         }
 
         public override async Task<PPMPDto> GetByIdAsync(int id)
@@ -368,7 +388,7 @@ namespace Service.Transaction
         }
 
         protected override Ppmp MapToEntity(PPMPDto dto)
-        {
+         {
             var entity = new Ppmp
             {
                 Ppmpid = dto.Id,

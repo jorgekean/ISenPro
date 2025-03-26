@@ -8,10 +8,13 @@ namespace Service
     {
         public int UserAccountId { get; set; }
         public string UserName { get; set; }
+        public string DisplayName { get; set; }
         public string Email { get; set; }
         public string RoleCode { get; set; }
         public string RoleName { get; set; }
         public string Department { get; set; }
+        public int DepartmentId { get; set; }
+        public int RoleId { get; set; }
 
         public List<string> ModuleNames { get; set; }
 
@@ -73,10 +76,13 @@ namespace Service
                 {
                     UserAccountId = userInfo.UserAccountId,
                     UserName = userInfo.UserId,
+                    DisplayName = $"{userInfo.Person.LastName}, {userInfo.Person.FirstName}",
                     Email = userInfo.Person?.Email,
                     RoleCode = userInfo.Role?.Code,
                     RoleName = userInfo.Role?.Name,
                     Department = userInfo.Person?.Department?.Name,
+                    DepartmentId = userInfo.Person?.DepartmentId ?? 0,
+                    RoleId = userInfo.RoleId ?? 0,
 
                     ModuleNames = moduleNames
                 };

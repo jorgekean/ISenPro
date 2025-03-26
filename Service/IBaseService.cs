@@ -13,9 +13,11 @@ namespace Service
         Task<TDto> GetByIdAsync(int id);
         Task<TDto> GetByIdAsync(string id);
         Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters);
+        Task<(IEnumerable<TDynamic> Data, int TotalRecords)> GetComplexPagedAndFilteredAsync<TDynamic>(PagingParameters pagingParameters) where TDynamic : class;
         Task<object> AddAsync(TDto dto);
         Task UpdateAsync(TDto dto);
         Task DeleteAsync(string id);
         Task DeleteAsync(int id);
-    }    
+
+    } 
 }

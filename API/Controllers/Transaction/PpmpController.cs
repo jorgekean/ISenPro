@@ -9,6 +9,7 @@ using Service.Dto.Transaction;
 using Microsoft.EntityFrameworkCore;
 using Service.SystemSetup;
 using Service.Cache;
+using EF.Models;
 
 namespace API.Controllers.Transaction
 {
@@ -31,13 +32,13 @@ namespace API.Controllers.Transaction
         #region CRUD
         // GET: api/ppmps
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<PPMPDto>>> GetAll([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VPpmpindex>>> GetAll([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _ppmpService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _ppmpService.GetComplexPagedAndFilteredAsync<VPpmpindex>(pagingParameters);
 
-                var response = new PaginatedResponse<PPMPDto>
+                var response = new PaginatedResponse<VPpmpindex>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,

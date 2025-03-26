@@ -17,12 +17,12 @@ namespace Service
         public abstract class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto> where TEntity : class where TDto : class
         {
             protected readonly ISenProContext _context;
-            protected readonly DbSet<TEntity> _dbSet;
+            protected readonly DbSet<TEntity> _dbSet;            
 
             public BaseService(ISenProContext context)
             {
                 _context = context;
-                _dbSet = _context.Set<TEntity>();
+                _dbSet = _context.Set<TEntity>();                
             }
 
             public virtual async Task<IEnumerable<TDto>> GetAllAsync()
@@ -150,6 +150,11 @@ namespace Service
                 return query;
             }
 
+            public virtual IQueryable<TDynamic> ApplyDynamicFilters<TDynamic>(IQueryable<TDynamic> query, List<Filter> filters) where TDynamic : class
+            {
+                return query;
+            }
+
 
             public virtual async Task<(IEnumerable<TDto> Data, int TotalRecords)> GetPagedAndFilteredAsync(PagingParameters pagingParameters)
             {
@@ -202,6 +207,11 @@ namespace Service
                         }
                     }
                 }
+                //  else apply default sorting
+                else
+                {
+                    query = query.OrderByDescending(e => EF.Property<object>(e, "CreatedDate"));
+                }
 
                 var totalRecords = await query.CountAsync();
                 var data = await query.Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
@@ -210,6 +220,78 @@ namespace Service
 
                 var dtoData = data.Select(MapToDto).ToList();
                 return (dtoData, totalRecords);
+            }
+
+            /// <summary>
+            /// Used for Index page with complex data structure
+            /// </summary>
+            /// <param name="pagingParameters"></param>
+            /// <returns></returns>
+            public virtual async Task<(IEnumerable<TDynamic> Data, int TotalRecords)> GetComplexPagedAndFilteredAsync<TDynamic>(PagingParameters pagingParameters)
+                 where TDynamic : class
+            {
+                var query = _context.Set<TDynamic>().Where(e => EF.Property<bool>(e, "IsActive"));
+
+                if (pagingParameters.Filters != null && pagingParameters.Filters.Any())
+                {
+                    // Apply dynamic filters
+                    query = ApplyDynamicFilters<TDynamic>(query, pagingParameters.Filters);
+                }
+
+                if (!string.IsNullOrEmpty(pagingParameters.SearchQuery))
+                {
+                    query = ApplySearchFilter(query, pagingParameters.SearchQuery);// ApplyDynamicSearchFilter<TDynamic>(query, pagingParameters.SearchQuery);
+                }
+
+                // Apply server-side sorting if sort instructions are provided
+                if (pagingParameters.SortBy != null && pagingParameters.SortBy.Any())
+                {
+                    bool firstSort = true;
+                    foreach (var sort in pagingParameters.SortBy)
+                    {
+                        // Use reflection to find the correct property name, ignoring case.
+                        var propertyInfo = typeof(TEntity)
+                            .GetProperties()
+                            .FirstOrDefault(pi => string.Equals(pi.Name, sort.Id, StringComparison.OrdinalIgnoreCase));
+
+                        if (propertyInfo == null)
+                        {
+                            // If no matching property is found, you might choose to skip this sort instruction.
+                            continue;
+                        }
+
+                        // Use the correct property name from the entity.
+                        string propertyName = propertyInfo.Name;
+
+                        if (firstSort)
+                        {
+                            query = sort.Desc
+                                ? query.OrderByDescending(e => EF.Property<object>(e, propertyName))
+                                : query.OrderBy(e => EF.Property<object>(e, propertyName));
+                            firstSort = false;
+                        }
+                        else
+                        {
+                            var orderedQuery = query as IOrderedQueryable<TDynamic>;
+                            query = sort.Desc
+                                ? orderedQuery.ThenByDescending(e => EF.Property<object>(e, propertyName))
+                                : orderedQuery.ThenBy(e => EF.Property<object>(e, propertyName));
+                        }
+                    }
+                }
+                //  else apply default sorting
+                else
+                {
+                    query = query.OrderByDescending(e => EF.Property<object>(e, "CreatedDate"));
+                }
+
+                var totalRecords = await query.CountAsync();
+                var data = await query.Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
+                                      .Take(pagingParameters.PageSize)
+                                      .ToListAsync();
+
+                //var dtoData = data.Select(MapToDto).ToList();
+                return (data.ToList(), totalRecords);
             }
 
             protected virtual IQueryable<TEntity> IncludeNavigationProperties(IQueryable<TEntity> query)
@@ -234,8 +316,17 @@ namespace Service
             }
 
 
+            protected virtual IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery) where T : class
+            {
+                return query; // By default, no search filter is applied.
+            }
 
             protected abstract IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string searchQuery);
+
+            protected virtual IQueryable<TDynamic> ApplyDynamicSearchFilter<TDynamic>(IQueryable<TDynamic> query, string searchQuery) where TDynamic : class
+            {
+                return query; // By default, no search filter is applied.
+            }
 
             // Mapping methods
             protected abstract TDto MapToDto(TEntity entity);

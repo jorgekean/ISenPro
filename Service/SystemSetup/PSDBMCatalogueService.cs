@@ -75,7 +75,7 @@ namespace Service.SystemSetup
 
                         // Apply the OR condition to the query
                         query = query.Where(filterCondition);
-                    }
+                    }   
                 }
             }
 
