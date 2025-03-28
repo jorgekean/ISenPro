@@ -43,7 +43,7 @@ public partial class VPpmpPsdbmcatalogue
 
     public string? CatalogueCode { get; set; }
 
-    public string? MajorCategoryName { get; set; }
+    public string MajorCategoryName { get; set; } = null!;
 
     public string? UnitOfMeasurementCode { get; set; }
 

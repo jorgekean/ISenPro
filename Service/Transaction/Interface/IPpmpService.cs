@@ -8,6 +8,8 @@ namespace Service.Transaction.Interface
     {
         // Additional methods specific to this service
 
+        // report
+        Task GenerateReport(int id);
         IList<int> GetBudgetYears();
     }
 }

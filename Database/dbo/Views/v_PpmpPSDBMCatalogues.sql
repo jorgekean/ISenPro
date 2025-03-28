@@ -1,4 +1,5 @@
-﻿CREATE VIEW v_PpmpPSDBMCatalogues AS
+﻿
+CREATE VIEW v_PpmpPSDBMCatalogues AS
 SELECT 
     pc.*,
     c.Code AS CatalogueCode,
@@ -6,11 +7,11 @@ SELECT
     uom.Code AS UnitOfMeasurementCode,
     ac.Description AS AccountCodeDescription
 FROM dbo.PPMPCatalogues pc
-LEFT JOIN dbo.SS_PSDBMCatalogue c
+JOIN dbo.SS_PSDBMCatalogue c
     ON pc.CatalogueId = c.PSDBMCatalogueId
-LEFT JOIN dbo.SS_MajorCategory mc
+JOIN dbo.SS_MajorCategory mc
     ON c.MajorCategoryId = mc.MajorCategoryId
-LEFT JOIN dbo.SS_UnitOfMeasurement uom
+JOIN dbo.SS_UnitOfMeasurement uom
     ON c.UnitOfMeasurementId = uom.UnitOfMeasurementId
-LEFT JOIN dbo.SS_AccountCode ac
+JOIN dbo.SS_AccountCode ac
     ON c.AccountCodeId = ac.AccountCodeId;

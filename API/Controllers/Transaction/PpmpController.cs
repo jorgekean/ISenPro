@@ -137,6 +137,24 @@ namespace API.Controllers.Transaction
 
         #endregion
 
+        #region Reports
+        [HttpGet("printpreview")]
+        public async Task<ActionResult<PPMPDto>> GetPPMPReport(int id)
+        {
+            try
+            {
+                await _ppmpService.GenerateReport(id);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
+            return BadRequest();
+        }
+        #endregion
+
         [HttpGet("budgetyears")]
         public async Task<ActionResult<IList<int>>> GetBudgetYears()
         {

@@ -6,6 +6,8 @@ using Service.Cache;
 using Service.Dto.SystemSetup;
 using Service.Dto.Transaction;
 using Service.Dto.UserManagement;
+using Service.Reports;
+using Service.Reports.Transactions;
 using Service.Service;
 using Service.SystemSetup.Interface;
 using Service.Transaction.Interface;
@@ -28,16 +30,7 @@ namespace Service.Transaction
             _cachedItems = cachedItems;
         }
 
-        //protected override IQueryable<Ppmp> IncludeNavigationProperties(IQueryable<Ppmp> query)
-        //{
-        //    return query.Include(o => o.RequestingOffice);//.Include(i => i.Ppmpcatalogues).Include(i => i.Ppmpsupplementaries);
-        //}
-
-        //protected override IQueryable<Ppmp> ApplySearchFilter(IQueryable<Ppmp> query, string searchQuery)
-        //{
-        //    return query;// no need to apply search filter since we are using dynamic ApplySearchFilter
-        //}
-
+        #region CRUD
         protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
             // If the type is MyEntity, cast the query and apply filtering.
@@ -479,6 +472,65 @@ namespace Service.Transaction
             return entity;
         }
 
+        #endregion
+
+        #region Reports
+        //  Implement the PPMPGenerateReport method here
+        public async Task GenerateReport(int ppmpId)
+        {
+            string templatePath = "C:\\Users\\Jorge\\Documents\\Freelance\\PPMS\\Report Templates\\PpmpReportTemplateMergeField.docx";
+            string outputPath = $"C:\\Users\\Jorge\\Documents\\Freelance\\PPMS\\Report Output\\PPMP_Output_{DateTime.Now.ToString("MMddyyyyHHmmss")}.docx";
+
+            // Load the PPMP record
+            var ppmp = await _context.Ppmps
+                .Include(p => p.RequestingOffice)
+                .FirstOrDefaultAsync(p => p.Ppmpid == ppmpId);
+
+            // Load the PPMP Catalogues
+            var ppmpCatalogues = await _context.Ppmpcatalogues
+                .Include(c => c.Catalogue)
+                .Where(c => c.Ppmpid == ppmpId)
+                .ToListAsync();
+
+            // Load the PPMP Supplementaries
+            var ppmpSupplementaries = await _context.Ppmpsupplementaries
+                .Include(s => s.Supplementary)
+                .Where(s => s.Ppmpid == ppmpId)
+                .ToListAsync();
+
+            // Load the PPMP Projects
+            var ppmpProjects = await _context.Ppmpprojects
+                .Include(p => p.AccountCode)
+                .Where(p => p.Ppmpid == ppmpId)
+                .ToListAsync();
+
+            // Prepare the placeholders
+            var placeholders = new Dictionary<string, string>
+            {
+                { BaseGenerateReport.MERGEFIELD_BUDGETYEAR, ppmp.BudgetYear.ToString() },
+                { BaseGenerateReport.MERGEFIELD_DEPARTMENTNAME, ppmp.RequestingOffice.Name }
+            };
+
+            var generator = new PPMPGenerateReport();
+            generator.Items = ppmpCatalogues.Select(c => new PPMPItem
+            {
+                Description = c.Catalogue.Description,
+                Qtr1 = c.FirstQuarter,
+                Qtr2 = c.SecondQuarter,
+                Qtr3 = c.ThirdQuarter,
+                Qtr4 = c.FourthQuarter,
+                Amount = c.Amount,
+                Remarks = c.Remarks,
+                UnitPrice = c.UnitPrice,
+                //UOM = c.
+            }).ToList();
+            generator.GenerateReport(templatePath, outputPath, placeholders);
+
+            // Replace the table placeholders
+            //ReplaceTablePlaceholders(outputPath, ppmpCatalogues, ppmpSupplementaries, ppmpProjects);
+        }
+        #endregion
+
         public IList<int> GetBudgetYears()
         {
             // to do
@@ -512,8 +564,7 @@ namespace Service.Transaction
             splitReferenceNo[2] = seriesNumber.ToString("D4"); // Ensures 4-digit formatting
 
             return string.Join("-", splitReferenceNo);
-        }
-
+        }   
         #endregion
     }
 }
