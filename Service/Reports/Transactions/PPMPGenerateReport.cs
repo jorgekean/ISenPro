@@ -10,6 +10,7 @@ namespace Service.Reports.Transactions
     {
         // Merge field name to identify the row to clone
         private const string ROW_MERGEFIELD = "description";
+        private Dictionary<string, string> _mergeValues;
 
         public override void GenerateReport(string templatePath, string outputPath, Dictionary<string, string> mergeValues)
         {
@@ -18,6 +19,8 @@ namespace Service.Reports.Transactions
 
             // 2) Now handle table merge fields in the output file
             FillPPMPTable(outputPath, ROW_MERGEFIELD, Items);
+
+            _mergeValues = mergeValues;
         }
 
         public List<PPMPItem> Items { get; set; } = new List<PPMPItem>();
@@ -26,6 +29,8 @@ namespace Service.Reports.Transactions
         {
             using (WordprocessingDocument doc = WordprocessingDocument.Open(filePath, true))
             {
+                var body = doc.MainDocumentPart.Document.Body;
+
                 // Find the table that has the merge field
                 Table table = doc.MainDocumentPart.Document.Body
                     .Descendants<Table>()
@@ -76,6 +81,34 @@ namespace Service.Reports.Transactions
                         templateRow.Remove();
                     }
                 }
+
+                #region chart
+                //// Add chart if we find a chart placeholder
+                //var chartPlaceholder = body.Descendants<Text>()
+                //    .FirstOrDefault(t => t.Text.Contains("«PIE_CHART»"));
+
+                //if (chartPlaceholder != null)
+                //{
+                //    // Prepare chart data (example - group by category)
+                //    //var chartData = items
+                //    //    .GroupBy(i => i.Category) // Assuming PPMPItem has a Category property
+                //    //    .ToDictionary(g => g.Key, g => g.Sum(i => i.TotalPrice));
+
+                //    var chartData = new Dictionary<string, float>
+                //    {
+                //        { "PSDBMs", 1500000 },
+                //        { "Supplementaries", 200000 },
+                //        { "Projects", 300000 }
+
+                //    };
+
+                //    //byte[] chartImage = ChartGenerator.GeneratePieChart(chartData);
+
+                //    // Insert the chart image
+                //    WordChartInserter.InsertChartIntoWord(doc, chartData);
+                //}
+                #endregion
+
                 doc.MainDocumentPart.Document.Save();
             }
         }

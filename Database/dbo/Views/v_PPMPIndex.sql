@@ -1,5 +1,4 @@
-﻿
-CREATE VIEW dbo.v_PPMPIndex
+﻿CREATE VIEW dbo.v_PPMPIndex
 AS
 SELECT a.PPMPId,
        a.BudgetYear,
@@ -13,5 +12,6 @@ SELECT a.PPMPId,
 FROM dbo.PPMPs a
     JOIN dbo.UM_Department d
         ON d.DepartmentId = a.RequestingOfficeId
-    JOIN dbo.UM_Person p
-        ON p.PersonId = a.CreatedByUserId;
+    JOIN dbo.UM_UserAccount ua
+        ON ua.UserAccountId = a.CreatedByUserId
+	JOIN dbo.UM_Person p ON p.PersonId = ua.PersonId

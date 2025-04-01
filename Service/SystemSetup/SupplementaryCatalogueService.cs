@@ -156,10 +156,14 @@ namespace Service.SystemSetup
         /// Get Current Catalogue
         /// </summary>
         /// <returns></returns>
-        public async Task<List<SupplementaryCatalogueDto>> GetAllCurrent()
+        public async Task<List<SupplementaryCatalogueDto>> GetAllCurrent(int year)
         {
             var query = IncludeNavigationProperties(_dbSet);
-            var entities = await query.Where(e => e.IsActive && e.IsCurrent.HasValue && e.IsCurrent.Value).ToListAsync();
+
+            var entities = await query.Where(e => e.IsActive 
+            && e.CatalogueYear.HasValue && e.CatalogueYear.Value.Year == year
+            && e.IsCurrent.HasValue && e.IsCurrent.Value).ToListAsync();
+
             return entities.Select(MapToDto).ToList();
         }
 

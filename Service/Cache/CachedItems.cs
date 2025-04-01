@@ -1,14 +1,6 @@
-﻿using EF.Models;
-using Microsoft.EntityFrameworkCore;
-using Service.Dto.SystemSetup;
+﻿using Service.Dto.SystemSetup;
 using Service.SystemSetup.Interface;
 using Service.UserManagement.Interface;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Cache
 {
@@ -21,8 +13,8 @@ namespace Service.Cache
         private readonly IRoleService _roleService;
         private readonly int _expirationHours = 24;
 
-        public CachedItems(IGenericCacheService cacheService, 
-            IPSDBMCatalogueService catalogueService, 
+        public CachedItems(IGenericCacheService cacheService,
+            IPSDBMCatalogueService catalogueService,
             ISupplementaryCatalogueService supplementaryCatalogueService,
             IAccountCodeService accountCodeService,
             IRoleService roleService)
@@ -34,14 +26,16 @@ namespace Service.Cache
             _accountCodeService = accountCodeService;
         }
 
-        public Task<List<PSDBMCatalogueDto>> PSDBMCatalogues =>
-            _cacheService.GetOrCreateAsync("CachedPSDBMCatalogue", async () => (await (_psdbmCatalogueService.GetAllCurrent())).ToList(), TimeSpan.FromHours(_expirationHours));
+        public Task<List<PSDBMCatalogueDto>> GetPSDBMCatalogues(int year) =>
+            _cacheService.GetOrCreateAsync($"CachedPSDBMCatalogue_{year}", async () =>
+                (await _psdbmCatalogueService.GetAllCurrent(year)).ToList(), TimeSpan.FromHours(_expirationHours));
 
-        public Task<List<SupplementaryCatalogueDto>> SupplementaryCatalogues =>
-           _cacheService.GetOrCreateAsync("CachedSupplementaryCatalogue", async () => (await (_supplementaryCatalogueService.GetAllCurrent())).ToList(), TimeSpan.FromHours(_expirationHours));
+        public Task<List<SupplementaryCatalogueDto>> GetSupplementaryCatalogues(int year) =>
+           _cacheService.GetOrCreateAsync($"CachedSupplementaryCatalogue_{year}", async () =>
+               (await _supplementaryCatalogueService.GetAllCurrent(year)).ToList(), TimeSpan.FromHours(_expirationHours));
 
         public Task<List<AccountCodeDto>> AccountCodes =>
-          _cacheService.GetOrCreateAsync("CachedAccountCodes", async () => (await (_accountCodeService.GetAllAsync())).ToList(), TimeSpan.FromHours(_expirationHours));
+          _cacheService.GetOrCreateAsync("CachedAccountCodes", async () =>
+              (await _accountCodeService.GetAllAsync()).ToList(), TimeSpan.FromHours(_expirationHours));
     }
-
 }

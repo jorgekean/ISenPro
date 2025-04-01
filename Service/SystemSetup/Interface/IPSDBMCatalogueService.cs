@@ -18,6 +18,6 @@ namespace Service.SystemSetup.Interface
         Task<List<UnitOfMeasurementDto>> GetUnitOfMeasurements();
         Task<List<AccountCodeDto>> GetAccountCodes();
 
-        Task<List<PSDBMCatalogueDto>> GetAllCurrent();
+        Task<List<PSDBMCatalogueDto>> GetAllCurrent(int year);
     }
 }

@@ -29,7 +29,7 @@ namespace Service.SystemSetup
             ) : base(context)
         {
             _cacheService = cacheService;
-        }     
+        }
 
         public Task<List<UnitOfMeasurementDto>> GetUnitOfMeasurements()
         {
@@ -37,7 +37,7 @@ namespace Service.SystemSetup
             {
                 Id = p.UnitOfMeasurementId,
                 Code = p.Code,
-                Name = p.Name                
+                Name = p.Name
             }).ToListAsync();
         }
 
@@ -75,12 +75,12 @@ namespace Service.SystemSetup
 
                         // Apply the OR condition to the query
                         query = query.Where(filterCondition);
-                    }   
+                    }
                 }
             }
 
             return query;
-        }       
+        }
 
         protected override IQueryable<SsPsdbmcatalogue> IncludeNavigationProperties(IQueryable<SsPsdbmcatalogue> query)
         {
@@ -96,8 +96,8 @@ namespace Service.SystemSetup
 
             }
 
-            return query.Where(p => new[] { p.Description, 
-                                            p.Code, 
+            return query.Where(p => new[] { p.Description,
+                                            p.Code,
                                             p.Description,
                                             p.UnitOfMeasurement != null ? p.UnitOfMeasurement.Code : string.Empty,
                                             p.ItemType != null ? p.ItemType.Name : string.Empty,
@@ -132,7 +132,7 @@ namespace Service.SystemSetup
         public override async Task<PSDBMCatalogueDto> GetByIdAsync(int id)
         {
             var entity = await _context.SsPsdbmcatalogues.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory).Include(o => o.SsPsdbmcatalogueOffices).ThenInclude(x => x.Department).ThenInclude(x => x.Bureau).FirstOrDefaultAsync(x => x.PsdbmcatalogueId == id);
-            
+
             return entity != null ? MapToDto(entity) : null;
         }
 
@@ -163,8 +163,10 @@ namespace Service.SystemSetup
                 {
                     PSDBMCatalogueId = x.PsdbmcatalogueId,
                     DepartmentId = x.DepartmentId,
-                    Department = new DepartmentDto { 
-                        Bureau = new BureauDto { 
+                    Department = new DepartmentDto
+                    {
+                        Bureau = new BureauDto
+                        {
                             Name = x.Department.Bureau.Name
                         },
                         Name = x.Department.Name
@@ -213,7 +215,7 @@ namespace Service.SystemSetup
 
             if (!string.IsNullOrEmpty(dto.CatalogueYearStr))
             {
-                catalogueYear = new DateTime(Convert.ToInt32(dto.CatalogueYearStr), 01, 01); 
+                catalogueYear = new DateTime(Convert.ToInt32(dto.CatalogueYearStr), 01, 01);
             }
 
             entity.Code = dto.Code;
@@ -241,10 +243,14 @@ namespace Service.SystemSetup
         /// Get Current Catalogue
         /// </summary>
         /// <returns></returns>
-        public async Task<List<PSDBMCatalogueDto>> GetAllCurrent()
+        public async Task<List<PSDBMCatalogueDto>> GetAllCurrent(int year)
         {
             var query = IncludeNavigationProperties(_dbSet);
-            var entities = await query.Where(e => e.IsActive && e.IsCurrent.HasValue && e.IsCurrent.Value).ToListAsync();
+
+            var entities = await query.Where(e => e.IsActive
+            && e.CatalogueYear.HasValue && e.CatalogueYear.Value.Year == year
+            && e.IsCurrent.HasValue && e.IsCurrent.Value).ToListAsync();
+
             return entities.Select(MapToDto).ToList();
         }
 
@@ -254,7 +260,7 @@ namespace Service.SystemSetup
             var result = base.AddAsync(dto);
 
             // clear cached items
-            _cacheService.Remove("CachedPSDBMCatalogue");
+            _cacheService.Remove($"CachedPSDBMCatalogue_{dto.CatalogueYear?.Year}");
 
             return result;
         }
@@ -264,7 +270,7 @@ namespace Service.SystemSetup
             var result = base.DeleteAsync(id);
 
             // clear cached items
-            _cacheService.Remove("CachedPSDBMCatalogue");
+            _cacheService.Remove($"CachedPSDBMCatalogue_{DateTime.Now.Year}");// to do: get year from db
 
             return result;
         }

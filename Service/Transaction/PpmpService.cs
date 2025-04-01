@@ -478,7 +478,7 @@ namespace Service.Transaction
         //  Implement the PPMPGenerateReport method here
         public async Task GenerateReport(int ppmpId)
         {
-            string templatePath = "C:\\Users\\Jorge\\Documents\\Freelance\\PPMS\\Report Templates\\PpmpReportTemplateMergeField.docx";
+            string templatePath = "C:\\Users\\Jorge\\Documents\\Freelance\\PPMS\\Report Templates\\PpmpReportTemplateMergeFieldWithChart.docx";
             string outputPath = $"C:\\Users\\Jorge\\Documents\\Freelance\\PPMS\\Report Output\\PPMP_Output_{DateTime.Now.ToString("MMddyyyyHHmmss")}.docx";
 
             // Load the PPMP record

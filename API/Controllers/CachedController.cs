@@ -16,16 +16,16 @@ namespace API.Controllers
         private readonly ILogger<CachedController> _logger;
         public CachedController(ILogger<CachedController> logger, CachedItems cachedItems)
         {
-            _cachedItems = cachedItems;            
+            _cachedItems = cachedItems;
             _logger = logger;
         }
 
-        [HttpGet("psdbmcatalogues")]
-        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBCatalogues()
+        [HttpGet("psdbmcatalogues/{year}")]
+        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBCatalogues(int year)
         {
             try
             {
-                var result = await _cachedItems.PSDBMCatalogues;
+                var result = await _cachedItems.GetPSDBMCatalogues(year);
 
                 return Ok(result);
             }
@@ -37,12 +37,12 @@ namespace API.Controllers
             return BadRequest();
         }
 
-        [HttpGet("supplementarycatalogues")]
-        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBSupplementaryCatalogues()
+        [HttpGet("supplementarycatalogues/{year}")]
+        public async Task<ActionResult<IList<PSDBMCatalogueDto>>> GetPSDBSupplementaryCatalogues(int year)
         {
             try
             {
-                var result = await _cachedItems.SupplementaryCatalogues;
+                var result = await _cachedItems.GetSupplementaryCatalogues(year);
 
                 return Ok(result);
             }
