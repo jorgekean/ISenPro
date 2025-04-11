@@ -89,6 +89,7 @@ namespace Service
                     Department = userInfo.Person?.Department?.Name,
                     DepartmentId = userInfo.Person?.DepartmentId ?? 0,
                     RoleId = userInfo.RoleId ?? 0,
+                    IsAdmin = userInfo.IsAdmin,
 
                     ModuleNames = moduleNames
                 };
