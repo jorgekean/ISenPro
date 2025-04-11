@@ -18,6 +18,12 @@ namespace Service
 
         public List<string> ModuleNames { get; set; }
 
+
+        // rolebasedbutton fields
+        public bool IsAdmin { get; set; }
+        public bool CanPrint { get; set; }
+        public bool CanApprove { get; set; }
+
     }
 
     public interface IAuthService

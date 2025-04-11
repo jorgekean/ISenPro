@@ -17,13 +17,23 @@ namespace Service
         public abstract class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto> where TEntity : class where TDto : class
         {
             protected readonly ISenProContext _context;
-            protected readonly DbSet<TEntity> _dbSet;            
+            protected readonly DbSet<TEntity> _dbSet;
+
+            protected readonly IUserContext _userContext;
 
             public BaseService(ISenProContext context)
             {
                 _context = context;
                 _dbSet = _context.Set<TEntity>();                
             }
+
+            public BaseService(ISenProContext context, IUserContext userContext)
+            {
+                _context = context;
+                _dbSet = _context.Set<TEntity>();
+                _userContext = userContext;
+            }
+
 
             public virtual async Task<IEnumerable<TDto>> GetAllAsync()
             {
@@ -52,7 +62,7 @@ namespace Service
 
             public virtual async Task<object> AddAsync(TDto dto)
             {
-                var entity = MapToEntity(dto);
+                var entity = MapToEntity(dto);               
 
                 // Track child entities generically
                 TrackChildEntities(entity);

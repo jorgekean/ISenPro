@@ -1,8 +1,9 @@
-﻿CREATE VIEW dbo.v_PPMPIndex
+﻿
+CREATE VIEW dbo.v_PPMPIndex
 AS
 SELECT a.PPMPId,
        a.BudgetYear,
-       a.Status,
+       CASE WHEN a.IsSubmitted = 1 THEN 'submitted' ELSE 'saved' END [Status],
        a.PPMPNo,
        d.Name OfficeName,
        p.FirstName + ', ' + p.LastName PreparedBy,

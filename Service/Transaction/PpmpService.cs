@@ -24,8 +24,9 @@ namespace Service.Transaction
     public class PpmpService : BaseService<Ppmp, PPMPDto>, IPpmpService
     {
         private readonly CachedItems _cachedItems;
-        public PpmpService(ISenProContext context,
-            CachedItems cachedItems) : base(context)
+        
+        public PpmpService(ISenProContext context, IUserContext userContext,
+            CachedItems cachedItems) : base(context, userContext)
         {
             _cachedItems = cachedItems;
         }
@@ -349,7 +350,7 @@ namespace Service.Transaction
                 Id = entity.Ppmpid,
                 BudgetYear = entity.BudgetYear,
                 Remarks = entity.Remarks,
-                Status = entity.Status,
+                Status =  entity.Status,
                 CreatedDate = entity.CreatedDate,
                 CreatedBy = entity.CreatedByUserId,
                 AdditionalInflationValue = entity.AdditionalInflationValue,
@@ -393,8 +394,8 @@ namespace Service.Transaction
                 CreatedByUserId = dto.CreatedBy,
                 IsActive = dto.IsActive,
                 IsSubmitted = dto.IsSubmitted,
-                SubmittedByUserId = dto.SubmittedBy,
-                SubmittedDate = dto.SubmittedDate,
+                SubmittedByUserId = dto.IsSubmitted ? _userContext.UserId : null,
+                SubmittedDate = dto.IsSubmitted ? DateTime.Now : null,
                 DeletedByUserId = dto.DeletedBy,
                 DeletedDate = dto.DeletedDate,
                 UpdatedDate = dto.UpdatedDate,

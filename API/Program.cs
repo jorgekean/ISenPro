@@ -88,6 +88,10 @@ builder.Services.AddDbContext<ISenProContext>(options =>
     options.UseSqlServer(connectionString));
 #endregion
 
+#region User
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserContext, UserContext>();
+#endregion
 
 #region MemoryCache
 builder.Services.AddMemoryCache();
