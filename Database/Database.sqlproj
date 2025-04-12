@@ -57,6 +57,7 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Views\" />
+    <Folder Include="dbo\Functions\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\UM_Role.sql" />
@@ -108,5 +109,6 @@
     <Build Include="dbo\Views\v_ParentModule.sql" />
     <Build Include="dbo\Tables\SS_PSDBMCatalogueOffice.sql" />
     <Build Include="dbo\Views\v_PPMPIndex.sql" />
+    <Build Include="dbo\Functions\fn_GetUserTransactionPermissions.sql" />
   </ItemGroup>
 </Project>

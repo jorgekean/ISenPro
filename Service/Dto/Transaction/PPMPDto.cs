@@ -42,5 +42,8 @@ namespace Service.Dto.Transaction
         public IEnumerable<PPMPProjectDto> PpmpProjects { get; set; } = new List<PPMPProjectDto>();
 
         public DepartmentDto? RequestingOffice { get; set; } = null!;
+
+
+        public bool CanApprove { get; set; }
     }
 }

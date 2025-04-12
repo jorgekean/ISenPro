@@ -907,7 +907,7 @@ public partial class ISenProContext : DbContext
                 .HasColumnName("PPMPNo");
             entity.Property(e => e.PreparedBy).HasMaxLength(202);
             entity.Property(e => e.Status)
-                .HasMaxLength(50)
+                .HasMaxLength(9)
                 .IsUnicode(false);
         });
 

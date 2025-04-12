@@ -56,6 +56,9 @@ namespace Service.Transaction
         {
             var model = await base.GetByIdAsync(id);
 
+            var userPermission = await _context.GetUserTransactionPermissionsAsync(id, 333, 25);
+            model.CanApprove = model.IsSubmitted && userPermission.CanApprove;
+
             var psdbms = _context.VPpmpPsdbmcatalogues
                          .Where(x => x.Ppmpid == id && x.IsActive)
                          .ToList();
