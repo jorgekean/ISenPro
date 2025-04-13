@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EF.Models;
+using Service.Dto.Transaction;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -35,6 +37,8 @@ namespace Service.Dto
         public DateTime? UpdatedDate { get; set; }
 
         public int? Updatedby { get; set; }
+
+        public TransactionStatusDto? TransactionStatus { get; set; }
 
     }
 }

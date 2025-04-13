@@ -24,7 +24,7 @@ namespace Service.Transaction
     public class PpmpService : BaseService<Ppmp, PPMPDto>, IPpmpService
     {
         private readonly CachedItems _cachedItems;
-        
+
         public PpmpService(ISenProContext context, IUserContext userContext,
             CachedItems cachedItems) : base(context, userContext)
         {
@@ -56,7 +56,7 @@ namespace Service.Transaction
         {
             var model = await base.GetByIdAsync(id);
 
-            var userPermission = await _context.GetUserTransactionPermissionsAsync(id, 333, 25);
+            var userPermission = await _context.GetUserTransactionPermissionsAsync(id, _userContext.UserId, 25);
             model.CanApprove = model.IsSubmitted && userPermission.CanApprove;
 
             var psdbms = _context.VPpmpPsdbmcatalogues
@@ -343,6 +343,36 @@ namespace Service.Transaction
             }
             #endregion
 
+            #region Approval
+            if (dto.TransactionStatus != null && (dto.TransactionStatus.Approved || dto.TransactionStatus.Disapproved))
+            {
+                // get current transaction status
+                var transactionStatus = await _context.TransactionStatuses
+                    .Where(x => x.TransactionId == dto.Id && x.PageId == 25 && x.IsActive)
+                    .OrderByDescending(x => x.CreatedDate)
+                    .FirstOrDefaultAsync();
+
+                // if approve then + 1 on Count - for count
+                // add requiredapprover count for IsDone and Count
+
+
+                var trn = new TransactionStatusDto
+                {
+                    CreatedDate = DateTime.Now,
+                    IsCurrent = true,// TBD - OR ALWAYS TRUE(CHECK IF WE STILL NEED THIS), then set to false other rows
+                    Count = 1, // TBD
+                    IsDone = true, //  TBD
+                    PageId = 25, // ModuleId
+                    ProcessByUserId = _userContext.UserId,
+                    Remarks = dto.TransactionStatus.Remarks,
+                    Status = dto.TransactionStatus.Status,
+                    TransactionId = dto.Id,
+                    WorkstepId = dto.TransactionStatus.WorkstepId,
+                    Action = dto.TransactionStatus.Action,                    
+                };
+            }
+            #endregion
+
             await _context.SaveChangesAsync();
         }
 
@@ -353,7 +383,7 @@ namespace Service.Transaction
                 Id = entity.Ppmpid,
                 BudgetYear = entity.BudgetYear,
                 Remarks = entity.Remarks,
-                Status =  entity.Status,
+                Status = entity.Status,
                 CreatedDate = entity.CreatedDate,
                 CreatedBy = entity.CreatedByUserId,
                 AdditionalInflationValue = entity.AdditionalInflationValue,
@@ -385,7 +415,7 @@ namespace Service.Transaction
         }
 
         protected override Ppmp MapToEntity(PPMPDto dto)
-         {
+        {
             var entity = new Ppmp
             {
                 Ppmpid = dto.Id,
@@ -568,7 +598,7 @@ namespace Service.Transaction
             splitReferenceNo[2] = seriesNumber.ToString("D4"); // Ensures 4-digit formatting
 
             return string.Join("-", splitReferenceNo);
-        }   
+        }
         #endregion
     }
 }

@@ -28,15 +28,20 @@ namespace EF.Models
             modelBuilder.Entity<UserTransactionPermissions>(entity =>
             {
                 entity.HasNoKey();
+                entity.Property(e => e.WorkStepId).HasColumnName("WorkStepId");
                 entity.Property(e => e.CanApprove).HasColumnName("CanApprove");
                 entity.Property(e => e.CanModify).HasColumnName("CanModify");
+                entity.Property(e => e.WorkStepName).HasColumnName("WorkStepName");
             });
         }
     }
 
     public class UserTransactionPermissions
     {
+        public int WorkStepId { get; set; }
         public bool CanApprove { get; set; }
         public bool CanModify { get; set; }
+        public string WorkStepName { get; set; } = null!;
+        public int RequiredApprover { get; set; }
     }
 }

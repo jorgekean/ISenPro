@@ -27,5 +27,12 @@ public partial class TransactionStatus
 
     public int? WorkstepId { get; set; }
 
+    /// <summary>
+    /// Will be disabled(0) if transaction is disapproved. Default value is true(1)
+    /// </summary>
+    public bool IsActive { get; set; }
+
+    public string? Action { get; set; }
+
     public virtual UmWorkStep? Workstep { get; set; }
 }

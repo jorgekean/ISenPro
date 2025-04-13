@@ -560,7 +560,9 @@ public partial class ISenProContext : DbContext
 
             entity.HasIndex(e => new { e.TransactionId, e.WorkstepId }, "NonClusteredIndex-20201119-202802");
 
+            entity.Property(e => e.Action).HasMaxLength(20);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.IsActive).HasComment("Will be disabled(0) if transaction is disapproved. Default value is true(1)");
             entity.Property(e => e.Status).HasMaxLength(200);
 
             entity.HasOne(d => d.Workstep).WithMany(p => p.TransactionStatuses)
