@@ -1,4 +1,5 @@
 ﻿using API.Dto;
+using EF.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
@@ -59,13 +60,13 @@ namespace API.Controllers.UserManagement
 
         // GET: api/SupplementaryCatalogues
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<SupplementaryCatalogueDto>>> GetSupplementaryCatalogues([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VSupplementaryCatalogueIndex>>> GetSupplementaryCatalogues([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _supplementaryCataloguesservice.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _supplementaryCataloguesservice.GetComplexPagedAndFilteredAsync<VSupplementaryCatalogueIndex>(pagingParameters);
 
-                var response = new PaginatedResponse<SupplementaryCatalogueDto>
+                var response = new PaginatedResponse<VSupplementaryCatalogueIndex>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,

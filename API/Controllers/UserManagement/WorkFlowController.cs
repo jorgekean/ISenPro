@@ -48,13 +48,13 @@ namespace API.Controllers.UserManagement
 
         // GET: api/WorkFlows
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<WorkFlowDto>>> GetWorkFlows([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VWorkFlowIndex>>> GetWorkFlows([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _workFlowService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _workFlowService.GetComplexPagedAndFilteredAsync<VWorkFlowIndex>(pagingParameters);
 
-                var response = new PaginatedResponse<WorkFlowDto>
+                var response = new PaginatedResponse<VWorkFlowIndex>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,

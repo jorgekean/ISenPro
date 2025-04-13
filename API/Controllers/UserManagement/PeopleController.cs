@@ -1,4 +1,5 @@
 ﻿using API.Dto;
+using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,14 +23,14 @@ namespace API.Controllers.UserManagement
 
         // GET: api/People
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<PersonDto>>> GetPeople([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VPersonIndex>>> GetPeople([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _personService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _personService.GetComplexPagedAndFilteredAsync<VPersonIndex>(pagingParameters);
                 var empStatuses = paginatedResult.Data.Select(x => x.EmployeeStatusLabel).ToList();
 
-                var response = new PaginatedResponse<PersonDto>
+                var response = new PaginatedResponse<VPersonIndex>
                 {
                     Items = paginatedResult.Data.OrderBy(x => x.FullName),
                     TotalCount = paginatedResult.TotalRecords,

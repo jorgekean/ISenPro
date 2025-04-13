@@ -33,10 +33,30 @@ namespace Service.SystemSetup
             }).OrderBy(x => x.Name).ToListAsync();
         }
 
-        protected override IQueryable<SsSupplier> ApplySearchFilter(IQueryable<SsSupplier> query, string searchQuery)
+        //protected override IQueryable<SsSupplier> ApplySearchFilter(IQueryable<SsSupplier> query, string searchQuery)
+        //{
+        //    return query.Where(p => new[] { p.CompanyName, p.Address }
+        //                    .Any(value => value != null && value.Contains(searchQuery)));
+        //}
+
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
-            return query.Where(p => new[] { p.CompanyName, p.Address }
-                            .Any(value => value != null && value.Contains(searchQuery)));
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VSupplierIndex))
+            {
+                var typedQuery = query as IQueryable<VSupplierIndex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    typedQuery = typedQuery.Where(p => new[] { p.CompanyName, p.IndustryName, p.EmailAddress, p.Address }
+                             .Any(value => value != null && value.Contains(searchQuery)));
+                }
+
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
+            }
+
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
+            return query;
         }
 
         public override async Task<object> AddAsync(SupplierDto dto)

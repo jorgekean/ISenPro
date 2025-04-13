@@ -51,40 +51,36 @@ namespace Service.SystemSetup
             }).ToListAsync();
         }
 
-        public override IQueryable<SsPsdbmcatalogue> ApplyFilters(IQueryable<SsPsdbmcatalogue> query, List<Filter> filters)
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
-            if (filters != null && filters.Any())
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VPsdbmcatalogueIndex))
             {
-                // Apply each filter
-                foreach (var filter in filters)
+                var typedQuery = query as IQueryable<VPsdbmcatalogueIndex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
                 {
-                    if (filter.FilterOptions != null && filter.FilterOptions.Any())
-                    {
-                        // Apply filter using OR logic for FilterOptions
-                        Expression<Func<SsPsdbmcatalogue, bool>> filterCondition = p => false; // Default false, will combine with OR
-
-                        foreach (var option in filter.FilterOptions)
-                        {
-                            if (filter.FilterName.ToLower() == "unitofmeasurement")
-                            {
-                                // Combine filter options with OR logic
-                                var currentCondition = (Expression<Func<SsPsdbmcatalogue, bool>>)(p => p.UnitOfMeasurementId == option.Value);
-                                filterCondition = CombineWithOr(filterCondition, currentCondition);
-                            }
-                        }
-
-                        // Apply the OR condition to the query
-                        query = query.Where(filterCondition);
-                    }
+                    typedQuery = typedQuery.Where(p => new[] { p.Code, p.Description, p.UnitOfMeasurementCode, p.ItemTypeName, p.MajorCategoryName, p.SubCategoryName }
+                             .Any(value => value != null && value.Contains(searchQuery)));
                 }
+
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
             }
 
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
             return query;
         }
 
         protected override IQueryable<SsPsdbmcatalogue> IncludeNavigationProperties(IQueryable<SsPsdbmcatalogue> query)
         {
-            return query.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory).Include(o => o.SsPsdbmcatalogueOffices);
+            return query.Include(o => o.UnitOfMeasurement)
+                                  .Include(o => o.ItemType)
+                                  .Include(o => o.AccountCode)
+                                  .Include(o => o.MajorCategory)
+                                  .Include(o => o.SubCategory)
+                                  .Include(o => o.SsPsdbmcatalogueOffices)
+                                  .ThenInclude(x => x.Department)
+                                  .ThenInclude(x => x.Bureau);
         }
 
         protected override IQueryable<SsPsdbmcatalogue> ApplySearchFilter(IQueryable<SsPsdbmcatalogue> query, string searchQuery)

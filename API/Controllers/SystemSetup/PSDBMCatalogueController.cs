@@ -1,4 +1,5 @@
 ﻿using API.Dto;
+using EF.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
@@ -58,13 +59,13 @@ namespace API.Controllers.UserManagement
 
         // GET: api/PSDBMCatalogues
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<PSDBMCatalogueDto>>> GetPSDBMCatalogues([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VPsdbmcatalogueIndex>>> GetPSDBMCatalogues([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _psdbmCataloguesservice.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _psdbmCataloguesservice.GetComplexPagedAndFilteredAsync<VPsdbmcatalogueIndex>(pagingParameters);
 
-                var response = new PaginatedResponse<PSDBMCatalogueDto>
+                var response = new PaginatedResponse<VPsdbmcatalogueIndex>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,

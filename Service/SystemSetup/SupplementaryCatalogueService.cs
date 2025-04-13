@@ -84,23 +84,43 @@ namespace Service.SystemSetup
             return query.Include(o => o.UnitOfMeasurement).Include(o => o.ItemType).Include(o => o.AccountCode).Include(o => o.MajorCategory).Include(o => o.SubCategory);
         }
 
-        protected override IQueryable<SsSupplementaryCatalogue> ApplySearchFilter(IQueryable<SsSupplementaryCatalogue> query, string searchQuery)
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
-            // for efficiency, if there is no search query, return the query as is
-            if (string.IsNullOrEmpty(searchQuery))
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VSupplementaryCatalogueIndex))
             {
-                return query;
+                var typedQuery = query as IQueryable<VSupplementaryCatalogueIndex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    typedQuery = typedQuery.Where(p => new[] { p.Code, p.Description, p.UnitOfMeasurementCode, p.ItemTypeName, p.MajorCategoryName, p.SubCategoryName }
+                             .Any(value => value != null && value.Contains(searchQuery)));
+                }
 
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
             }
 
-            return query.Where(p => new[] { p.Description, 
-                                            p.Code, 
-                                            p.Description,
-                                            p.UnitOfMeasurement != null ? p.UnitOfMeasurement.Code : string.Empty,
-                                            p.ItemType != null ? p.ItemType.Name : string.Empty,
-                                          }
-                            .Any(value => value != null && value.Contains(searchQuery)));
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
+            return query;
         }
+
+        //protected override IQueryable<SsSupplementaryCatalogue> ApplySearchFilter(IQueryable<SsSupplementaryCatalogue> query, string searchQuery)
+        //{
+        //    // for efficiency, if there is no search query, return the query as is
+        //    if (string.IsNullOrEmpty(searchQuery))
+        //    {
+        //        return query;
+
+        //    }
+
+        //    return query.Where(p => new[] { p.Description, 
+        //                                    p.Code, 
+        //                                    p.Description,
+        //                                    p.UnitOfMeasurement != null ? p.UnitOfMeasurement.Code : string.Empty,
+        //                                    p.ItemType != null ? p.ItemType.Name : string.Empty,
+        //                                  }
+        //                    .Any(value => value != null && value.Contains(searchQuery)));
+        //}
 
         protected override SupplementaryCatalogueDto MapToDto(SsSupplementaryCatalogue entity)
         {
