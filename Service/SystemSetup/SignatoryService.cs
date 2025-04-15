@@ -29,11 +29,31 @@ namespace Service.SystemSetup
             return query.Include(o => o.Person).ThenInclude(s => s.Department);
         }
 
-        protected override IQueryable<SsSignatory> ApplySearchFilter(IQueryable<SsSignatory> query, string searchQuery)
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
-            return query.Where(p => new[] { p.SignatoryDesignation.Name, p.ReportSection.Name }
-                        .Any(value => value != null && value.Contains(searchQuery)));
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VSignatoryIndex))
+            {
+                var typedQuery = query as IQueryable<VSignatoryIndex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    typedQuery = typedQuery.Where(p => new[] { p.ModuleName, p.SignatoryDesignation, p.SignatoryOffice, p.FullName, p.Office }
+                             .Any(value => value != null && value.Contains(searchQuery)));
+                }
+
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
+            }
+
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
+            return query;
         }
+
+        //protected override IQueryable<SsSignatory> ApplySearchFilter(IQueryable<SsSignatory> query, string searchQuery)
+        //{
+        //    return query.Where(p => new[] { p.SignatoryDesignation.Name, p.ReportSection.Name }
+        //                .Any(value => value != null && value.Contains(searchQuery)));
+        //}
         public override async Task<SignatoryDto> GetByIdAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);

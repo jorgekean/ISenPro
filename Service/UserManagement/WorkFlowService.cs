@@ -28,37 +28,57 @@ namespace Service.UserManagement
 
         //protected override IQueryable<UmWorkFlow> IncludeNavigationProperties(IQueryable<UmWorkFlow> query)
         //{
-            //return query.Include(o => o.ItemType);
+        //return query.Include(o => o.ItemType);
         //}
 
-        public override IQueryable<UmWorkFlow> ApplyFilters(IQueryable<UmWorkFlow> query, List<Filter> filters)
+        //public override IQueryable<UmWorkFlow> ApplyFilters(IQueryable<UmWorkFlow> query, List<Filter> filters)
+        //{
+        //    if (filters != null && filters.Any())
+        //    {
+        //        // Apply each filter
+        //        foreach (var filter in filters)
+        //        {
+        //            if (filter.FilterOptions != null && filter.FilterOptions.Any())
+        //            {
+        //                // Apply filter using OR logic for FilterOptions
+        //                Expression<Func<UmWorkFlow, bool>> filterCondition = p => false; // Default false, will combine with OR
+
+        //                foreach (var option in filter.FilterOptions)
+        //                {
+        //                    if (filter.FilterName.ToLower() == "itemtype")
+        //                    {
+        //                        // Combine filter options with OR logic
+        //                        //var currentCondition = (Expression<Func<UmWorkFlow, bool>>)(p => p.ItemTypeId == option.Value);
+        //                        //filterCondition = CombineWithOr(filterCondition, currentCondition);
+        //                    }
+        //                }
+
+        //                // Apply the OR condition to the query
+        //                query = query.Where(filterCondition);
+        //            }
+        //        }
+        //    }
+
+        //    return query;
+        //}
+
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
-            if (filters != null && filters.Any())
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VWorkFlowIndex))
             {
-                // Apply each filter
-                foreach (var filter in filters)
+                var typedQuery = query as IQueryable<VWorkFlowIndex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
                 {
-                    if (filter.FilterOptions != null && filter.FilterOptions.Any())
-                    {
-                        // Apply filter using OR logic for FilterOptions
-                        Expression<Func<UmWorkFlow, bool>> filterCondition = p => false; // Default false, will combine with OR
-
-                        foreach (var option in filter.FilterOptions)
-                        {
-                            if (filter.FilterName.ToLower() == "itemtype")
-                            {
-                                // Combine filter options with OR logic
-                                //var currentCondition = (Expression<Func<UmWorkFlow, bool>>)(p => p.ItemTypeId == option.Value);
-                                //filterCondition = CombineWithOr(filterCondition, currentCondition);
-                            }
-                        }
-
-                        // Apply the OR condition to the query
-                        query = query.Where(filterCondition);
-                    }
+                    typedQuery = typedQuery.Where(p => new[] { p.Code, p.Name, p.Description, p.ModuleName }
+                             .Any(value => value != null && value.Contains(searchQuery)));
                 }
+
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
             }
 
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
             return query;
         }
 

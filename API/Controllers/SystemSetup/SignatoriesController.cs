@@ -1,4 +1,5 @@
 ﻿using API.Dto;
+using EF.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service;
@@ -101,13 +102,13 @@ namespace API.Controllers.SystemSetup
 
         // GET: api/Signatories
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<SignatoryDto>>> GetSignatories([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VSignatoryIndex>>> GetSignatories([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _signatoriesService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _signatoriesService.GetComplexPagedAndFilteredAsync<VSignatoryIndex>(pagingParameters);
 
-                var response = new PaginatedResponse<SignatoryDto>
+                var response = new PaginatedResponse<VSignatoryIndex>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,

@@ -42,13 +42,13 @@ namespace API.Controllers.SystemSetup
 
         // GET: api/Suppliers
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<SupplierDto>>> GetSuppliers([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<VSupplierIndex>>> GetSuppliers([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
-                var paginatedResult = await _supplierService.GetPagedAndFilteredAsync(pagingParameters);
+                var paginatedResult = await _supplierService.GetComplexPagedAndFilteredAsync<VSupplierIndex>(pagingParameters);
 
-                var response = new PaginatedResponse<SupplierDto>
+                var response = new PaginatedResponse<VSupplierIndex>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,

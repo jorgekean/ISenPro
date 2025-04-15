@@ -109,6 +109,13 @@
     <Build Include="dbo\Views\v_ParentModule.sql" />
     <Build Include="dbo\Tables\SS_PSDBMCatalogueOffice.sql" />
     <Build Include="dbo\Views\v_PPMPIndex.sql" />
+    <Build Include="dbo\Views\v_PersonIndex.sql" />
     <Build Include="dbo\Functions\fn_GetUserTransactionPermissions.sql" />
+    <Build Include="dbo\Views\v_UserAccountIndex.sql" />
+    <Build Include="dbo\Views\v_WorkFlowIndex.sql" />
+    <Build Include="dbo\Views\v_PSDBMCatalogueIndex.sql" />
+    <Build Include="dbo\Views\v_SupplementaryCatalogueIndex.sql" />
+    <Build Include="dbo\Views\v_SupplierIndex.sql" />
+    <Build Include="dbo\Views\v_SignatoryIndex.sql" />
   </ItemGroup>
 </Project>

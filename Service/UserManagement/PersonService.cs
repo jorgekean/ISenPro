@@ -20,15 +20,35 @@ namespace Service.UserManagement
         {
         }
 
-        protected override IQueryable<UmPerson> IncludeNavigationProperties(IQueryable<UmPerson> query)
-        {
-            return query.Include(o => o.Department).ThenInclude(s => s.Bureau).Include(o => o.Section).Include(x => x.EmployeeStatusNavigation).Include(x => x.EmployeeStatusNavigation);
-        }
+        //protected override IQueryable<UmPerson> IncludeNavigationProperties(IQueryable<UmPerson> query)
+        //{
+        //    return query.Include(o => o.Department).ThenInclude(s => s.Bureau).Include(o => o.Section).Include(x => x.EmployeeStatusNavigation).Include(x => x.EmployeeStatusNavigation);
+        //}
 
-        protected override IQueryable<UmPerson> ApplySearchFilter(IQueryable<UmPerson> query, string searchQuery)
+        //protected override IQueryable<UmPerson> ApplySearchFilter(IQueryable<UmPerson> query, string searchQuery)
+        //{
+        //    return query.Where(p => new[] { p.FirstName, p.LastName }
+        //                    .Any(value => value != null && value.Contains(searchQuery)));
+        //}
+
+        protected override IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery)
         {
-            return query.Where(p => new[] { p.FirstName, p.LastName }
-                            .Any(value => value != null && value.Contains(searchQuery)));
+            // If the type is MyEntity, cast the query and apply filtering.
+            if (typeof(T) == typeof(VPersonIndex))
+            {
+                var typedQuery = query as IQueryable<VPersonIndex>;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    typedQuery = typedQuery.Where(p => new[] { p.FullName, p.OfficeName, p.SectionName, p.EmployeeStatusLabel }
+                             .Any(value => value != null && value.Contains(searchQuery)));
+                }
+
+                // Cast back to IQueryable<T> and return
+                return typedQuery as IQueryable<T>;
+            }
+
+            // Otherwise, for any other type, you can either return the unfiltered query or add your own logic.
+            return query;
         }
 
         public override async Task<PersonDto> GetByIdAsync(int id)

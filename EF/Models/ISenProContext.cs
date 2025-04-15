@@ -99,6 +99,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<VParentModule> VParentModules { get; set; }
 
+    public virtual DbSet<VPersonIndex> VPersonIndices { get; set; }
+
     public virtual DbSet<VPpmpPsdbmcatalogue> VPpmpPsdbmcatalogues { get; set; }
 
     public virtual DbSet<VPpmpSupplementaryCatalogue> VPpmpSupplementaryCatalogues { get; set; }
@@ -107,13 +109,25 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<VPsdbmcatalogue> VPsdbmcatalogues { get; set; }
 
+    public virtual DbSet<VPsdbmcatalogueIndex> VPsdbmcatalogueIndices { get; set; }
+
     public virtual DbSet<VRoleModuleControl> VRoleModuleControls { get; set; }
+
+    public virtual DbSet<VSignatoryIndex> VSignatoryIndices { get; set; }
+
+    public virtual DbSet<VSupplementaryCatalogueIndex> VSupplementaryCatalogueIndices { get; set; }
+
+    public virtual DbSet<VSupplierIndex> VSupplierIndices { get; set; }
+
+    public virtual DbSet<VUserAccountIndex> VUserAccountIndices { get; set; }
+
+    public virtual DbSet<VWorkFlowIndex> VWorkFlowIndices { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD1A331309");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD9A277DAF");
 
             entity.ToTable("ChangeDetailsTable");
 
@@ -125,12 +139,12 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.ChangeDetailsTables)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChangeDet__Chang__5AEE82B9");
+                .HasConstraintName("FK__ChangeDet__Chang__619B8048");
         });
 
         modelBuilder.Entity<ChangeTrackingTable>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B7EDE63023");
+            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B79B51F191");
 
             entity.ToTable("ChangeTrackingTable");
 
@@ -147,7 +161,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRole>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7F73B0AF9");
+            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7A94B4D02");
 
             entity.ToTable("CT_UM_Role");
 
@@ -164,7 +178,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRoleDetail>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD248F3172");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD531C5CC8");
 
             entity.ToTable("CT_UM_Role_Details");
 
@@ -176,7 +190,7 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.CtUmRoleDetails)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CT_UM_Rol__Chang__5BE2A6F2");
+                .HasConstraintName("FK__CT_UM_Rol__Chang__628FA481");
         });
 
         modelBuilder.Entity<Ppmp>(entity =>
@@ -518,7 +532,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsSupplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B4535CB4E9");
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B41D945853");
 
             entity.ToTable("SS_Suppliers");
 
@@ -859,6 +873,22 @@ public partial class ISenProContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<VPersonIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_PersonIndex");
+
+            entity.Property(e => e.BureauName).HasMaxLength(200);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(303);
+            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.MiddleName).HasMaxLength(100);
+            entity.Property(e => e.OfficeName).HasMaxLength(200);
+            entity.Property(e => e.SectionName).HasMaxLength(200);
+        });
+
         modelBuilder.Entity<VPpmpPsdbmcatalogue>(entity =>
         {
             entity
@@ -926,6 +956,20 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
         });
 
+        modelBuilder.Entity<VPsdbmcatalogueIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_PSDBMCatalogueIndex");
+
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.MajorCategoryName).HasMaxLength(200);
+            entity.Property(e => e.SubCategoryName).HasMaxLength(200);
+            entity.Property(e => e.UnitOfMeasurementCode).HasMaxLength(200);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+        });
+
         modelBuilder.Entity<VRoleModuleControl>(entity =>
         {
             entity
@@ -937,6 +981,79 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.ParentModuleName)
                 .HasMaxLength(15)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VSignatoryIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_SignatoryIndex");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.FullName).HasMaxLength(303);
+            entity.Property(e => e.ModuleName).HasMaxLength(100);
+            entity.Property(e => e.Office).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<VSupplementaryCatalogueIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_SupplementaryCatalogueIndex");
+
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.MajorCategoryName).HasMaxLength(200);
+            entity.Property(e => e.SubCategoryName).HasMaxLength(200);
+            entity.Property(e => e.UnitOfMeasurementCode).HasMaxLength(200);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+        });
+
+        modelBuilder.Entity<VSupplierIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_SupplierIndex");
+
+            entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.CompanyName).HasMaxLength(200);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.EmailAddress).HasMaxLength(100);
+            entity.Property(e => e.IsBlackListedStr)
+                .HasMaxLength(3)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VUserAccountIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_UserAccountIndex");
+
+            entity.Property(e => e.BureauName).HasMaxLength(200);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(303);
+            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.MiddleName).HasMaxLength(100);
+            entity.Property(e => e.OfficeName).HasMaxLength(200);
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.SectionName).HasMaxLength(200);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(50)
+                .HasColumnName("UserID");
+        });
+
+        modelBuilder.Entity<VWorkFlowIndex>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_WorkFlowIndex");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.ModuleName).HasMaxLength(100);
         });
 
         OnModelCreatingPartial(modelBuilder);
