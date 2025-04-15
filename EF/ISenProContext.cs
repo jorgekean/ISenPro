@@ -32,6 +32,7 @@ namespace EF.Models
                 entity.Property(e => e.CanApprove).HasColumnName("CanApprove");
                 entity.Property(e => e.CanModify).HasColumnName("CanModify");
                 entity.Property(e => e.WorkStepName).HasColumnName("WorkStepName");
+                entity.Property(e => e.RequiredApprover).HasColumnName("RequiredApprover");
             });
         }
     }

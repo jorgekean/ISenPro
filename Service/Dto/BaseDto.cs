@@ -38,6 +38,7 @@ namespace Service.Dto
 
         public int? Updatedby { get; set; }
 
+        public UserTransactionPermissions? UserTransactionPermissions { get; set; }
         public TransactionStatusDto? TransactionStatus { get; set; }
 
     }

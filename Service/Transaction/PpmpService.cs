@@ -57,7 +57,9 @@ namespace Service.Transaction
             var model = await base.GetByIdAsync(id);
 
             var userPermission = await _context.GetUserTransactionPermissionsAsync(id, _userContext.UserId, 25);
-            model.CanApprove = model.IsSubmitted && userPermission.CanApprove;
+
+            model.UserTransactionPermissions = userPermission;
+            model.CanApprove = model.IsSubmitted && userPermission != null && userPermission.CanApprove;
 
             var psdbms = _context.VPpmpPsdbmcatalogues
                          .Where(x => x.Ppmpid == id && x.IsActive)
@@ -170,9 +172,6 @@ namespace Service.Transaction
         public override async Task UpdateAsync(PPMPDto dto)
         {
             var entity = MapToEntity(dto);
-
-            // update the PPMP model
-            _dbSet.Update(entity);
 
             #region PPMP Catalogues
             // Get a list of IDs from the DTO for records that are NOT new.
@@ -344,36 +343,81 @@ namespace Service.Transaction
             #endregion
 
             #region Approval
-            if (dto.TransactionStatus != null && (dto.TransactionStatus.Approved || dto.TransactionStatus.Disapproved))
+            if (dto.TransactionStatus != null && dto.UserTransactionPermissions != null)//  && (dto.TransactionStatus.Approved || dto.TransactionStatus.Disapproved)
             {
                 // get current transaction status
                 var transactionStatus = await _context.TransactionStatuses
                     .Where(x => x.TransactionId == dto.Id && x.PageId == 25 && x.IsActive)
-                    .OrderByDescending(x => x.CreatedDate)
-                    .FirstOrDefaultAsync();
+                    .OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
 
-                // if approve then + 1 on Count - for count
-                // add requiredapprover count for IsDone and Count
-
-
-                var trn = new TransactionStatusDto
+                var count = TransactionStatusDto.GetNextCount(dto.UserTransactionPermissions.WorkStepId, transactionStatus);
+                var trn = new TransactionStatus
                 {
+                    //RequiredApprover = dto.TransactionStatus.RequiredApprover,
                     CreatedDate = DateTime.Now,
-                    IsCurrent = true,// TBD - OR ALWAYS TRUE(CHECK IF WE STILL NEED THIS), then set to false other rows
-                    Count = 1, // TBD
-                    IsDone = true, //  TBD
+                    IsCurrent = true,// TBD - NO NEED FOR THIS
+                    Count = count,
+                    IsDone = dto.UserTransactionPermissions.RequiredApprover == count,
                     PageId = 25, // ModuleId
                     ProcessByUserId = _userContext.UserId,
                     Remarks = dto.TransactionStatus.Remarks,
-                    Status = dto.TransactionStatus.Status,
+                    Status = dto.UserTransactionPermissions.WorkStepName,
                     TransactionId = dto.Id,
-                    WorkstepId = dto.TransactionStatus.WorkstepId,
-                    Action = dto.TransactionStatus.Action,                    
+                    WorkstepId = dto.UserTransactionPermissions.WorkStepId,
+                    Action = dto.TransactionStatus.Approved ? "approved" : "disapproved",// TO DO - other actions
+                    IsActive = true,
                 };
+
+                _context.TransactionStatuses.Add(trn);
+
+                #region Ppmp Status
+                if (dto.TransactionStatus.Approved)
+                {
+                    var workStep = await _context.UmWorkSteps.FindAsync(dto.UserTransactionPermissions.WorkStepId);
+                    if (workStep != null)
+                    {
+                        if (workStep.IsLastStep.GetValueOrDefault())
+                        {
+                            entity.Status = "approved";
+                        }
+                        else
+                        {
+                            entity.Status = "approval in progress";
+                        }
+                    }
+                }
+                else if (dto.TransactionStatus.Disapproved)
+                {
+                    entity.Status = "disapproved";
+                    entity.IsSubmitted = false;
+                }
+                #endregion
             }
             #endregion
 
+            // update the PPMP model
+            _dbSet.Update(entity);
+
             await _context.SaveChangesAsync();
+
+
+            #region dissapproval
+            // for disapproval and cancellation, set IsActive=false or transactionstatuses
+            if (dto.TransactionStatus != null && dto.TransactionStatus.Disapproved)
+            {
+                var transactionStatus = await _context.TransactionStatuses
+                   .Where(x => x.TransactionId == dto.Id && x.PageId == 25 && x.IsActive)
+                   .OrderByDescending(x => x.CreatedDate).ToListAsync();
+
+                foreach (var item in transactionStatus)
+                {
+                    item.IsActive = false;
+                }
+
+
+                await _context.SaveChangesAsync();
+            }
+            #endregion
         }
 
         protected override PPMPDto MapToDto(Ppmp entity)
@@ -422,7 +466,7 @@ namespace Service.Transaction
                 Ppmpno = dto.Ppmpno,
                 BudgetYear = dto.BudgetYear,
                 Remarks = dto.Remarks,
-                Status = dto.Status,
+                Status = dto.IsSubmitted ? "submitted" : dto.Status,
                 CreatedDate = dto.CreatedDate,
                 CreatedByUserId = dto.CreatedBy,
                 IsActive = dto.IsActive,

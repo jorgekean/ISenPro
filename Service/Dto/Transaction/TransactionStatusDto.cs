@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EF.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,9 +36,24 @@ namespace Service.Dto.Transaction
 
         //public string? WorkStepName { get; set; }
         public bool Approved { get; set; }
-        public bool Disapproved { get; set; }
+        public bool Disapproved { get; set; }       
 
         // default value true
         public bool IsActive { get; set; } = true;
-    }
+
+
+        public static int GetNextCount(int workstepId, TransactionStatus? transactionStatus)
+        {
+            return transactionStatus != null && transactionStatus.WorkstepId == workstepId
+                ? transactionStatus.Count + 1
+                : 1;
+        }
+
+        //public static bool GetNextCount(int workstepId, TransactionStatus? transactionStatus)
+        //{
+        //    return transactionStatus != null && transactionStatus.WorkstepId == workstepId
+        //        ? transactionStatus.Count + 1
+        //        : 1;
+        //}
+    }    
 }
