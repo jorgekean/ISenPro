@@ -11,7 +11,7 @@ RETURNS @Results TABLE
     CanApprove BIT,            -- Flag indicating if user can approve at this step
     CanModify BIT,             -- Flag indicating if user can modify at this step
     WorkStepName NVARCHAR(100),-- Descriptive name of the current workstep
-    RequiredApprover BIT       -- Indicates if this step requires approval
+    RequiredApprover INT       -- Indicates if this step requires approval
 )
 AS
 BEGIN
@@ -21,7 +21,7 @@ BEGIN
     DECLARE @CanApprove BIT = 0;       -- Permission flag (default: false)
     DECLARE @WorkStepId INT = 0;       -- Stores the current workstep ID
     DECLARE @WorkStepName NVARCHAR(100) = ''; -- Stores the workstep name
-    DECLARE @RequiredApprover BIT = 0; -- Stores if approval is required for this step
+    DECLARE @RequiredApprover INT = 0; -- Stores if approval is required for this step
     
     -- ========================================================================
     -- Determine the current workflow position
