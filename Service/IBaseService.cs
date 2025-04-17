@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EF.Models;
+using Service.Dto.Transaction;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,5 +21,10 @@ namespace Service
         Task DeleteAsync(string id);
         Task DeleteAsync(int id);
 
+        Task<TransactionStatus> AddTransactionStatus(int moduleId, int id,
+                UserTransactionPermissions userTransactionPermissions,
+                TransactionStatusDto transactionStatusDto);
+        Task<string> GetTransactionStatus(int workStepId, TransactionStatusDto transactionStatus);
+        Task DisableTransactionStatuses(int moduleId, int id);
     } 
 }

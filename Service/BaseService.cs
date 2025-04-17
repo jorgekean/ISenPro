@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace Service
 {
+    using DocumentFormat.OpenXml.Vml.Office;
     using EF;
     using EF.Models;
+    using global::Service.Dto.Transaction;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
@@ -340,6 +342,77 @@ namespace Service
             protected virtual IQueryable<TDynamic> ApplyDynamicSearchFilter<TDynamic>(IQueryable<TDynamic> query, string searchQuery) where TDynamic : class
             {
                 return query; // By default, no search filter is applied.
+            }
+
+            public virtual async Task<TransactionStatus> AddTransactionStatus(int moduleId, int id, 
+                UserTransactionPermissions userTransactionPermissions, 
+                TransactionStatusDto transactionStatusDto)
+            {
+                // get current transaction status
+                var transactionStatus = await _context.TransactionStatuses
+                    .Where(x => x.TransactionId == id && x.PageId == moduleId && x.IsActive)
+                    .OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
+
+                var count = TransactionStatusDto.GetNextCount(userTransactionPermissions.WorkStepId, transactionStatus);
+                var trn = new TransactionStatus
+                {
+                    //RequiredApprover = dto.TransactionStatus.RequiredApprover,
+                    CreatedDate = DateTime.Now,
+                    IsCurrent = true,// TBD - NO NEED FOR THIS
+                    Count = count,
+                    IsDone = userTransactionPermissions.RequiredApprover == count,
+                    PageId = moduleId, // ModuleId
+                    ProcessByUserId = _userContext.UserId,
+                    Remarks = transactionStatusDto.Remarks,
+                    Status = userTransactionPermissions.WorkStepName,
+                    TransactionId = id,
+                    WorkstepId = userTransactionPermissions.WorkStepId,
+                    Action = transactionStatusDto.Approved ? "approved" : "disapproved",// TO DO - other actions
+                    IsActive = true,
+                };
+
+                return trn;
+            }
+
+            public async Task DisableTransactionStatuses(int moduleId, int id)
+            {
+                var transactionStatus = await _context.TransactionStatuses
+                   .Where(x => x.TransactionId == id && x.PageId == moduleId && x.IsActive).ToListAsync();
+
+                foreach (var item in transactionStatus)
+                {
+                    item.IsActive = false;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            public virtual async Task<string> GetTransactionStatus(int workStepId, TransactionStatusDto transactionStatus)
+            {
+                var result = "";
+
+                if (transactionStatus.Approved)
+                {
+                    var workStep = await _context.UmWorkSteps.FindAsync(workStepId);
+                    if (workStep != null)
+                    {
+                        if (workStep.IsLastStep.GetValueOrDefault())
+                        {
+                            result = "approved";
+                        }
+                        else
+                        {
+                            result = "approval in progress";
+                        }
+                    }
+                }
+                else if (transactionStatus.Disapproved)
+                {
+                    result = "disapproved";
+                    //entity.IsSubmitted = false;
+                }
+
+                return result;
             }
 
             // Mapping methods

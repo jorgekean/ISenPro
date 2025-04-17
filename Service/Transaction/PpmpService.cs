@@ -345,52 +345,18 @@ namespace Service.Transaction
             #region Approval
             if (dto.TransactionStatus != null && dto.UserTransactionPermissions != null)//  && (dto.TransactionStatus.Approved || dto.TransactionStatus.Disapproved)
             {
-                // get current transaction status
-                var transactionStatus = await _context.TransactionStatuses
-                    .Where(x => x.TransactionId == dto.Id && x.PageId == 25 && x.IsActive)
-                    .OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
-
-                var count = TransactionStatusDto.GetNextCount(dto.UserTransactionPermissions.WorkStepId, transactionStatus);
-                var trn = new TransactionStatus
-                {
-                    //RequiredApprover = dto.TransactionStatus.RequiredApprover,
-                    CreatedDate = DateTime.Now,
-                    IsCurrent = true,// TBD - NO NEED FOR THIS
-                    Count = count,
-                    IsDone = dto.UserTransactionPermissions.RequiredApprover == count,
-                    PageId = 25, // ModuleId
-                    ProcessByUserId = _userContext.UserId,
-                    Remarks = dto.TransactionStatus.Remarks,
-                    Status = dto.UserTransactionPermissions.WorkStepName,
-                    TransactionId = dto.Id,
-                    WorkstepId = dto.UserTransactionPermissions.WorkStepId,
-                    Action = dto.TransactionStatus.Approved ? "approved" : "disapproved",// TO DO - other actions
-                    IsActive = true,
-                };
+                var trn = await AddTransactionStatus(25, dto.Id, dto.UserTransactionPermissions, dto.TransactionStatus);
 
                 _context.TransactionStatuses.Add(trn);
 
                 #region Ppmp Status
-                if (dto.TransactionStatus.Approved)
+               entity.Status = await GetTransactionStatus(dto.UserTransactionPermissions.WorkStepId, dto.TransactionStatus);
+                
+                if (dto.TransactionStatus.Disapproved)
                 {
-                    var workStep = await _context.UmWorkSteps.FindAsync(dto.UserTransactionPermissions.WorkStepId);
-                    if (workStep != null)
-                    {
-                        if (workStep.IsLastStep.GetValueOrDefault())
-                        {
-                            entity.Status = "approved";
-                        }
-                        else
-                        {
-                            entity.Status = "approval in progress";
-                        }
-                    }
-                }
-                else if (dto.TransactionStatus.Disapproved)
-                {
-                    entity.Status = "disapproved";
                     entity.IsSubmitted = false;
                 }
+
                 #endregion
             }
             #endregion
@@ -400,22 +366,11 @@ namespace Service.Transaction
 
             await _context.SaveChangesAsync();
 
-
             #region dissapproval
             // for disapproval and cancellation, set IsActive=false or transactionstatuses
             if (dto.TransactionStatus != null && dto.TransactionStatus.Disapproved)
             {
-                var transactionStatus = await _context.TransactionStatuses
-                   .Where(x => x.TransactionId == dto.Id && x.PageId == 25 && x.IsActive)
-                   .OrderByDescending(x => x.CreatedDate).ToListAsync();
-
-                foreach (var item in transactionStatus)
-                {
-                    item.IsActive = false;
-                }
-
-
-                await _context.SaveChangesAsync();
+               await DisableTransactionStatuses(25, dto.Id);
             }
             #endregion
         }
