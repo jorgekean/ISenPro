@@ -38,7 +38,7 @@ BEGIN
             @RequiredApprover = ws.RequiredApprover
         FROM UM_WorkStep ws
         JOIN UM_Workflow wf ON ws.WorkflowId = wf.WorkflowId
-        WHERE wf.ModuleId = @ModuleId
+        WHERE wf.ModuleId = @ModuleId and ws.IsActive = 1
         ORDER BY ws.Sequence;
     END
     ELSE
@@ -53,26 +53,26 @@ BEGIN
                     (SELECT TOP 1 ws2.WorkstepId 
                      FROM UM_WorkStep ws2 
                      JOIN UM_Workflow wf2 ON ws2.WorkflowId = wf2.WorkflowId
-                     WHERE wf2.ModuleId = @ModuleId AND ws2.Sequence = ws.Sequence + 1)
+                     WHERE wf2.ModuleId = @ModuleId AND ws2.Sequence = ws.Sequence + 1 AND ws2.IsActive = 1)
                 ELSE ws.WorkstepId END,
             @WorkStepName = CASE
                 WHEN ts.IsDone = 1 THEN
                     (SELECT TOP 1 ws2.Name
                      FROM UM_WorkStep ws2 
                      JOIN UM_Workflow wf2 ON ws2.WorkflowId = wf2.WorkflowId
-                     WHERE wf2.ModuleId = @ModuleId AND ws2.Sequence = ws.Sequence + 1)
+                     WHERE wf2.ModuleId = @ModuleId AND ws2.Sequence = ws.Sequence + 1 AND ws2.IsActive = 1)
                 ELSE ws.Name END,
             @RequiredApprover = CASE
                 WHEN ts.IsDone = 1 THEN
                     (SELECT TOP 1 ws2.RequiredApprover
                      FROM UM_WorkStep ws2 
                      JOIN UM_Workflow wf2 ON ws2.WorkflowId = wf2.WorkflowId
-                     WHERE wf2.ModuleId = @ModuleId AND ws2.Sequence = ws.Sequence + 1)
+                     WHERE wf2.ModuleId = @ModuleId AND ws2.Sequence = ws.Sequence + 1 AND ws2.IsActive = 1)
                 ELSE ws.RequiredApprover END
         FROM TransactionStatuses ts
         JOIN UM_WorkStep ws ON ts.WorkstepId = ws.WorkstepId
         WHERE ts.IsActive = 1 AND ts.TransactionId = @TransactionId 
-          AND ts.PageId = @ModuleId
+          AND ts.PageId = @ModuleId AND ws.IsActive = 1
         ORDER BY ws.Sequence DESC;
     END
     
@@ -88,6 +88,7 @@ BEGIN
           AND ws.Sequence = @CurrentSequence
           AND wsa.UserAccountId = @UserAccountId
           AND wsa.IsActive = 1
+          AND ws.IsActive = 1
     )
     BEGIN
         SET @CanApprove = 1;  -- User is an approver for this step
@@ -102,6 +103,7 @@ BEGIN
         JOIN UM_Workflow wf ON ws.WorkflowId = wf.WorkflowId
         WHERE wf.ModuleId = @ModuleId
           AND ws.Sequence = @CurrentSequence
+          AND ws.IsActive = 1
     ), 0);  -- Default to false if no record found
     
     -- ========================================================================
