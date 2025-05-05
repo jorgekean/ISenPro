@@ -36,6 +36,9 @@ namespace API.Controllers.Transaction
         {
             try
             {
+                pagingParameters.ApplyFilterCriteria = true;
+                pagingParameters.ParentModule = 1;
+
                 var paginatedResult = await _ppmpService.GetComplexPagedAndFilteredAsync<VPpmpindex>(pagingParameters);
 
                 var response = new PaginatedResponse<VPpmpindex>

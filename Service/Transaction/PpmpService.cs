@@ -52,6 +52,33 @@ namespace Service.Transaction
             return query;
         }
 
+        public override IQueryable<T> ApplyFilterCriteria<T>(IQueryable<T> query)
+        {
+            if (typeof(T) == typeof(VPpmpindex))
+            {
+                var userId = _userContext.UserId;
+                var isAdmin = _userContext.IsAdmin;
+                var parentModule = 1;
+
+                var typedQuery = (IQueryable<VPpmpindex>)query;
+
+                // This assumes you've registered the SQL function in your DbContext
+                typedQuery = typedQuery.Where(p =>
+                    _context.ApplyTransactionFilters(
+                        userId,
+                        p.RequestingOfficeId,
+                        p.CreatedByUserId,
+                        p.Status,
+                        isAdmin,
+                        parentModule
+                    ));
+
+                return (IQueryable<T>)typedQuery;
+            }
+
+            return query;
+        }
+
         public override async Task<PPMPDto> GetByIdAsync(int id)
         {
             var model = await base.GetByIdAsync(id);

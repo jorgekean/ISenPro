@@ -117,5 +117,10 @@
     <Build Include="dbo\Views\v_SupplementaryCatalogueIndex.sql" />
     <Build Include="dbo\Views\v_SupplierIndex.sql" />
     <Build Include="dbo\Views\v_SignatoryIndex.sql" />
+    <Build Include="dbo\Tables\UM_FilterCriteriaList.sql" />
+    <Build Include="dbo\Tables\UM_FilterCriteria.sql" />
+    <Build Include="dbo\Tables\Setting.sql" />
+    <Build Include="dbo\Functions\ApplyTransactionFilters.sql" />
+    <Build Include="dbo\Functions\GetUserFilterCriteria.sql" />
   </ItemGroup>
 </Project>

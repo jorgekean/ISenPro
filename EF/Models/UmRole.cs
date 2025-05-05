@@ -19,6 +19,8 @@ public partial class UmRole
 
     public int CreatedBy { get; set; }
 
+    public virtual ICollection<UmFilterCriterion> UmFilterCriteria { get; set; } = new List<UmFilterCriterion>();
+
     public virtual ICollection<UmPolicyRole> UmPolicyRoles { get; set; } = new List<UmPolicyRole>();
 
     public virtual ICollection<UmUserAccount> UmUserAccounts { get; set; } = new List<UmUserAccount>();

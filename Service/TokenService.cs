@@ -39,7 +39,8 @@ namespace Service
             // add more custom clains
             new Claim("Email", string.IsNullOrWhiteSpace(user.Email) ? "No Email" : user.Email),
             new Claim("Department", user.Department),
-            new Claim("RoleName", user.RoleName)
+            new Claim("RoleName", user.RoleName),
+            new Claim("IsAdmin", user.IsAdmin.ToString())
         };
 
             // Retrieve JWT settings from configuration.

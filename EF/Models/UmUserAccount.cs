@@ -29,5 +29,7 @@ public partial class UmUserAccount
 
     public virtual UmRole? Role { get; set; }
 
+    public virtual ICollection<UmFilterCriterion> UmFilterCriteria { get; set; } = new List<UmFilterCriterion>();
+
     public virtual ICollection<UmWorkStepApprover> UmWorkStepApprovers { get; set; } = new List<UmWorkStepApprover>();
 }

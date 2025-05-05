@@ -26,7 +26,7 @@ namespace Service
             public BaseService(ISenProContext context)
             {
                 _context = context;
-                _dbSet = _context.Set<TEntity>();                
+                _dbSet = _context.Set<TEntity>();
             }
 
             public BaseService(ISenProContext context, IUserContext userContext)
@@ -64,7 +64,7 @@ namespace Service
 
             public virtual async Task<object> AddAsync(TDto dto)
             {
-                var entity = MapToEntity(dto);               
+                var entity = MapToEntity(dto);
 
                 // Track child entities generically
                 TrackChildEntities(entity);
@@ -242,7 +242,13 @@ namespace Service
             public virtual async Task<(IEnumerable<TDynamic> Data, int TotalRecords)> GetComplexPagedAndFilteredAsync<TDynamic>(PagingParameters pagingParameters)
                  where TDynamic : class
             {
-                var query = _context.Set<TDynamic>().Where(e => EF.Property<bool>(e, "IsActive"));
+                var query = _context.Set<TDynamic>().Where(e => EF.Property<bool>(e, "IsActive")); ;
+
+                // apply filter criteria,
+                if (pagingParameters.ApplyFilterCriteria)
+                {
+                    query = ApplyFilterCriteria(query);
+                }              
 
                 if (pagingParameters.Filters != null && pagingParameters.Filters.Any())
                 {
@@ -306,6 +312,19 @@ namespace Service
                 return (data.ToList(), totalRecords);
             }
 
+
+            /// <summary>
+            /// Implement this on every service that needs to apply filter criteria
+            /// </summary>
+            /// <typeparam name="TDynamic"></typeparam>
+            /// <param name="query"></param>
+            /// <returns></returns>
+            public virtual IQueryable<TDynamic> ApplyFilterCriteria<TDynamic>(IQueryable<TDynamic> query) where TDynamic : class
+            {
+                return query;
+            }
+
+
             protected virtual IQueryable<TEntity> IncludeNavigationProperties(IQueryable<TEntity> query)
             {
                 return query; // By default, no navigation properties are included.
@@ -344,8 +363,8 @@ namespace Service
                 return query; // By default, no search filter is applied.
             }
 
-            public virtual async Task<TransactionStatus> AddTransactionStatus(int moduleId, int id, 
-                UserTransactionPermissions userTransactionPermissions, 
+            public virtual async Task<TransactionStatus> AddTransactionStatus(int moduleId, int id,
+                UserTransactionPermissions userTransactionPermissions,
                 TransactionStatusDto transactionStatusDto)
             {
                 // get current transaction status

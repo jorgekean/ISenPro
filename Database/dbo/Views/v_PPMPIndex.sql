@@ -6,6 +6,8 @@ SELECT
     p.BudgetYear,	  
     p.Status AS [Status],
     p.PPMPNo,
+	p.RequestingOfficeId,
+	p.CreatedByUserId,
     d.Name AS OfficeName,
     CONCAT(per.FirstName, ', ', per.LastName) AS PreparedBy,
     p.Remarks,

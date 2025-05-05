@@ -27,6 +27,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<Ppmpsupplementary> Ppmpsupplementaries { get; set; }
 
+    public virtual DbSet<Setting> Settings { get; set; }
+
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
 
     public virtual DbSet<SsItemStatus> SsItemStatuses { get; set; }
@@ -70,6 +72,10 @@ public partial class ISenProContext : DbContext
     public virtual DbSet<UmDepartment> UmDepartments { get; set; }
 
     public virtual DbSet<UmDivision> UmDivisions { get; set; }
+
+    public virtual DbSet<UmFilterCriteriaList> UmFilterCriteriaLists { get; set; }
+
+    public virtual DbSet<UmFilterCriterion> UmFilterCriteria { get; set; }
 
     public virtual DbSet<UmModule> UmModules { get; set; }
 
@@ -127,7 +133,7 @@ public partial class ISenProContext : DbContext
     {
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD9A277DAF");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD1A331309");
 
             entity.ToTable("ChangeDetailsTable");
 
@@ -139,12 +145,12 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.ChangeDetailsTables)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChangeDet__Chang__619B8048");
+                .HasConstraintName("FK__ChangeDet__Chang__5AEE82B9");
         });
 
         modelBuilder.Entity<ChangeTrackingTable>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B79B51F191");
+            entity.HasKey(e => e.ChangeId).HasName("PK__ChangeTr__0E05C5B7EDE63023");
 
             entity.ToTable("ChangeTrackingTable");
 
@@ -161,7 +167,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRole>(entity =>
         {
-            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7A94B4D02");
+            entity.HasKey(e => e.ChangeId).HasName("PK__CT_UM_Ro__0E05C5B7F73B0AF9");
 
             entity.ToTable("CT_UM_Role");
 
@@ -178,7 +184,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<CtUmRoleDetail>(entity =>
         {
-            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD531C5CC8");
+            entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__CT_UM_Ro__648DB5CD248F3172");
 
             entity.ToTable("CT_UM_Role_Details");
 
@@ -190,7 +196,7 @@ public partial class ISenProContext : DbContext
             entity.HasOne(d => d.Change).WithMany(p => p.CtUmRoleDetails)
                 .HasForeignKey(d => d.ChangeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CT_UM_Rol__Chang__628FA481");
+                .HasConstraintName("FK__CT_UM_Rol__Chang__5BE2A6F2");
         });
 
         modelBuilder.Entity<Ppmp>(entity =>
@@ -293,6 +299,26 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.SupplementaryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKF25AB4FE366CDA2C");
+        });
+
+        modelBuilder.Entity<Setting>(entity =>
+        {
+            entity.HasKey(e => new { e.Type, e.Code });
+
+            entity.ToTable("Setting");
+
+            entity.Property(e => e.Type)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Code)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.AltDesc)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.Description)
+                .HasMaxLength(200)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<SsAccountCode>(entity =>
@@ -532,7 +558,7 @@ public partial class ISenProContext : DbContext
 
         modelBuilder.Entity<SsSupplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B41D945853");
+            entity.HasKey(e => e.SupplierId).HasName("PK__SS_Suppl__4BE666B4535CB4E9");
 
             entity.ToTable("SS_Suppliers");
 
@@ -634,6 +660,37 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Code).HasMaxLength(100);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<UmFilterCriteriaList>(entity =>
+        {
+            entity.HasKey(e => e.FilterCriteriaListId).HasName("PK__FilterCr__E906902169885181");
+
+            entity.ToTable("UM_FilterCriteriaList");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.FilterCriteria).WithMany(p => p.UmFilterCriteriaLists)
+                .HasForeignKey(d => d.FilterCriteriaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKD031074A630A3B93");
+        });
+
+        modelBuilder.Entity<UmFilterCriterion>(entity =>
+        {
+            entity.HasKey(e => e.FilterCriteriaId).HasName("PK__FilterCr__E6D3405B5E169ED5");
+
+            entity.ToTable("UM_FilterCriteria");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UmFilterCriteria)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK2D7383BA419B0845");
+
+            entity.HasOne(d => d.UserAccount).WithMany(p => p.UmFilterCriteria)
+                .HasForeignKey(d => d.UserAccountId)
+                .HasConstraintName("FK2D7383BA681C74F9");
         });
 
         modelBuilder.Entity<UmModule>(entity =>
@@ -939,7 +996,7 @@ public partial class ISenProContext : DbContext
                 .HasColumnName("PPMPNo");
             entity.Property(e => e.PreparedBy).HasMaxLength(202);
             entity.Property(e => e.Status)
-                .HasMaxLength(9)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 

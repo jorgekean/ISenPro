@@ -13,9 +13,13 @@ public partial class VPpmpindex
 
     public string Ppmpno { get; set; } = null!;
 
+    public int? RequestingOfficeId { get; set; }
+
+    public int CreatedByUserId { get; set; }
+
     public string? OfficeName { get; set; }
 
-    public string? PreparedBy { get; set; }
+    public string PreparedBy { get; set; } = null!;
 
     public string? Remarks { get; set; }
 

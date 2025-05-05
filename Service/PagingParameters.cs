@@ -15,6 +15,8 @@ namespace Service
 
 
         public List<Filter> Filters { get; set; } = new List<Filter>();
+        public bool ApplyFilterCriteria { get; set; } = false;
+        public int ParentModule { get; set; } = 0;
     }
 
     public class FilterOption

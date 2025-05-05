@@ -14,6 +14,7 @@ namespace Service
         int UserId { get; }
         string UserName { get; }
         string RoleCode { get; }
+        bool IsAdmin { get; }
     }
 
     public class UserContext : IUserContext
@@ -33,5 +34,9 @@ namespace Service
 
         public string RoleCode => _httpContextAccessor.HttpContext?.User?
            .FindFirst(ClaimTypes.Role)?.Value ?? "";
+
+        // convert to bool
+        public bool IsAdmin => _httpContextAccessor.HttpContext?.User?
+            .FindFirst("IsAdmin")?.Value == "True" ? true : false;
     }
 }

@@ -22,6 +22,18 @@ namespace EF.Models
                 .FirstOrDefaultAsync();
         }
 
+        [DbFunction("ApplyTransactionFilters", "dbo")]
+        public bool ApplyTransactionFilters(
+        int userId,
+        int? requestingOfficeId,
+        int? createdByUserId,
+        string status,
+        bool isAdmin,
+        int parentModule)
+        {
+            throw new NotSupportedException("This method is for LINQ to Entities translation only.");
+        }
+
         // Partial method for additional model configuration
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
         {
