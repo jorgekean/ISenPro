@@ -122,5 +122,7 @@
     <Build Include="dbo\Tables\Setting.sql" />
     <Build Include="dbo\Functions\ApplyTransactionFilters.sql" />
     <Build Include="dbo\Functions\GetUserFilterCriteria.sql" />
+    <Build Include="dbo\Tables\APPs.sql" />
+    <Build Include="dbo\Tables\APPDetails.sql" />
   </ItemGroup>
 </Project>

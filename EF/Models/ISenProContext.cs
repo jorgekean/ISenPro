@@ -11,6 +11,10 @@ public partial class ISenProContext : DbContext
     {
     }
 
+    public virtual DbSet<App> Apps { get; set; }
+
+    public virtual DbSet<Appdetail> Appdetails { get; set; }
+
     public virtual DbSet<ChangeDetailsTable> ChangeDetailsTables { get; set; }
 
     public virtual DbSet<ChangeTrackingTable> ChangeTrackingTables { get; set; }
@@ -131,6 +135,46 @@ public partial class ISenProContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<App>(entity =>
+        {
+            entity.HasKey(e => e.Appid).HasName("PK__APPs__AA3B3831327CD7C3");
+
+            entity.ToTable("APPs");
+
+            entity.Property(e => e.Appid).HasColumnName("APPId");
+            entity.Property(e => e.AdditionalInflationValue).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.AdditionalTenPercent).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.AmendedAdditionalTenPercent).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.AmendedGrandTotal).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.AmendedTotalAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.Appno)
+                .HasMaxLength(100)
+                .HasColumnName("APPNo");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.SubmittedDate).HasColumnType("datetime");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Appdetail>(entity =>
+        {
+            entity.HasKey(e => e.AppdetailId).HasName("PK__APPDetai__EB87DD4A364D68A7");
+
+            entity.ToTable("APPDetails");
+
+            entity.Property(e => e.AppdetailId).HasColumnName("APPDetailId");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.App).WithMany(p => p.Appdetails)
+                .HasForeignKey(d => d.AppId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_APPDetails_APPs");
+        });
+
         modelBuilder.Entity<ChangeDetailsTable>(entity =>
         {
             entity.HasKey(e => new { e.ChangeId, e.FieldName }).HasName("PK__ChangeDe__648DB5CD1A331309");
