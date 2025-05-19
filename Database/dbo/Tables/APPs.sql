@@ -6,6 +6,7 @@
     [AdditionalInflationValue]    DECIMAL (19, 5) NULL,
     [AdditionalTenPercent]        DECIMAL (19, 5) NULL,
     [GrandTotal]                  DECIMAL (19, 5) NULL,
+    [Status]                      VARCHAR (50)    NOT NULL,
     [AmendedTotalAmount]          DECIMAL (19, 5) NULL,
     [AmendedAdditionalTenPercent] DECIMAL (19, 5) NULL,
     [AmendedGrandTotal]           DECIMAL (19, 5) NULL,
@@ -21,4 +22,6 @@
     [DeletedDate]                 DATETIME        NULL,
     CONSTRAINT [PK__APPs__AA3B3831327CD7C3] PRIMARY KEY CLUSTERED ([APPId] ASC)
 );
+
+
 

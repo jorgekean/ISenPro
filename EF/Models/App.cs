@@ -19,6 +19,8 @@ public partial class App
 
     public decimal? GrandTotal { get; set; }
 
+    public string Status { get; set; } = null!;
+
     public decimal? AmendedTotalAmount { get; set; }
 
     public decimal? AmendedAdditionalTenPercent { get; set; }

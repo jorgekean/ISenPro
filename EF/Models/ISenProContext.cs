@@ -153,6 +153,9 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.DeletedDate).HasColumnType("datetime");
             entity.Property(e => e.GrandTotal).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.SubmittedDate).HasColumnType("datetime");
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(19, 5)");
             entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
