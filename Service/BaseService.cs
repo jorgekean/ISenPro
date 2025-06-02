@@ -432,7 +432,7 @@ namespace Service
                 }
 
                 return result;
-            }
+            } 
 
             // Mapping methods
             protected abstract TDto MapToDto(TEntity entity);

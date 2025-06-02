@@ -13,6 +13,7 @@ using Service;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Service.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -131,6 +132,7 @@ builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 #endregion
 
 #region Transaction
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IPpmpService, PpmpService>();
 #endregion
 

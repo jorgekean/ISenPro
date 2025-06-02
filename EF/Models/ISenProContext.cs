@@ -129,6 +129,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<VSupplierIndex> VSupplierIndices { get; set; }
 
+    public virtual DbSet<VTransactionHistory> VTransactionHistories { get; set; }
+
     public virtual DbSet<VUserAccountIndex> VUserAccountIndices { get; set; }
 
     public virtual DbSet<VWorkFlowIndex> VWorkFlowIndices { get; set; }
@@ -1126,6 +1128,20 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.IsBlackListedStr)
                 .HasMaxLength(3)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VTransactionHistory>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_TransactionHistory");
+
+            entity.Property(e => e.Action).HasMaxLength(20);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DisplayName).HasMaxLength(202);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(50)
+                .HasColumnName("UserID");
         });
 
         modelBuilder.Entity<VUserAccountIndex>(entity =>

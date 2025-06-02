@@ -24,7 +24,7 @@ namespace Service
         Task<TransactionStatus> AddTransactionStatus(int moduleId, int id,
                 UserTransactionPermissions userTransactionPermissions,
                 TransactionStatusDto transactionStatusDto);
-        Task<string> GetTransactionStatus(int workStepId, TransactionStatusDto transactionStatus);
+        Task<string> GetTransactionStatus(int workStepId, TransactionStatusDto transactionStatus);        
         Task DisableTransactionStatuses(int moduleId, int id);
     } 
 }
