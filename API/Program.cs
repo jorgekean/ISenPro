@@ -133,6 +133,7 @@ builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 
 #region Transaction
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IAppService, AppService>();
 builder.Services.AddScoped<IPpmpService, PpmpService>();
 #endregion
 

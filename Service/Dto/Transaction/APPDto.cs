@@ -45,10 +45,18 @@ namespace Service.Dto.Transaction
 
         //public Dictionary<int, APPDetailsModel> AppDetails { get; set; } = new Dictionary<int, APPDetailsModel>();
 
-        public List<DepartmentDto> OfficesWithApprovedPPMPs { get; set; } = [];
-        public List<DepartmentDto> OfficesWithASavedPPMPs { get; set; } = [];
-        public List<DepartmentDto> OfficesWithOutPPMPs { get; set; } = [];
+        public List<APPDetailsPPMPDto> OfficesWithApprovedPPMPs { get; set; } = [];
+        public List<APPDetailsPPMPDto> OfficesWithASavedPPMPs { get; set; } = [];
+        public List<APPDetailsPPMPDto> OfficesWithOutPPMPs { get; set; } = [];
 
         public bool CanApprove { get; set; }
+    }
+
+    public class  APPDetailsPPMPDto
+    {
+        public int BudgetYear { get; set; }
+        public string? PpmpNo { get; set; }
+        public string? DateSubmitted { get; set; }
+        public required string RequestingOffice { get; set; }
     }
 }

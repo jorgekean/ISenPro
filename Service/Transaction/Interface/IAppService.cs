@@ -11,5 +11,7 @@ namespace Service.Transaction.Interface
         // report
         Task GenerateReport(int id);
         IList<int> GetBudgetYears();
+
+        Task<List<APPDetailsPPMPDto>> GetOfficeNoPPMPs(short budgetYear);
     }
 }

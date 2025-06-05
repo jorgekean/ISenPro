@@ -28,9 +28,32 @@ namespace API.Controllers
             {
 
                 // Fetch transaction history
-                var transactions = await _transactionService.GetTransactionStatus(transactionId, pageId);               
+                var transactions = await _transactionService.GetTransactionStatus(transactionId, pageId);
 
                 return Ok(transactions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching transaction history");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request");
+            }
+        }
+
+        // GET: api/Transaction/BudgetYear
+        [HttpGet("budgetyears")]
+        public async Task<ActionResult<IEnumerable<VTransactionHistory>>> GetBudgetYear()
+        {
+            try
+            {
+
+                // get years based on current year, 3 years past and 2 years future
+                var years = await Task.Run(() =>
+                {
+                    var currentYear = DateTime.Now.Year;
+                    return Enumerable.Range(currentYear - 3, 6).OrderByDescending(s => s).ToList();
+                });
+
+                return Ok(years);
             }
             catch (Exception ex)
             {

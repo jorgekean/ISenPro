@@ -1,4 +1,6 @@
-﻿using EF.Models;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Wordprocessing;
+using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,7 @@ using Service.Reports.Transactions;
 using Service.Service;
 using Service.SystemSetup.Interface;
 using Service.Transaction.Interface;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -349,7 +352,7 @@ namespace Service.Transaction
                 SubmittedDate = entity.SubmittedDate,
                 DeletedBy = entity.DeletedByUserId,
                 DeletedDate = entity.DeletedDate,
-                IsDeleted = entity.DeletedDate.HasValue,         
+                IsDeleted = entity.DeletedDate.HasValue,
             };
             return dto;
         }
@@ -382,6 +385,25 @@ namespace Service.Transaction
         }
 
         #endregion
+
+        public async Task<List<APPDetailsPPMPDto>> GetOfficeNoPPMPs(short budgetYear)
+        {
+            // use linq
+            // SELECT d.Name FROM dbo.Departments d
+            // LEFT JOIN dbo.PPMPs p ON p.RequestingOfficeId = d.DepartmentId AND YEAR(p.BudgetYear)= @budgetyear
+            //WHERE d.IsActive = 1 AND p.PPMPId IS NULL
+            var result = await _context.UmDepartments
+                .Where(d => d.IsActive && !_context.Ppmps.Any(p => p.RequestingOfficeId == d.DepartmentId && p.BudgetYear == budgetYear))
+                .Select(d => new APPDetailsPPMPDto
+                {
+                    BudgetYear = budgetYear,
+                    RequestingOffice = d.Name ?? ""
+                })
+                .ToListAsync();
+
+            return result;
+        }
+
 
         #region Reports
         //  Implement the APPGenerateReport method here
