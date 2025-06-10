@@ -107,6 +107,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<UmWorkStepApprover> UmWorkStepApprovers { get; set; }
 
+    public virtual DbSet<VAppPpmpCatalogue> VAppPpmpCatalogues { get; set; }
+
     public virtual DbSet<VParentModule> VParentModules { get; set; }
 
     public virtual DbSet<VPersonIndex> VPersonIndices { get; set; }
@@ -963,6 +965,25 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.WorkstepId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UM_WorkStepApprovers_UM_WorkSteps");
+        });
+
+        modelBuilder.Entity<VAppPpmpCatalogue>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_app_PpmpCatalogues");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.ItemCode).HasMaxLength(50);
+            entity.Property(e => e.PpmpcatalogueId).HasColumnName("PPMPCatalogueId");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.ProductCategory).HasMaxLength(200);
+            entity.Property(e => e.RequestingOffice).HasMaxLength(200);
+            entity.Property(e => e.UnitOfMeasure).HasMaxLength(200);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<VParentModule>(entity =>

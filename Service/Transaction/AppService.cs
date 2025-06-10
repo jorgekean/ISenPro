@@ -1,10 +1,12 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Wordprocessing;
 using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Service.Cache;
+using Service.Constants;
 using Service.Dto.SystemSetup;
 using Service.Dto.Transaction;
 using Service.Dto.UserManagement;
@@ -386,9 +388,8 @@ namespace Service.Transaction
 
         #endregion
 
-        public async Task<List<APPDetailsPPMPDto>> GetOfficeNoPPMPs(short budgetYear)
+        public async Task<List<APPDetailsPPMPDto>> GetOfficesNoPPMPs(short budgetYear)
         {
-            // use linq
             // SELECT d.Name FROM dbo.Departments d
             // LEFT JOIN dbo.PPMPs p ON p.RequestingOfficeId = d.DepartmentId AND YEAR(p.BudgetYear)= @budgetyear
             //WHERE d.IsActive = 1 AND p.PPMPId IS NULL
@@ -397,9 +398,84 @@ namespace Service.Transaction
                 .Select(d => new APPDetailsPPMPDto
                 {
                     BudgetYear = budgetYear,
-                    RequestingOffice = d.Name ?? ""
+                    RequestingOffice = d.Name ?? "",
+                    OfficeCode = d.Code ?? ""
                 })
                 .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<APPDetailsPPMPDto>> GetOfficesWithApprovedPPMPs(short budgetYear)
+        {
+
+            //SELECT* FROM dbo.PPMPs a
+            //JOIN dbo.UM_Department d ON d.DepartmentId = a.RequestingOfficeId
+            //WHERE a.IsActive = 1 AND a.Status = 'approved'
+            //AND a.BudgetYear = @budgetyear
+            var result = await _context.Ppmps.Include(d => d.RequestingOffice)
+                .Where(x => x.Status == TransactionStatusConst.Approved && x.IsActive && x.BudgetYear == budgetYear)
+                .Select(x => new APPDetailsPPMPDto
+                {
+                    PpmpId = x.Ppmpid,
+                    BudgetYear = x.BudgetYear,
+                    PpmpNo = x.Ppmpno,
+                    RequestingOffice = x.RequestingOffice.Name ?? "",
+                    OfficeCode = x.RequestingOffice.Code ?? "",
+                    DateSubmitted = x.SubmittedDate.GetValueOrDefault().ToString("MM/dd/yyyy")
+                })
+                .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<APPDetailsPPMPDto>> GetOfficesWithSavedPPMPs(short budgetYear)
+        {
+            var result = await _context.Ppmps.Include(d => d.RequestingOffice)
+                .Where(x => x.Status != TransactionStatusConst.Approved && x.IsActive && x.BudgetYear == budgetYear)
+                .Select(x => new APPDetailsPPMPDto
+                {
+                    BudgetYear = x.BudgetYear,
+                    PpmpNo = x.Ppmpno,
+                    RequestingOffice = x.RequestingOffice.Name ?? "",
+                    OfficeCode = x.RequestingOffice.Code ?? "",
+                    DateSubmitted = x.SubmittedDate.GetValueOrDefault().ToString("MM/dd/yyyy")
+                })
+                .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<APPCatalogueDto>> ViewConsolidated(short budgetYear)
+        {
+            var approvedPpmps = (await GetOfficesWithApprovedPPMPs(budgetYear)).Select(s => s.PpmpId);
+
+            //SELECT*
+            //FROM dbo.PPMPs a
+            //JOIN dbo.PPMPCatalogues pc ON pc.PPMPId = a.PPMPId
+            //JOIN dbo.Departments d ON d.DepartmentId = a.RequestingOfficeId
+            //WHERE YEAR(a.BudgetYear)= 2025 AND a.IsActive = 1 AND pc.IsActive = 1
+
+            var result = await _context.VAppPpmpCatalogues
+                .Where(p => p.BudgetYear == budgetYear)
+                .Join(approvedPpmps,
+                 catalogue => catalogue.Ppmpid,
+                 ppmpId => ppmpId,
+                 (s, _) => new APPCatalogueDto
+                 {
+                     PpmpCatalogueId = s.PpmpcatalogueId,
+                     Description = s.Description ?? "",
+                     ItemCode = s.ItemCode ?? "",
+                     ProductCategory = s.ProductCategory,
+                     PpmpId = s.Ppmpid,
+                     UnitPrice = s.UnitPrice,
+                     RequestingOffice = s.RequestingOffice ?? "",
+                     UnitOfMeasure = s.UnitOfMeasure ?? "",
+                     FirstQty = s.FirstQuarter,
+                     SecondQty = s.SecondQuarter,
+                     ThirdQty = s.ThirdQuarter,
+                     FourthQty = s.FourthQuarter
+                 }).ToListAsync();
 
             return result;
         }

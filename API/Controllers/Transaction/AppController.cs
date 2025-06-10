@@ -141,12 +141,60 @@ namespace API.Controllers.Transaction
         #endregion
 
         // OfficeNoSubmittedPPMP
-        [HttpGet("officenosubmittedppmp")]
+        [HttpGet("officesnosubmittedppmp")]
         public async Task<ActionResult<IEnumerable<APPDetailsPPMPDto>>> GetOfficeNoSubmittedPPMP([FromQuery] short budgetYear)
         {
             try
+            {                            
+                var result = await _appService.GetOfficesNoPPMPs(budgetYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
             {
-                var result = await _appService.GetOfficeNoPPMPs(budgetYear);
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // OfficesWithApprovedPPMP
+        [HttpGet("officeswithapprovedppmp")]
+        public async Task<ActionResult<IEnumerable<APPDetailsPPMPDto>>> GetOfficesWithApprovedPPMP([FromQuery] short budgetYear)
+        {
+            try
+            {
+                var result = await _appService.GetOfficesWithApprovedPPMPs(budgetYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // OfficesWithSavedPPMP
+        [HttpGet("officeswithsavedppmp")]
+        public async Task<ActionResult<IEnumerable<APPDetailsPPMPDto>>> GetOfficesWithSavedPPMP([FromQuery] short budgetYear)
+        {
+            try
+            {
+                var result = await _appService.GetOfficesWithSavedPPMPs(budgetYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // viewconsolidated
+        [HttpGet("viewconsolidated")]
+        public async Task<ActionResult<IEnumerable<APPCatalogueDto>>> GetConsolidated([FromQuery] short budgetYear)
+        {
+            try
+            {
+                var result = await _appService.ViewConsolidated(budgetYear);
                 return Ok(result);
             }
             catch (Exception ex)
