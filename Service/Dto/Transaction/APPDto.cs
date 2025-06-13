@@ -79,4 +79,15 @@ namespace Service.Dto.Transaction
         public decimal UnitPrice { get; set; }
         public decimal Amount => TotalQty * UnitPrice;
     }
+
+    public class APPProjectItemDto
+    {
+        public int PpmpProjectId { get; set; }
+        public int PpmpId { get; set; }
+        public required string RequestingOffice { get; set; }
+        public required string ProjectName { get; set; }
+        public required string Description { get; set; }
+        public int Quarter { get; set; }                
+        public decimal Cost { get; set; }        
+    }
 }

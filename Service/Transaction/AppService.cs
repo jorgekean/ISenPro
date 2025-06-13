@@ -480,6 +480,56 @@ namespace Service.Transaction
             return result;
         }
 
+        public async Task<List<APPCatalogueDto>> ViewConsolidatedSuppItems(short budgetYear)
+        {
+            var approvedPpmps = (await GetOfficesWithApprovedPPMPs(budgetYear)).Select(s => s.PpmpId);
+
+            var result = await _context.VAppPpmpSupplementaryItems
+                .Where(p => p.BudgetYear == budgetYear)
+                .Join(approvedPpmps,
+                 catalogue => catalogue.Ppmpid,
+                 ppmpId => ppmpId,
+                 (s, _) => new APPCatalogueDto
+                 {
+                     PpmpCatalogueId = s.PpmpsupplementaryId,
+                     Description = s.Description ?? "",
+                     ItemCode = s.ItemCode ?? "",
+                     ProductCategory = s.ProductCategory,
+                     PpmpId = s.Ppmpid,
+                     UnitPrice = s.UnitPrice,
+                     RequestingOffice = s.RequestingOffice ?? "",
+                     UnitOfMeasure = s.UnitOfMeasure ?? "",
+                     FirstQty = s.FirstQuarter,
+                     SecondQty = s.SecondQuarter,
+                     ThirdQty = s.ThirdQuarter,
+                     FourthQty = s.FourthQuarter
+                 }).ToListAsync();
+
+            return result;
+        }
+
+        public async Task<List<APPProjectItemDto>> ViewConsolidatedProjectItems(short budgetYear)
+        {
+            var approvedPpmps = (await GetOfficesWithApprovedPPMPs(budgetYear)).Select(s => s.PpmpId);
+
+            var result = await _context.VAppPpmpProjectItems
+                .Where(p => p.BudgetYear == budgetYear)
+                .Join(approvedPpmps,
+                 catalogue => catalogue.Ppmpid,
+                 ppmpId => ppmpId,
+                 (s, _) => new APPProjectItemDto
+                 {
+                     Cost = s.Cost,
+                     Description = s.Description ?? "",                     
+                     PpmpId = s.Ppmpid,
+                     ProjectName = s.ProjectName ?? "",
+                     Quarter = s.Quarter,
+                     RequestingOffice = s.RequestingOffice ?? "",
+                     PpmpProjectId = s.PpmpprojectId,                     
+                 }).ToListAsync();
+
+            return result;
+        }
 
         #region Reports
         //  Implement the APPGenerateReport method here

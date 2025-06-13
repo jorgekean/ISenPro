@@ -16,5 +16,7 @@ namespace Service.Transaction.Interface
         Task<List<APPDetailsPPMPDto>> GetOfficesWithApprovedPPMPs(short budgetYear);
         Task<List<APPDetailsPPMPDto>> GetOfficesWithSavedPPMPs(short budgetYear);
         Task<List<APPCatalogueDto>> ViewConsolidated(short budgetYear);
+        Task<List<APPCatalogueDto>> ViewConsolidatedSuppItems(short budgetYear);
+        Task<List<APPProjectItemDto>> ViewConsolidatedProjectItems(short budgetYear);
     }
 }

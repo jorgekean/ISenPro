@@ -109,6 +109,10 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<VAppPpmpCatalogue> VAppPpmpCatalogues { get; set; }
 
+    public virtual DbSet<VAppPpmpProjectItem> VAppPpmpProjectItems { get; set; }
+
+    public virtual DbSet<VAppPpmpSupplementaryItem> VAppPpmpSupplementaryItems { get; set; }
+
     public virtual DbSet<VParentModule> VParentModules { get; set; }
 
     public virtual DbSet<VPersonIndex> VPersonIndices { get; set; }
@@ -979,6 +983,41 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.ItemCode).HasMaxLength(50);
             entity.Property(e => e.PpmpcatalogueId).HasColumnName("PPMPCatalogueId");
             entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.ProductCategory).HasMaxLength(200);
+            entity.Property(e => e.RequestingOffice).HasMaxLength(200);
+            entity.Property(e => e.UnitOfMeasure).HasMaxLength(200);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<VAppPpmpProjectItem>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_app_PpmpProjectItems");
+
+            entity.Property(e => e.Cost).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.PpmpprojectId).HasColumnName("PPMPProjectId");
+            entity.Property(e => e.ProjectStatus).HasMaxLength(20);
+            entity.Property(e => e.RequestingOffice).HasMaxLength(200);
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<VAppPpmpSupplementaryItem>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_app_PpmpSupplementaryItems");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.ItemCode).HasMaxLength(50);
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.PpmpsupplementaryId).HasColumnName("PPMPSupplementaryId");
             entity.Property(e => e.ProductCategory).HasMaxLength(200);
             entity.Property(e => e.RequestingOffice).HasMaxLength(200);
             entity.Property(e => e.UnitOfMeasure).HasMaxLength(200);

@@ -204,6 +204,38 @@ namespace API.Controllers.Transaction
             }
         }
 
+        // viewconsolidated
+        [HttpGet("viewconsolidatedsuppitems")]
+        public async Task<ActionResult<IEnumerable<APPCatalogueDto>>> GetConsolidatedSupp([FromQuery] short budgetYear)
+        {
+            try
+            {
+                var result = await _appService.ViewConsolidatedSuppItems(budgetYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // viewconsolidatedsuppitems
+        [HttpGet("viewconsolidatedprojectitems")]
+        public async Task<ActionResult<IEnumerable<APPCatalogueDto>>> GetConsolidatedProject([FromQuery] short budgetYear)
+        {
+            try
+            {
+                var result = await _appService.ViewConsolidatedProjectItems(budgetYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         #region Reports
         [HttpGet("printpreview")]
         public async Task<ActionResult<APPDto>> GetPPMPReport(int id)

@@ -126,5 +126,7 @@
     <Build Include="dbo\Tables\APPDetails.sql" />
     <Build Include="dbo\Views\v_TransactionHistory.sql" />
     <Build Include="dbo\Views\v_app_PpmpCatalogues.sql" />
+    <Build Include="dbo\Views\v_app_PpmpSupplementaryItems.sql" />
+    <Build Include="dbo\Views\v_app_PpmpProjectItems.sql" />
   </ItemGroup>
 </Project>
