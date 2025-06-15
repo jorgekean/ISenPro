@@ -59,7 +59,7 @@ namespace Service.Transaction
 
         protected override IQueryable<App> ApplySearchFilter(IQueryable<App> query, string searchQuery)
         {
-            return query.Where(p => new[] { p.Appno, p.BudgetYear.ToString() }
+            return query.Where(p => new[] { p.Appno, p.BudgetYear.ToString(), p.Status }
                             .Any(value => value != null && value.Contains(searchQuery)));
         }
 
@@ -116,7 +116,21 @@ namespace Service.Transaction
 
         public override async Task<object> AddAsync(APPDto dto)
         {
-            dto.AppNo = GenerateAppNo(dto.BudgetYear);
+            dto.AppNo = GenerateAppNo(dto.BudgetYear.GetValueOrDefault());
+
+            // total amounts
+            var totalAmount = 0m;
+            var psdbmItems = await ViewConsolidated(dto.BudgetYear.GetValueOrDefault());
+            var supplementaryItems = await ViewConsolidatedSuppItems(dto.BudgetYear.GetValueOrDefault());
+            var projectItems = await ViewConsolidatedProjectItems(dto.BudgetYear.GetValueOrDefault());
+
+            totalAmount += psdbmItems.Sum(i => i.Amount) +
+                          supplementaryItems.Sum(i => i.Amount) +
+                          projectItems.Sum(i => i.Cost);
+
+            dto.TotalAmount = totalAmount;
+            dto.AdditionalInflationValue = 10; // static to 10 for now
+            dto.GrandTotalAmount = totalAmount + (totalAmount * (dto.AdditionalInflationValue / 100));
 
             return await base.AddAsync(dto);
         }
@@ -124,198 +138,15 @@ namespace Service.Transaction
         // Expect to received the updated/added appcatalogues and appsupplementaries ONLY
         public override async Task UpdateAsync(APPDto dto)
         {
+
+            // AppDetails - Skip if PpmpId exists in the database
+            var existingAppDetails = await _context.Appdetails.Where(x => x.AppId == dto.Id && x.IsActive).ToListAsync();
+            var newAppDetails = dto.AppDetails?
+                .Where(ad => ad.PpmpId.HasValue && !existingAppDetails.Any(ed => ed.PpmpId == ad.PpmpId)).ToList();
+            dto.AppDetails = newAppDetails;
+
             var entity = MapToEntity(dto);
-
-            #region for review
-            //#region APP Catalogues
-            //// Get a list of IDs from the DTO for records that are NOT new.
-            //var existingIds = dto.Appcatalogues
-            //                     .Where(item => item.Id != 0)
-            //                     .Select(item => item.Id)
-            //                     .ToList();
-
-            //// Load all existing Appcatalogues in one go.
-            //var existingCatalogues = await _context.Appcatalogues
-            //    .Where(c => existingIds.Contains(c.AppcatalogueId))
-            //    .ToDictionaryAsync(c => c.AppcatalogueId);
-
-            //foreach (var item in dto.Appcatalogues)
-            //{
-            //    if (item.Id != 0 && existingCatalogues.TryGetValue(item.Id, out var catalogue))
-            //    {
-            //        // Existing record: update its properties.
-            //        catalogue.Appid = dto.Id;
-            //        catalogue.CatalogueId = item.CatalogueId;
-            //        catalogue.FirstQuarter = item.FirstQuarter;
-            //        catalogue.SecondQuarter = item.SecondQuarter;
-            //        catalogue.ThirdQuarter = item.ThirdQuarter;
-            //        catalogue.FourthQuarter = item.FourthQuarter;
-            //        catalogue.UnitPrice = item.UnitPrice;
-            //        catalogue.Amount = item.Amount;
-            //        catalogue.IsActive = item.IsActive;
-            //        catalogue.CreatedDate = item.CreatedDate;
-            //        catalogue.CreatedByUserId = item.CreatedBy;
-            //        catalogue.UpdatedDate = item.UpdatedDate;
-            //        catalogue.UpdatedByUserId = item.Updatedby;
-            //        catalogue.DeletedDate = item.DeletedDate;
-            //        catalogue.DeletedByUserId = item.DeletedBy;
-            //        catalogue.Description = item.Description;
-            //        catalogue.Remarks = item.Remarks;
-            //    }
-            //    else
-            //    {
-            //        // New record: create a new instance and add it to the context.
-            //        catalogue = new Appcatalogue
-            //        {
-            //            Appid = dto.Id,
-            //            CatalogueId = item.CatalogueId,
-            //            FirstQuarter = item.FirstQuarter,
-            //            SecondQuarter = item.SecondQuarter,
-            //            ThirdQuarter = item.ThirdQuarter,
-            //            FourthQuarter = item.FourthQuarter,
-            //            UnitPrice = item.UnitPrice,
-            //            Amount = item.Amount,
-            //            IsActive = true,
-            //            CreatedDate = DateTime.Now,
-            //            CreatedByUserId = 1, // TO DO: Use the current user's id
-            //            Description = item.Description,
-            //            Remarks = item.Remarks
-            //        };
-            //        _context.Appcatalogues.Add(catalogue);
-            //    }
-            //}
-            //#endregion
-
-            //#region APP Supplementaries
-            //// Get a list of IDs from the DTO for records that are NOT new.
-            //var existingSuppIds = dto.Appsupplementaries
-            //                     .Where(item => item.Id != 0)
-            //                     .Select(item => item.Id)
-            //                     .ToList();
-
-            //// Load all existing AppSupplementaries in one go.
-            //var existingSupps = await _context.Appsupplementaries
-            //    .Where(c => existingSuppIds.Contains(c.AppsupplementaryId))
-            //    .ToDictionaryAsync(c => c.AppsupplementaryId);
-
-            //foreach (var item in dto.Appsupplementaries)
-            //{
-            //    if (item.Id != 0 && existingSupps.TryGetValue(item.Id, out var supplementary))
-            //    {
-            //        // Existing record: update its properties.
-            //        supplementary.Appid = dto.Id;
-            //        supplementary.SupplementaryId = item.SupplementaryId;
-            //        supplementary.FirstQuarter = item.FirstQuarter;
-            //        supplementary.SecondQuarter = item.SecondQuarter;
-            //        supplementary.ThirdQuarter = item.ThirdQuarter;
-            //        supplementary.FourthQuarter = item.FourthQuarter;
-            //        supplementary.UnitPrice = item.UnitPrice;
-            //        supplementary.Amount = item.Amount;
-            //        supplementary.IsActive = item.IsActive;
-            //        supplementary.CreatedDate = item.CreatedDate;
-            //        supplementary.CreatedByUserId = item.CreatedBy;
-            //        supplementary.UpdatedDate = item.UpdatedDate;
-            //        supplementary.UpdatedByUserId = item.Updatedby;
-            //        supplementary.DeletedDate = item.DeletedDate;
-            //        supplementary.DeletedByUserId = item.DeletedBy;
-            //        supplementary.Description = item.Description;
-            //        supplementary.Remarks = item.Remarks;
-            //    }
-            //    else
-            //    {
-            //        // New record: create a new instance and add it to the context.
-            //        supplementary = new Appsupplementary
-            //        {
-            //            Appid = dto.Id,
-            //            SupplementaryId = item.SupplementaryId,
-            //            FirstQuarter = item.FirstQuarter,
-            //            SecondQuarter = item.SecondQuarter,
-            //            ThirdQuarter = item.ThirdQuarter,
-            //            FourthQuarter = item.FourthQuarter,
-            //            UnitPrice = item.UnitPrice,
-            //            Amount = item.Amount,
-            //            IsActive = true,
-            //            CreatedDate = DateTime.Now,
-            //            CreatedByUserId = 1, // TO DO: Use the current user's id
-            //            Description = item.Description,
-            //            Remarks = item.Remarks
-            //        };
-            //        _context.Appsupplementaries.Add(supplementary);
-            //    }
-            //}
-            //#endregion
-
-            //#region APP Projects
-            //// Get a list of IDs from the DTO for records that are NOT new.
-            //var existingProjectIds = dto.AppProjects
-            //                     .Where(item => item.Id != 0)
-            //                     .Select(item => item.Id)
-            //                     .ToList();
-
-            //// Load all existing AppSupplementaries in one go.
-            //var existingProjs = await _context.Appprojects
-            //    .Where(c => existingProjectIds.Contains(c.AppprojectId))
-            //    .ToDictionaryAsync(c => c.AppprojectId);
-
-            //foreach (var item in dto.AppProjects)
-            //{
-            //    if (item.Id != 0 && existingProjs.TryGetValue(item.Id, out var project))
-            //    {
-            //        // Existing record: update its properties.
-            //        project.AppprojectId = item.Id;
-            //        project.Appid = item.Appid;
-            //        project.ProjectName = item.ProjectName;
-            //        project.Description = item.Description;
-            //        project.Quarter = item.Quarter;
-            //        project.Cost = item.Cost;
-            //        project.ProjectStatus = item.ProjectStatus;
-            //        project.IsActive = item.IsActive;
-            //        project.CreatedByUserId = item.CreatedBy;
-            //        project.CreatedDate = item.CreatedDate;
-            //        project.AccountCodeId = item.AccountCode?.Id;
-            //    }
-            //    else
-            //    {
-            //        // New record: create a new instance and add it to the context.
-            //        project = new Appproject
-            //        {
-            //            AppprojectId = item.Id,
-            //            Appid = item.Appid,
-            //            ProjectName = item.ProjectName,
-            //            Description = item.Description,
-            //            Quarter = item.Quarter,
-            //            Cost = item.Cost,
-            //            ProjectStatus = item.ProjectStatus,
-            //            IsActive = item.IsActive,
-            //            CreatedByUserId = item.CreatedBy,
-            //            CreatedDate = item.CreatedDate,
-            //            AccountCodeId = item.AccountCode?.Id
-            //        };
-            //        _context.Appprojects.Add(project);
-            //    }
-            //}
-            //#endregion
-
-            //#region Approval
-            //if (dto.TransactionStatus != null && dto.UserTransactionPermissions != null)//  && (dto.TransactionStatus.Approved || dto.TransactionStatus.Disapproved)
-            //{
-            //    var trn = await AddTransactionStatus(25, dto.Id, dto.UserTransactionPermissions, dto.TransactionStatus);
-
-            //    _context.TransactionStatuses.Add(trn);
-
-            //    #region App Status
-            //   entity.Status = await GetTransactionStatus(dto.UserTransactionPermissions.WorkStepId, dto.TransactionStatus);
-
-            //    if (dto.TransactionStatus.Disapproved)
-            //    {
-            //        entity.IsSubmitted = false;
-            //    }
-
-            //    #endregion
-            //}
-            //#endregion
-            #endregion
-
+            
             // update the APP model
             _dbSet.Update(entity);
 
@@ -363,9 +194,9 @@ namespace Service.Transaction
         {
             var entity = new App
             {
-                Appid = dto.Id,
+                Appid = dto.Id.GetValueOrDefault(),
                 Appno = dto.AppNo,
-                BudgetYear = dto.BudgetYear,
+                BudgetYear = dto.BudgetYear.GetValueOrDefault(),
                 Status = dto.IsSubmitted ? "submitted" : dto.Status,
                 CreatedDate = dto.CreatedDate,
                 CreatedByUserId = dto.CreatedBy,
@@ -377,11 +208,22 @@ namespace Service.Transaction
                 DeletedDate = dto.DeletedDate,
                 UpdatedDate = dto.UpdatedDate,
                 UpdatedByUserId = dto.Updatedby,
-                AdditionalInflationValue = dto.AdditionalInflationValue,
-                AdditionalTenPercent = dto.AdditionalTenPercent,
+                AdditionalInflationValue = 10,// static to 10 for now
+                AdditionalTenPercent = dto.AdditionalTenPercent,// to be removed?
                 TotalAmount = dto.TotalAmount,
                 GrandTotal = dto.GrandTotalAmount
             };
+
+            entity.Appdetails = dto.AppDetails?
+                .Select(ad => new Appdetail
+                {
+                    AppId = entity.Appid,
+                    PpmpId = ad.PpmpId.GetValueOrDefault(),
+                    AppdetailId = ad.Id.GetValueOrDefault(),
+                    CreatedDate = DateTime.Now,
+                    CreatedByUserId = _userContext.UserId,
+                    IsActive = true,
+                }).ToList() ?? new List<Appdetail>();
 
             return entity;
         }
@@ -520,12 +362,12 @@ namespace Service.Transaction
                  (s, _) => new APPProjectItemDto
                  {
                      Cost = s.Cost,
-                     Description = s.Description ?? "",                     
+                     Description = s.Description ?? "",
                      PpmpId = s.Ppmpid,
                      ProjectName = s.ProjectName ?? "",
                      Quarter = s.Quarter,
                      RequestingOffice = s.RequestingOffice ?? "",
-                     PpmpProjectId = s.PpmpprojectId,                     
+                     PpmpProjectId = s.PpmpprojectId,
                  }).ToListAsync();
 
             return result;

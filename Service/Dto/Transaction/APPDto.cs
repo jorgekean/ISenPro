@@ -29,11 +29,11 @@ namespace Service.Dto.Transaction
         //officesWithApprovedPPMPs: Record<number, OfficeModel>;
         //officesWithASavedPPMPs: Record<number, OfficeModel>;
         //officesWithOutPPMPs: Record<number, OfficeModel>;
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string? AppNo { get; set; }
-        public short BudgetYear { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public short? BudgetYear { get; set; }
+        public string? Status { get; set; } = string.Empty;
 
         public decimal? TotalCatalogueAmount { get; set; }
         public decimal? TotalSupplementaryAmount { get; set; }
@@ -43,13 +43,20 @@ namespace Service.Dto.Transaction
         public decimal? AdditionalTenPercent { get; set; }
         public decimal? GrandTotalAmount { get; set; }
 
-        //public Dictionary<int, APPDetailsModel> AppDetails { get; set; } = new Dictionary<int, APPDetailsModel>();
+        public List<AppDetailsDto>? AppDetails { get; set; } = [];
 
-        public List<APPDetailsPPMPDto> OfficesWithApprovedPPMPs { get; set; } = [];
-        public List<APPDetailsPPMPDto> OfficesWithASavedPPMPs { get; set; } = [];
-        public List<APPDetailsPPMPDto> OfficesWithOutPPMPs { get; set; } = [];
+        //public List<APPDetailsPPMPDto>? OfficesWithApprovedPPMPs { get; set; } = [];
+        //public List<APPDetailsPPMPDto>? OfficesWithASavedPPMPs { get; set; } = [];
+        //public List<APPDetailsPPMPDto>? OfficesWithOutPPMPs { get; set; } = [];
 
-        public bool CanApprove { get; set; }
+        public bool? CanApprove { get; set; }
+    }
+
+    public class AppDetailsDto
+    {
+        public int? Id { get; set; }
+        public int? AppId { get; set; }
+        public int? PpmpId { get; set; }
     }
 
     public class APPDetailsPPMPDto

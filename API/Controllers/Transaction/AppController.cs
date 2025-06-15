@@ -32,16 +32,16 @@ namespace API.Controllers.Transaction
         #region CRUD
         // GET: api/ppmps
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<VPpmpindex>>> GetAll([FromQuery] PagingParameters pagingParameters)
+        public async Task<ActionResult<PaginatedResponse<APPDto>>> GetAll([FromQuery] PagingParameters pagingParameters)
         {
             try
             {
                 pagingParameters.ApplyFilterCriteria = true;
                 pagingParameters.ParentModule = 1;
 
-                var paginatedResult = await _appService.GetComplexPagedAndFilteredAsync<VPpmpindex>(pagingParameters);
+                var paginatedResult = await _appService.GetPagedAndFilteredAsync(pagingParameters);
 
-                var response = new PaginatedResponse<VPpmpindex>
+                var response = new PaginatedResponse<APPDto>
                 {
                     Items = paginatedResult.Data,
                     TotalCount = paginatedResult.TotalRecords,
