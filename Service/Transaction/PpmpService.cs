@@ -83,6 +83,17 @@ namespace Service.Transaction
         {
             var model = await base.GetByIdAsync(id);
 
+            //var officeModel = _context.UmDepartments.Find(model.RequestingOfficeId.GetValueOrDefault());            
+
+            var ppmpView = _context.VPpmpindices.FirstOrDefault(x => x.Ppmpid == id);
+            model.CreatedByStr = ppmpView?.PreparedBy;
+            model.RequestingOffice = ppmpView != null ? new DepartmentDto
+            {
+                Id = ppmpView.RequestingOfficeId,
+                Name = ppmpView.OfficeName,
+                Code = ""
+            } : null;
+
             var userPermission = await _context.GetUserTransactionPermissionsAsync(id, _userContext.UserId, 25);
 
             model.UserTransactionPermissions = userPermission;
@@ -377,8 +388,8 @@ namespace Service.Transaction
                 _context.TransactionStatuses.Add(trn);
 
                 #region Ppmp Status
-               entity.Status = await GetTransactionStatus(dto.UserTransactionPermissions.WorkStepId, dto.TransactionStatus);
-                
+                entity.Status = await GetTransactionStatus(dto.UserTransactionPermissions.WorkStepId, dto.TransactionStatus);
+
                 if (dto.TransactionStatus.Disapproved)
                 {
                     entity.IsSubmitted = false;
@@ -397,7 +408,7 @@ namespace Service.Transaction
             // for disapproval and cancellation, set IsActive=false or transactionstatuses
             if (dto.TransactionStatus != null && dto.TransactionStatus.Disapproved)
             {
-               await DisableTransactionStatuses(25, dto.Id);
+                await DisableTransactionStatuses(25, dto.Id);
             }
             #endregion
         }
@@ -465,7 +476,7 @@ namespace Service.Transaction
                 SupplementaryAmount = dto.SupplementaryAmount,
                 TotalAmount = dto.TotalAmount,
                 GrandTotalAmount = dto.GrandTotalAmount,
-                ProjectAmount = dto.ProjectAmount,
+                ProjectAmount = dto.PpmpProjects.Where(x => x.IsActive).Sum(s => s.Cost),
                 RequestingOfficeId = dto.RequestingOfficeId,
 
                 // Populate PpmpCatalogues for Create ONLY(has PPmpId)

@@ -16,6 +16,7 @@ namespace Service.Dto
         public DateTime CreatedDate { get; set; }
 
         public int CreatedBy { get; set; }
+        public string? CreatedByStr { get; set; }
 
 
         public string CreatedDateStr => CreatedDate.ToString("d", CultureInfo.InvariantCulture);
