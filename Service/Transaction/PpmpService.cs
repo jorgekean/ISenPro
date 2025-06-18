@@ -476,7 +476,7 @@ namespace Service.Transaction
                 SupplementaryAmount = dto.SupplementaryAmount,
                 TotalAmount = dto.TotalAmount,
                 GrandTotalAmount = dto.GrandTotalAmount,
-                ProjectAmount = dto.PpmpProjects.Where(x => x.IsActive).Sum(s => s.Cost),
+                ProjectAmount = dto.ProjectAmount,
                 RequestingOfficeId = dto.RequestingOfficeId,
 
                 // Populate PpmpCatalogues for Create ONLY(has PPmpId)

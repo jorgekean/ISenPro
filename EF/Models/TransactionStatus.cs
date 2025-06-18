@@ -33,6 +33,4 @@ public partial class TransactionStatus
     public bool IsActive { get; set; }
 
     public string? Action { get; set; }
-
-    public virtual UmWorkStep? Workstep { get; set; }
 }

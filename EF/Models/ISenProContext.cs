@@ -659,10 +659,6 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasComment("Will be disabled(0) if transaction is disapproved. Default value is true(1)");
             entity.Property(e => e.Status).HasMaxLength(200);
-
-            entity.HasOne(d => d.Workstep).WithMany(p => p.TransactionStatuses)
-                .HasForeignKey(d => d.WorkstepId)
-                .HasConstraintName("FK955A368C57BC1BE3");
         });
 
         modelBuilder.Entity<UmBureau>(entity =>

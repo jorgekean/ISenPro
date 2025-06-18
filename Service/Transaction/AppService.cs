@@ -1,10 +1,12 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Wordprocessing;
 using EF.Models;
 using EF.Models.UserManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using Service.Cache;
 using Service.Constants;
 using Service.Dto.SystemSetup;
@@ -20,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -146,19 +149,37 @@ namespace Service.Transaction
             dto.AppDetails = newAppDetails;
 
             var entity = MapToEntity(dto);
-            
+
+            #region Submit means approved for APP
+            if (dto.IsSubmitted)
+            {
+                var trn = new TransactionStatus
+                {
+                    //RequiredApprover = dto.TransactionStatus.RequiredApprover,
+                    CreatedDate = DateTime.Now,
+                    IsCurrent = true,// TBD - NO NEED FOR THIS
+                    Count = 1,
+                    IsDone = true,
+                    PageId = 26, // ModuleId
+                    ProcessByUserId = _userContext.UserId,
+                    Remarks = "Submitted",
+                    Status = "Approved",
+                    TransactionId = dto.Id.GetValueOrDefault(),
+                    WorkstepId = 0,
+                    Action = "approved",
+                    IsActive = true,
+                };
+
+                _context.TransactionStatuses.Add(trn);
+
+                entity.Status = "approved";
+            }
+            #endregion
+
             // update the APP model
             _dbSet.Update(entity);
 
             await _context.SaveChangesAsync();
-
-            //#region dissapproval
-            //// for disapproval and cancellation, set IsActive=false or transactionstatuses
-            //if (dto.TransactionStatus != null && dto.TransactionStatus.Disapproved)
-            //{
-            //   await DisableTransactionStatuses(25, dto.Id);
-            //}
-            //#endregion
         }
 
         protected override APPDto MapToDto(App entity)
