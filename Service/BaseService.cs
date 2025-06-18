@@ -135,7 +135,6 @@ namespace Service
                 }
             }
 
-
             public virtual async Task DeleteAsync(string id)
             {
                 var entity = await _dbSet.FindAsync(id);
@@ -164,6 +163,63 @@ namespace Service
 
             public virtual IQueryable<TDynamic> ApplyDynamicFilters<TDynamic>(IQueryable<TDynamic> query, List<Filter> filters) where TDynamic : class
             {
+
+                if (filters != null && filters.Any())
+                {
+                    foreach (var filter in filters)
+                    {
+                        if (filter.FilterOptions != null && filter.FilterOptions.Any())
+                        {
+                            // Create parameter expression
+                            var parameter = Expression.Parameter(typeof(TDynamic), "p");
+
+                            // Start with false expression
+                            Expression combinedExpression = Expression.Constant(false);
+
+                            foreach (var option in filter.FilterOptions)
+                            {
+                                if (filter.FilterName.ToLower() == "requestingoffice")
+                                {
+                                    // Get property (handles nullable properties)
+                                    var property = Expression.Property(parameter, "RequestingOfficeId");
+
+                                    // Convert value to the property's type
+                                    var propertyType = property.Type;
+                                    var convertedValue = Convert.ChangeType(option.Value,
+                                        Nullable.GetUnderlyingType(propertyType) ?? propertyType);
+                                    var constant = Expression.Constant(convertedValue, propertyType);
+
+                                    // Create equality expression that handles nullables
+                                    Expression equality;
+
+                                    if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                                    {
+                                        // For nullable types, we need to handle null comparison
+                                        var hasValue = Expression.Property(property, "HasValue");
+                                        var value = Expression.Property(property, "Value");
+                                        equality = Expression.AndAlso(
+                                            hasValue,
+                                            Expression.Equal(value, Expression.Convert(constant, value.Type))
+                                        );
+                                    }
+                                    else
+                                    {
+                                        equality = Expression.Equal(property, constant);
+                                    }
+
+                                    // Combine with OR
+                                    combinedExpression = Expression.OrElse(combinedExpression, equality);
+                                }
+                            }
+
+                            // Create the lambda expression
+                            var lambda = Expression.Lambda<Func<TDynamic, bool>>(combinedExpression, parameter);
+
+                            // Apply the condition to the query
+                            query = query.Where(lambda);
+                        }
+                    }
+                }
                 return query;
             }
 
@@ -248,7 +304,7 @@ namespace Service
                 if (pagingParameters.ApplyFilterCriteria)
                 {
                     query = ApplyFilterCriteria(query);
-                }              
+                }
 
                 if (pagingParameters.Filters != null && pagingParameters.Filters.Any())
                 {
@@ -346,6 +402,22 @@ namespace Service
                 return Expression.Lambda<Func<TEntity, bool>>(body, parameter);
             }
 
+            protected Expression<Func<TDynamic, bool>> CombineWithOrDynamic<TDynamic>(
+               Expression<Func<TDynamic, bool>> firstCondition,
+               Expression<Func<TDynamic, bool>> secondCondition) where TDynamic : class
+            {
+                var parameter = Expression.Parameter(typeof(TEntity), "p");
+
+                // Combine the two expressions using OR logic
+                var body = Expression.OrElse(
+                    Expression.Invoke(firstCondition, parameter),
+                    Expression.Invoke(secondCondition, parameter)
+                );
+
+                return Expression.Lambda<Func<TDynamic, bool>>(body, parameter);
+            }
+
+
 
             protected virtual IQueryable<T> ApplySearchFilter<T>(IQueryable<T> query, string searchQuery) where T : class
             {
@@ -432,7 +504,7 @@ namespace Service
                 }
 
                 return result;
-            } 
+            }
 
             // Mapping methods
             protected abstract TDto MapToDto(TEntity entity);

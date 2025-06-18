@@ -87,6 +87,30 @@ namespace API.Controllers.Transaction
             return BadRequest();
         }
 
+        //// GET: api/ppmps/office/1
+        //[HttpGet("office/{officeId}")]
+        //public async Task<ActionResult<IEnumerable<PPMPDto>>> GetByOfficeId(int officeId)
+        //{
+        //    try
+        //    {
+        //        var model = await _ppmpService.GetByIdAsync(officeId);
+
+        //        if (model == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        return model;
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        _logger.LogError(ex, ex.Message);
+        //    }
+
+        //    return BadRequest();
+        //}
+
         // POST: api/ppmps        
         [HttpPost]
         public async Task<ActionResult<PPMPDto>> Post(PPMPDto model)
