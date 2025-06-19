@@ -8,27 +8,7 @@ using System.Threading.Tasks;
 namespace Service.Dto.Transaction
 {
     public class APPDto : TransactionBaseDto
-    {
-        // create properties for below
-        //    appNo: string;
-        //budgetYear: number;
-        //submittedDate?: string;
-        //submittedBy?: number;
-        //status: string;
-
-        //totalCatalogueAmount?: number;
-        //totalSupplementaryAmount?: number;
-        //totalProjectAmount?: number;
-        //totalAmount?: number;
-        //additionalInflationValue?: number;
-        //additionalTenPercent?: number;
-        //grandTotalAmount?: number;
-
-        //appDetails: Record<number, APPDetailsModel>;
-
-        //officesWithApprovedPPMPs: Record<number, OfficeModel>;
-        //officesWithASavedPPMPs: Record<number, OfficeModel>;
-        //officesWithOutPPMPs: Record<number, OfficeModel>;
+    {        
         public int? Id { get; set; }
 
         public string? AppNo { get; set; }
@@ -43,11 +23,7 @@ namespace Service.Dto.Transaction
         public decimal? AdditionalTenPercent { get; set; }
         public decimal? GrandTotalAmount { get; set; }
 
-        public List<AppDetailsDto>? AppDetails { get; set; } = [];
-
-        //public List<APPDetailsPPMPDto>? OfficesWithApprovedPPMPs { get; set; } = [];
-        //public List<APPDetailsPPMPDto>? OfficesWithASavedPPMPs { get; set; } = [];
-        //public List<APPDetailsPPMPDto>? OfficesWithOutPPMPs { get; set; } = [];
+        public List<AppDetailsDto>? AppDetails { get; set; } = [];      
 
         public bool? CanApprove { get; set; }
     }
