@@ -31,6 +31,12 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<Ppmpsupplementary> Ppmpsupplementaries { get; set; }
 
+    public virtual DbSet<PurchaseRequest> PurchaseRequests { get; set; }
+
+    public virtual DbSet<PurchaseRequestItem> PurchaseRequestItems { get; set; }
+
+    public virtual DbSet<PurchaseRequestItemDetail> PurchaseRequestItemDetails { get; set; }
+
     public virtual DbSet<Setting> Settings { get; set; }
 
     public virtual DbSet<SsAccountCode> SsAccountCodes { get; set; }
@@ -354,6 +360,62 @@ public partial class ISenProContext : DbContext
                 .HasForeignKey(d => d.SupplementaryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKF25AB4FE366CDA2C");
+        });
+
+        modelBuilder.Entity<PurchaseRequest>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseRequestId).HasName("PK__Purchase__3602DDBE00E57C2F");
+
+            entity.Property(e => e.ApprovedDate).HasColumnType("datetime");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DatePrepared).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.IsForRsqrfq).HasColumnName("IsForRSQRFQ");
+            entity.Property(e => e.PpmpNumber).HasMaxLength(20);
+            entity.Property(e => e.Prclassification).HasColumnName("PRClassification");
+            entity.Property(e => e.Prkind).HasColumnName("PRKind");
+            entity.Property(e => e.Prnumber)
+                .HasMaxLength(20)
+                .HasColumnName("PRNumber");
+            entity.Property(e => e.SubmittedDate).HasColumnType("datetime");
+            entity.Property(e => e.TempPrnumber)
+                .HasMaxLength(100)
+                .HasColumnName("TempPRNumber");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            entity.Property(e => e.WithoutPo).HasColumnName("WithoutPO");
+        });
+
+        modelBuilder.Entity<PurchaseRequestItem>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseRequestItemsId).HasName("PK__Purchase__2F2273C908869DF7");
+
+            entity.Property(e => e.AmendedUnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.PurchaseRequest).WithMany(p => p.PurchaseRequestItems)
+                .HasForeignKey(d => d.PurchaseRequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK1D97D78EB89E1275");
+        });
+
+        modelBuilder.Entity<PurchaseRequestItemDetail>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseRequestItemDetailsId).HasName("PK__Purchase__A62D008304B60D13");
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.PurchaseRequestItems).WithMany(p => p.PurchaseRequestItemDetails)
+                .HasForeignKey(d => d.PurchaseRequestItemsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK544D1A99F79ECDBD");
         });
 
         modelBuilder.Entity<Setting>(entity =>

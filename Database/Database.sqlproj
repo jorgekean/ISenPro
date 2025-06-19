@@ -128,5 +128,8 @@
     <Build Include="dbo\Views\v_app_PpmpCatalogues.sql" />
     <Build Include="dbo\Views\v_app_PpmpSupplementaryItems.sql" />
     <Build Include="dbo\Views\v_app_PpmpProjectItems.sql" />
+    <Build Include="dbo\Tables\PurchaseRequests.sql" />
+    <Build Include="dbo\Tables\PurchaseRequestItems.sql" />
+    <Build Include="dbo\Tables\PurchaseRequestItemDetails.sql" />
   </ItemGroup>
 </Project>

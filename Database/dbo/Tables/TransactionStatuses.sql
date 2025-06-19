@@ -12,9 +12,10 @@
     [WorkstepId]          INT            NULL,
     [IsActive]            BIT            NOT NULL,
     [Action]              NVARCHAR (20)  NULL,
-    CONSTRAINT [PK__Transact__57B5E1832ACC04F9] PRIMARY KEY CLUSTERED ([TransactionStatusId] ASC),
-    CONSTRAINT [FK955A368C57BC1BE3] FOREIGN KEY ([WorkstepId]) REFERENCES [dbo].[UM_WorkStep] ([WorkstepId])
+    CONSTRAINT [PK__Transact__57B5E1832ACC04F9] PRIMARY KEY CLUSTERED ([TransactionStatusId] ASC)
 );
+
+
 
 
 
