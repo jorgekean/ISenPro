@@ -33,9 +33,7 @@ namespace Service.Dto.Transaction
 
         public decimal? GrandTotalAmount { get; set; }        
 
-        public int? RequestingOfficeId { get; set; }
-
-        public string Status { get; set; } = null!;
+        public int? RequestingOfficeId { get; set; }        
 
         public IEnumerable<PPMPCatalogueDto> Ppmpcatalogues { get; set; } = new List<PPMPCatalogueDto>();
 

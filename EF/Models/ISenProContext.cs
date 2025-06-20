@@ -377,6 +377,9 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Prnumber)
                 .HasMaxLength(20)
                 .HasColumnName("PRNumber");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.SubmittedDate).HasColumnType("datetime");
             entity.Property(e => e.TempPrnumber)
                 .HasMaxLength(100)

@@ -103,5 +103,7 @@ public partial class PurchaseRequest
 
     public bool IsForRsqrfq { get; set; }
 
+    public string Status { get; set; } = null!;
+
     public virtual ICollection<PurchaseRequestItem> PurchaseRequestItems { get; set; } = new List<PurchaseRequestItem>();
 }

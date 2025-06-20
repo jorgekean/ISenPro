@@ -342,21 +342,21 @@ namespace API.Controllers.Transaction
         }
         #endregion
 
-        [HttpGet("budgetyears")]
-        public async Task<ActionResult<IList<int>>> GetBudgetYears()
-        {
-            try
-            {
-                var result = _ppmpService.GetBudgetYears();
+        //[HttpGet("budgetyears")]
+        //public async Task<ActionResult<IList<int>>> GetBudgetYears()
+        //{
+        //    try
+        //    {
+        //        var result = _ppmpService.GetBudgetYears();
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, ex.Message);
+        //    }
 
-            return BadRequest();
-        }
+        //    return BadRequest();
+        //}
     }
 }

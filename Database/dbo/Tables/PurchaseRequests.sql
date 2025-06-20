@@ -48,6 +48,9 @@
     [TempPRNumber]             NVARCHAR (100) NULL,
     [OtherRemarks]             NVARCHAR (MAX) NULL,
     [IsForRSQRFQ]              BIT            CONSTRAINT [DF__PurchaseR__IsFor__70D9FCEF] DEFAULT ((0)) NOT NULL,
+    [Status]                   VARCHAR (50)   NOT NULL,
     CONSTRAINT [PK__Purchase__3602DDBE00E57C2F] PRIMARY KEY CLUSTERED ([PurchaseRequestId] ASC)
 );
+
+
 

@@ -10,6 +10,6 @@ namespace Service.Transaction.Interface
 
         // report
         Task GenerateReport(int id);
-        IList<int> GetBudgetYears();
+        //IList<int> GetBudgetYears();
     }
 }

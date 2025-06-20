@@ -78,79 +78,7 @@ namespace Service.Transaction
             }
 
             return query;
-        }
-
-        //public override IQueryable<TDynamic> ApplyDynamicFilters<TDynamic>(IQueryable<TDynamic> query, List<Filter> filters)
-        //{
-        //    if (filters != null && filters.Any())
-        //    {
-        //        // Apply each filter
-        //        foreach (var filter in filters)
-        //        {
-        //            if (filter.FilterOptions != null && filter.FilterOptions.Any())
-        //            {
-        //                // Create a parameter expression for the generic type
-        //                var parameter = Expression.Parameter(typeof(TDynamic), "p");
-
-        //                // Start with false (will OR with other conditions)
-        //                Expression combinedExpression = Expression.Constant(false);
-
-        //                foreach (var option in filter.FilterOptions)
-        //                {
-        //                    if (filter.FilterName.ToLower() == "requestingoffice")
-        //                    {
-        //                        // Create property access
-        //                        var property = Expression.Property(parameter, "RequestingOfficeId");
-        //                        var value = Expression.Constant(option.Value);
-
-        //                        // Create equality expression
-        //                        var equality = Expression.Equal(property, value);
-
-        //                        // Combine with OR
-        //                        combinedExpression = Expression.OrElse(combinedExpression, equality);
-        //                    }
-        //                }
-
-        //                // Create the lambda expression
-        //                var lambda = Expression.Lambda<Func<TDynamic, bool>>(combinedExpression, parameter);
-
-        //                // Apply the condition to the query
-        //                query = query.Where(lambda);
-        //            }
-        //        }
-        //    }
-        //    return query;
-        //}
-        //public override IQueryable<VPpmpindex> ApplyDynamicFilters<VPpmpindex>(IQueryable<VPpmpindex> query, List<Filter> filters)
-        //{
-        //    if (filters != null && filters.Any())
-        //    {
-        //        // Apply each filter
-        //        foreach (var filter in filters)
-        //        {
-        //            if (filter.FilterOptions != null && filter.FilterOptions.Any())
-        //            {
-        //                // Apply filter using OR logic for FilterOptions
-        //                Expression<Func<VPpmpindex, bool>> filterCondition = p => false; // Default false, will combine with OR
-
-        //                foreach (var option in filter.FilterOptions)
-        //                {
-        //                    if (filter.FilterName.ToLower() == "division")
-        //                    {
-        //                        // Combine filter options with OR logic
-        //                        var currentCondition = (Expression<Func<VPpmpindex, bool>>)(p => p.Re == option.Value);
-        //                        filterCondition = CombineWithOr(filterCondition, currentCondition);
-        //                    }
-        //                }
-
-        //                // Apply the OR condition to the query
-        //                query = query.Where(filterCondition);
-        //            }
-        //        }
-        //    }
-
-        //    return query;
-        //}
+        }        
 
         public override async Task<PPMPDto> GetByIdAsync(int id)
         {
@@ -675,12 +603,12 @@ namespace Service.Transaction
         }
         #endregion
 
-        public IList<int> GetBudgetYears()
-        {
-            // to do
+        //public IList<int> GetBudgetYears()
+        //{
+        //    // to do
 
-            return [2023, 2024, 2025, 2026];
-        }
+        //    return [2023, 2024, 2025, 2026];
+        //}
 
         #region private methods
 

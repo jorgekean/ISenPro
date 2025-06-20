@@ -51,4 +51,3 @@ public partial class PurchaseRequestItem
 
     public virtual ICollection<PurchaseRequestItemDetail> PurchaseRequestItemDetails { get; set; } = new List<PurchaseRequestItemDetail>();
 }
-

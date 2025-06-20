@@ -91,6 +91,10 @@ namespace Service.Dto.Transaction
         public bool IsForRsqrfq { get; set; }
 
         public virtual IEnumerable<PurchaseRequestItemDto> PurchaseRequestItems { get; set; } = [];
+        public virtual IEnumerable<PurchaseRequestItemDetailDto> PurchaseRequestItemDetails { get; set; } = [];// child of PurchaseRequestItems
+
+
+        public bool CanApprove { get; set; }
     }
 
     public class PurchaseRequestItemDto : TransactionBaseDto
@@ -123,9 +127,9 @@ namespace Service.Dto.Transaction
 
         public int? AmendedQuantity { get; set; }
 
-        public decimal? AmendedUnitPrice { get; set; }        
+        public decimal? AmendedUnitPrice { get; set; }
 
-        //public virtual IEnumerable<PurchaseRequestItemDetail> PurchaseRequestItemDetails { get; set; } = new List<PurchaseRequestItemDetail>();
+        public IEnumerable<PurchaseRequestItemDetailDto> PurchaseRequestItemDetails { get; set; } = new List<PurchaseRequestItemDetailDto>();
     }
 
 
