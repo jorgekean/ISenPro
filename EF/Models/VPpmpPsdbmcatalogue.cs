@@ -5,6 +5,10 @@ namespace EF.Models;
 
 public partial class VPpmpPsdbmcatalogue
 {
+    public int? RequestingOfficeId { get; set; }
+
+    public short BudgetYear { get; set; }
+
     public int PpmpcatalogueId { get; set; }
 
     public int Ppmpid { get; set; }

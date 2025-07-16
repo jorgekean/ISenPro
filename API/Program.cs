@@ -135,6 +135,7 @@ builder.Services.AddScoped<IWorkStepService, WorkStepService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAppService, AppService>();
 builder.Services.AddScoped<IPpmpService, PpmpService>();
+builder.Services.AddScoped<IPrService, PrService>();
 #endregion
 
 #region Authentication

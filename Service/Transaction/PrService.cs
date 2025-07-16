@@ -203,7 +203,7 @@ namespace Service.Transaction
                     itemDetail.UpdatedDate = item.UpdatedDate;
                     itemDetail.UpdatedByUserId = item.Updatedby;
                     itemDetail.RequestedQuantity = item.RequestedQuantity;
-                    itemDetail.ItemType = item.ItemType;
+                    itemDetail.ItemType = item.ItemTypeId;                    
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace Service.Transaction
                         CreatedDate = DateTime.Now,
                         IsActive = true,
                         ItemSpecification = item.ItemSpecification,
-                        ItemType = item.ItemType,
+                        ItemType = item.ItemTypeId,
                         RequestedQuantity = item.RequestedQuantity,
                         UnitOfMeasure = item.UnitOfMeasureId,
                         UnitPrice = item.UnitPrice
@@ -299,7 +299,7 @@ namespace Service.Transaction
                     RequestedQuantity = detail.RequestedQuantity,
                     UnitPrice = detail.UnitPrice,
                     UnitOfMeasureId = detail.UnitOfMeasure,
-                    ItemType = detail.ItemType,
+                    ItemTypeId = detail.ItemType,
                     IsActive = detail.IsActive,
                     CreatedDate = detail.CreatedDate,
                     CreatedBy = detail.CreatedByUserId,
@@ -323,7 +323,7 @@ namespace Service.Transaction
                 TotalAmount = entity.TotalAmount,
                 IsActive = entity.IsActive,
                 IsSubmitted = entity.IsSubmitted.GetValueOrDefault(),
-                Prnumber = entity.Prnumber,
+                PrNumber = entity.Prnumber,
                 TempPrnumber = entity.TempPrnumber,
                 RequestingOfficeId = entity.RequestingOffice,
                 SubmittedBy = entity.SubmittedBy,
@@ -348,7 +348,7 @@ namespace Service.Transaction
             var entity = new PurchaseRequest
             {
                 PurchaseRequestId = dto.Id.GetValueOrDefault(),
-                Prnumber = dto.Prnumber,
+                Prnumber = dto.PrNumber,
                 BudgetYear = dto.BudgetYear,
                 Remarks = dto.Remarks,
                 Status = dto.IsSubmitted ? "submitted" : dto.Status,
@@ -394,7 +394,7 @@ namespace Service.Transaction
                         RequestedQuantity = detail.RequestedQuantity,
                         UnitPrice = detail.UnitPrice,
                         UnitOfMeasure = detail.UnitOfMeasureId,
-                        ItemType = detail.ItemType,
+                        ItemType = detail.ItemTypeId,
                         CreatedDate = DateTime.Now,
                         CreatedByUserId = _userContext.UserId,
                         IsActive = true
@@ -462,6 +462,12 @@ namespace Service.Transaction
             splitReferenceNo[2] = seriesNumber.ToString("D3"); // Ensures 4-digit formatting
 
             return string.Join("-", splitReferenceNo);
+        }
+
+        public Task<List<VPpmpPsdbmcatalogue>> GetRemainingPpmpCatalogue(short budgetYear, int requestingOffice)
+        {
+            return _context.VPpmpPsdbmcatalogues.Where(x => x.BudgetYear == budgetYear && x.RequestingOfficeId == requestingOffice && x.IsActive)
+                .ToListAsync();
         }
 
         #endregion

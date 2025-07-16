@@ -142,11 +142,27 @@ namespace API.Controllers.Transaction
 
         // pritems?purchaseRequestId=5
         [HttpGet("pritems")]
-        public async Task<ActionResult<IEnumerable<APPDetailsPPMPDto>>> GetPrItems([FromQuery] int purchaseRequestId)
+        public async Task<ActionResult<IEnumerable<PurchaseRequestItemDetail>>> GetPrItems([FromQuery] int purchaseRequestId)
         {
             try
             {                            
                 var result = await _prService.GetPurchaseRequestItems(purchaseRequestId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // remainingppmpcatalogueitems?budgetYear=2025&requestingOffice=1
+        [HttpGet("remainingppmpcatalogueitems")]
+        public async Task<ActionResult<IEnumerable<VPpmpPsdbmcatalogue>>> GetPrItems([FromQuery] short budgetYear, [FromQuery] int requestingOffice)
+        {
+            try
+            {
+                var result = await _prService.GetRemainingPpmpCatalogue(budgetYear, requestingOffice);
                 return Ok(result);
             }
             catch (Exception ex)

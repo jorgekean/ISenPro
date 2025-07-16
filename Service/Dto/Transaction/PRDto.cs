@@ -12,7 +12,7 @@ namespace Service.Dto.Transaction
     {
         public int? Id { get; set; }
 
-        public string? Prnumber { get; set; }
+        public string? PrNumber { get; set; }
 
         public int RequestingOfficeId { get; set; }
         public string? RequestingOffice { get; set; }
@@ -54,7 +54,7 @@ namespace Service.Dto.Transaction
 
         public int? Prkind { get; set; }
 
-        public int? Prclassification { get; set; }
+        public int? PrClassification { get; set; }
 
         public bool IsForDelivery { get; set; }
 
@@ -145,7 +145,8 @@ namespace Service.Dto.Transaction
 
         public decimal? UnitPrice { get; set; }
 
-        public int? ItemType { get; set; }
+        public int? ItemTypeId { get; set; }
+        public string? ItemType { get; set; }
 
         public int? UnitOfMeasureId { get; set; }
         public string? UnitOfMeasure { get; set; }
