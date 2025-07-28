@@ -89,6 +89,7 @@ namespace Service.Dto.Transaction
         public string? OtherRemarks { get; set; }
 
         public bool IsForRsqrfq { get; set; }
+        public int NumberOfItems { get; set; }
 
         public virtual IEnumerable<PurchaseRequestItemDto> PurchaseRequestItems { get; set; } = [];
         public virtual IEnumerable<PurchaseRequestItemDetailDto> PurchaseRequestItemDetails { get; set; } = [];// child of PurchaseRequestItems

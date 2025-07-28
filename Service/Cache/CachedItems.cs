@@ -1,4 +1,5 @@
-﻿using Service.Dto.SystemSetup;
+﻿using EF.Models.UserManagement;
+using Service.Dto.SystemSetup;
 using Service.SystemSetup.Interface;
 using Service.UserManagement.Interface;
 
@@ -11,19 +12,22 @@ namespace Service.Cache
         private readonly ISupplementaryCatalogueService _supplementaryCatalogueService;
         private readonly IAccountCodeService _accountCodeService;
         private readonly IRoleService _roleService;
+        private readonly IDepartmentService _departmentService;
         private readonly int _expirationHours = 24;
 
         public CachedItems(IGenericCacheService cacheService,
             IPSDBMCatalogueService catalogueService,
             ISupplementaryCatalogueService supplementaryCatalogueService,
             IAccountCodeService accountCodeService,
-            IRoleService roleService)
+            IRoleService roleService,
+            IDepartmentService departmentService)
         {
             _cacheService = cacheService;
             _psdbmCatalogueService = catalogueService;
             _supplementaryCatalogueService = supplementaryCatalogueService;
             _roleService = roleService;
             _accountCodeService = accountCodeService;
+            _departmentService = departmentService;
         }
 
         public Task<List<PSDBMCatalogueDto>> GetPSDBMCatalogues(int year) =>
@@ -37,5 +41,10 @@ namespace Service.Cache
         public Task<List<AccountCodeDto>> AccountCodes =>
           _cacheService.GetOrCreateAsync("CachedAccountCodes", async () =>
               (await _accountCodeService.GetAllAsync()).ToList(), TimeSpan.FromHours(_expirationHours));
+
+
+        public Task<List<DepartmentDto>> Departments =>
+         _cacheService.GetOrCreateAsync("CachedDepartments", async () =>
+             (await _departmentService.GetAllAsync()).ToList(), TimeSpan.FromHours(_expirationHours));
     }
 }

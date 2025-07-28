@@ -67,9 +67,11 @@ namespace Service
                 var entity = MapToEntity(dto);
 
                 // Track child entities generically
-                TrackChildEntities(entity);
+                 TrackChildEntities(entity);
 
                 // Add the parent entity
+                
+                
                 var result = await _dbSet.AddAsync(entity);
 
                 // Save changes for both parent and child entities
@@ -93,7 +95,7 @@ namespace Service
             /// Generic method to track child entities and ensure they are marked as Added.
             /// </summary>
             /// <param name="entity">The parent entity containing child collections.</param>
-            private void TrackChildEntities(TEntity entity)
+            private void TrackChildEntities(object entity)
             {
                 var context = _context; // DbContext reference
 
@@ -131,6 +133,9 @@ namespace Service
                         {
                             context.Entry(childEntity).State = isNew ? EntityState.Added : EntityState.Modified;
                         }
+
+                        // Add this recursive call to track its children
+                        TrackChildEntities(childEntity);
                     }
                 }
             }

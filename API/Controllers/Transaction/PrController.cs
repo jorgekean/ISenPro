@@ -89,7 +89,7 @@ namespace API.Controllers.Transaction
         {
             try
             {
-                await _prService.AddAsync(model);
+                var data = await _prService.AddAsync(model);
             }
             catch (Exception ex)
             {
@@ -98,7 +98,7 @@ namespace API.Controllers.Transaction
                 return BadRequest(new { message = ex.Message });
             }
 
-            return CreatedAtAction("GetById", new { id = model.Id }, model);
+            return CreatedAtAction("GetById", new { id = model.Id.GetValueOrDefault() }, model);
         }
 
         // PUT: api/prs/5        

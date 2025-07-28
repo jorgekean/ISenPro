@@ -80,7 +80,13 @@ namespace Service.Transaction
         //    }
 
         //    return query;
-        //}        
+        //}
+        //
+
+        protected override IQueryable<PurchaseRequest> IncludeNavigationProperties(IQueryable<PurchaseRequest> query)
+        {
+            return query.Include(s => s.PurchaseRequestItems);
+        }
 
         public override async Task<PRDto> GetByIdAsync(int id)
         {
@@ -203,7 +209,7 @@ namespace Service.Transaction
                     itemDetail.UpdatedDate = item.UpdatedDate;
                     itemDetail.UpdatedByUserId = item.Updatedby;
                     itemDetail.RequestedQuantity = item.RequestedQuantity;
-                    itemDetail.ItemType = item.ItemTypeId;                    
+                    itemDetail.ItemType = item.ItemTypeId;
                 }
                 else
                 {
@@ -267,7 +273,10 @@ namespace Service.Transaction
 
         public async Task<List<PurchaseRequestItemDto>> GetPurchaseRequestItems(int purchaseRequestId)
         {
-            var model = await _context.PurchaseRequestItems.Where(x => x.PurchaseRequestId == purchaseRequestId && x.IsActive).ToListAsync();
+            var model = await _context.PurchaseRequestItems
+                .Include(i => i.PurchaseRequestItemDetails)
+                .Where(x => x.PurchaseRequestId == purchaseRequestId && x.IsActive)
+                .ToListAsync();
 
 
             return model.Select(item => new PurchaseRequestItemDto
@@ -286,7 +295,7 @@ namespace Service.Transaction
                 RequestedQuantity = item.RequestedQuantity,
                 RequestingOfficeId = item.RequestingOfficeId,
                 UnitOfMeasurementId = item.UnitOfMeasurement,
-                UnitPrice = item.UnitPrice,
+                UnitPrice = item.UnitPrice.GetValueOrDefault(),
                 Amount = item.Amount,
                 IsFailed = item.IsFailed,
                 UpdatedDate = item.UpdatedDate,
@@ -297,14 +306,14 @@ namespace Service.Transaction
                     PurchaseRequestItemsId = detail.PurchaseRequestItemsId,
                     ItemSpecification = detail.ItemSpecification,
                     RequestedQuantity = detail.RequestedQuantity,
-                    UnitPrice = detail.UnitPrice,
+                    UnitPrice = detail.UnitPrice.GetValueOrDefault(),
                     UnitOfMeasureId = detail.UnitOfMeasure,
                     ItemTypeId = detail.ItemType,
                     IsActive = detail.IsActive,
                     CreatedDate = detail.CreatedDate,
                     CreatedBy = detail.CreatedByUserId,
                     UpdatedDate = detail.UpdatedDate,
-                    Updatedby = detail.UpdatedByUserId                    
+                    Updatedby = detail.UpdatedByUserId
 
                 }) : []
             }).ToList();
@@ -323,14 +332,52 @@ namespace Service.Transaction
                 TotalAmount = entity.TotalAmount,
                 IsActive = entity.IsActive,
                 IsSubmitted = entity.IsSubmitted.GetValueOrDefault(),
-                PrNumber = entity.Prnumber,
+                PrNumber = !string.IsNullOrWhiteSpace(entity.Prnumber) ? entity.Prnumber : entity.TempPrnumber,
                 TempPrnumber = entity.TempPrnumber,
                 RequestingOfficeId = entity.RequestingOffice,
+                RequestingOffice = (_cachedItems.Departments.Result).FirstOrDefault(s => s.Id == entity.RequestingOffice)?.Name,
                 SubmittedBy = entity.SubmittedBy,
                 SubmittedDate = entity.SubmittedDate,
                 DeletedBy = entity.DeletedByUserId,
                 DeletedDate = entity.DeletedDate,
                 IsDeleted = entity.DeletedDate.HasValue,
+                Purpose = entity.Purpose,
+                NumberOfItems = entity.PurchaseRequestItems.Count,
+                PurchasingType = entity.PurchasingType,
+                PrClassification = entity.Prclassification,
+                ConsolidatedBy = entity.ConsolidatedBy,
+                Prkind = entity.Prkind,
+                ContractId = entity.ContractId,
+                DatePrepared = entity.DatePrepared,
+                UpdatedDate = entity.UpdatedDate,
+                Updatedby = entity.UpdatedByUserId,
+                FirstQuarter = entity.FirstQuarter,
+                SecondQuarter = entity.SecondQuarter,
+                ThirdQuarter = entity.ThirdQuarter,
+                FourthQuarter = entity.FourthQuarter,
+                HasEquipments = entity.HasEquipments,
+                HasSupplies = entity.HasSupplies,
+                IsConsolidated = entity.IsConsolidated,
+                IsForDelivery = entity.IsForDelivery,
+                IsContract = entity.IsContract,
+                IsPartialEquipment = entity.IsPartialEquipment,
+                IsPartialSupply = entity.IsPartialSupply,
+                IsRepeatOrder = entity.IsRepeatOrder,
+                ModeOfProcurement = entity.ModeOfProcurement,
+                Supplier = entity.Supplier,
+                PpmpId = entity.PpmpId,
+                PpmpNumber = entity.PpmpNumber,
+                IsForRsqrfq = entity.IsForRsqrfq,
+                IsItemized = entity.IsItemized,
+                IsPrSo = entity.IsPrSo,
+                OtherRemarks = entity.OtherRemarks,
+                IsCreatedBySupplyOfficer = entity.IsCreatedBySupplyOfficer,
+                WithApr = entity.WithApr,
+                WithCanvassing = entity.WithCanvassing,
+                WithoutPo = entity.WithoutPo,
+
+
+
                 //RequestingOffice = entity.Req != null ? new DepartmentDto
                 //{
                 //    Name = entity.RequestingOffice.Name,
@@ -364,9 +411,43 @@ namespace Service.Transaction
                 UpdatedByUserId = dto.Updatedby,
                 TotalAmount = dto.TotalAmount,
                 RequestingOffice = dto.RequestingOfficeId,
+                TempPrnumber = dto.TempPrnumber,
+                Purpose = dto.Purpose,
+                PurchasingType = dto.PurchasingType,
+                Prclassification = dto.PrClassification,
+                ConsolidatedBy = dto.ConsolidatedBy,
+                Prkind = dto.Prkind,
+                ContractId = dto.ContractId,
+                DatePrepared = dto.DatePrepared,
+                //UpdatedDate = dto.UpdatedDate,
+                //Updatedby = dto.UpdatedByUserId,
+                FirstQuarter = dto.FirstQuarter,
+                SecondQuarter = dto.SecondQuarter,
+                ThirdQuarter = dto.ThirdQuarter,
+                FourthQuarter = dto.FourthQuarter,
+                HasEquipments = dto.HasEquipments,
+                HasSupplies = dto.HasSupplies,
+                IsConsolidated = dto.IsConsolidated,
+                IsForDelivery = dto.IsForDelivery,
+                IsContract = dto.IsContract,
+                IsPartialEquipment = dto.IsPartialEquipment,
+                IsPartialSupply = dto.IsPartialSupply,
+                IsRepeatOrder = dto.IsRepeatOrder,
+                ModeOfProcurement = dto.ModeOfProcurement,
+                Supplier = dto.Supplier,
+                PpmpId = dto.PpmpId,
+                PpmpNumber = dto.PpmpNumber,
+                IsForRsqrfq = dto.IsForRsqrfq,
+                IsItemized = dto.IsItemized,
+                IsPrSo = dto.IsPrSo,
+                OtherRemarks = dto.OtherRemarks,
+                IsCreatedBySupplyOfficer = dto.IsCreatedBySupplyOfficer,
+                WithApr = dto.WithApr,
+                WithCanvassing = dto.WithCanvassing,
+                WithoutPo = dto.WithoutPo,
 
                 // Populate PrItems for Create ONLY(has PurchaseRequestId)
-                PurchaseRequestItems = dto.Id == 0 ? dto.PurchaseRequestItems.Select(prItem => new PurchaseRequestItem
+                PurchaseRequestItems = dto.Id.GetValueOrDefault() == 0 ? dto.PurchaseRequestItems.Select(prItem => new PurchaseRequestItem
                 {
                     PurchaseRequestItemsId = prItem.Id,
                     PurchaseRequestId = prItem.PurchaseRequestId,
@@ -377,7 +458,7 @@ namespace Service.Transaction
                     UnitPrice = prItem.UnitPrice,
                     Amount = prItem.Amount,
                     IsActive = prItem.IsActive,
-                    CreatedDate = prItem.CreatedDate,
+                    CreatedDate = DateTime.Now,
                     CreatedByUserId = prItem.CreatedBy,
                     UpdatedDate = prItem.UpdatedDate,
                     UpdatedByUserId = prItem.Updatedby,
@@ -464,9 +545,10 @@ namespace Service.Transaction
             return string.Join("-", splitReferenceNo);
         }
 
-        public Task<List<VPpmpPsdbmcatalogue>> GetRemainingPpmpCatalogue(short budgetYear, int requestingOffice)
+        public Task<List<VPrPpmpPsdbmcatalogue>> GetRemainingPpmpCatalogue(short budgetYear, int requestingOffice)
         {
-            return _context.VPpmpPsdbmcatalogues.Where(x => x.BudgetYear == budgetYear && x.RequestingOfficeId == requestingOffice && x.IsActive)
+            return _context.VPrPpmpPsdbmcatalogues
+                .Where(x => x.BudgetYear == budgetYear && x.RequestingOfficeId == requestingOffice && x.IsActive)
                 .ToListAsync();
         }
 

@@ -132,5 +132,6 @@
     <Build Include="dbo\Tables\PurchaseRequestItems.sql" />
     <Build Include="dbo\Tables\PurchaseRequestItemDetails.sql" />
     <Build Include="dbo\Functions\FilterPPMPsByUserCriteria.sql" />
+    <Build Include="dbo\Views\v_PR_PpmpPSDBMCatalogues.sql" />
   </ItemGroup>
 </Project>

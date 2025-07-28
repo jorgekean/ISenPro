@@ -129,6 +129,8 @@ public partial class ISenProContext : DbContext
 
     public virtual DbSet<VPpmpindex> VPpmpindices { get; set; }
 
+    public virtual DbSet<VPrPpmpPsdbmcatalogue> VPrPpmpPsdbmcatalogues { get; set; }
+
     public virtual DbSet<VPsdbmcatalogue> VPsdbmcatalogues { get; set; }
 
     public virtual DbSet<VPsdbmcatalogueIndex> VPsdbmcatalogueIndices { get; set; }
@@ -1168,6 +1170,21 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VPrPpmpPsdbmcatalogue>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("v_PR_PpmpPSDBMCatalogues");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(19, 5)");
+            entity.Property(e => e.CatalogueCode).HasMaxLength(50);
+            entity.Property(e => e.MajorCategoryName).HasMaxLength(200);
+            entity.Property(e => e.PpmpcatalogueId).HasColumnName("PPMPCatalogueId");
+            entity.Property(e => e.Ppmpid).HasColumnName("PPMPId");
+            entity.Property(e => e.UnitOfMeasurementCode).HasMaxLength(100);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(19, 5)");
         });
 
         modelBuilder.Entity<VPsdbmcatalogue>(entity =>

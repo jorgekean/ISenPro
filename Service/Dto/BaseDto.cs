@@ -41,7 +41,7 @@ namespace Service.Dto
 
         public UserTransactionPermissions? UserTransactionPermissions { get; set; }
         public TransactionStatusDto? TransactionStatus { get; set; }
-        public string Status { get; set; } = null!;
+        public string? Status { get; set; }
 
     }
 }

@@ -13,7 +13,7 @@ namespace Service.Transaction.Interface
         //IList<int> GetBudgetYears();
 
         Task<List<PurchaseRequestItemDto>> GetPurchaseRequestItems(int purchaseRequestId);
-        Task<List<VPpmpPsdbmcatalogue>> GetRemainingPpmpCatalogue(short budgetYear, int requestingOffice);
+        Task<List<VPrPpmpPsdbmcatalogue>> GetRemainingPpmpCatalogue(short budgetYear, int requestingOffice);
         //Task<List<APPDetailsPPMPDto>> GetOfficesWithApprovedPPMPs(short budgetYear);
         //Task<List<APPDetailsPPMPDto>> GetOfficesWithSavedPPMPs(short budgetYear);
         //Task<List<APPCatalogueDto>> ViewConsolidated(short budgetYear);
