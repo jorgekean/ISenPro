@@ -121,7 +121,14 @@ namespace Service.Transaction
         // Expect to received the updated/added ppmpcatalogues and ppmpsupplementaries ONLY
         public override async Task UpdateAsync(PRDto dto)
         {
-            var entity = MapToEntity(dto);
+            var existingEntity = await _dbSet.FindAsync(dto.Id.GetValueOrDefault());
+
+            if (existingEntity == null)
+            {
+                return;
+            }
+
+            var entity = MapToEntity(existingEntity, dto);
 
             #region Pr Items
             // Get a list of IDs from the DTO for records that are NOT new.
@@ -140,10 +147,10 @@ namespace Service.Transaction
                 switch (item.Status?.ToLower())
                 {
                     case "modified":
-                        if (existingPrItems.TryGetValue(item.Id, out var prItemToUpdate))
+                        if (existingPrItems.TryGetValue(item.Id.GetValueOrDefault(), out var prItemToUpdate))
                         {
                             // Existing record: update its properties.
-                            prItemToUpdate.PurchaseRequestItemsId = item.Id;
+                            prItemToUpdate.PurchaseRequestItemsId = item.Id.GetValueOrDefault();
                             prItemToUpdate.CatalogueId = item.CatalogueId;
                             prItemToUpdate.RequestedQuantity = item.RequestedQuantity;
                             prItemToUpdate.AmendedQuantity = item.AmendedQuantity;
@@ -187,7 +194,7 @@ namespace Service.Transaction
 
                     case "deleted":
                         // Deleted record: mark it as inactive (soft delete).
-                        if (existingPrItems.TryGetValue(item.Id, out var prItemToDelete))
+                        if (existingPrItems.TryGetValue(item.Id.GetValueOrDefault(), out var prItemToDelete))
                         {
                             prItemToDelete.IsActive = false;
                             prItemToDelete.UpdatedDate = DateTime.Now;
@@ -360,7 +367,7 @@ namespace Service.Transaction
                 DeletedDate = entity.DeletedDate,
                 IsDeleted = entity.DeletedDate.HasValue,
                 Purpose = entity.Purpose,
-                NumberOfItems = entity.PurchaseRequestItems.Where(x=>x.IsActive).Count(),
+                NumberOfItems = entity.PurchaseRequestItems.Where(x => x.IsActive).Count(),
                 PurchasingType = entity.PurchasingType,
                 PrClassification = entity.Prclassification,
                 ConsolidatedBy = entity.ConsolidatedBy,
@@ -467,7 +474,7 @@ namespace Service.Transaction
                 // Populate PrItems for Create ONLY(has PurchaseRequestId)
                 PurchaseRequestItems = dto.Id.GetValueOrDefault() == 0 ? dto.PurchaseRequestItems.Select(prItem => new PurchaseRequestItem
                 {
-                    PurchaseRequestItemsId = prItem.Id,
+                    PurchaseRequestItemsId = prItem.Id.GetValueOrDefault(),
                     PurchaseRequestId = prItem.PurchaseRequestId,
                     CatalogueId = prItem.CatalogueId,
                     RequestedQuantity = prItem.RequestedQuantity,
@@ -488,7 +495,7 @@ namespace Service.Transaction
 
                     PurchaseRequestItemDetails = prItem.Id == 0 ? dto.PurchaseRequestItemDetails.Where(d => d.PurchaseRequestItemsId == prItem.Id).Select(detail => new PurchaseRequestItemDetail
                     {
-                        PurchaseRequestItemsId = prItem.Id,
+                        PurchaseRequestItemsId = prItem.Id.GetValueOrDefault(),
                         ItemSpecification = detail.ItemSpecification,
                         RequestedQuantity = detail.RequestedQuantity,
                         UnitPrice = detail.UnitPrice,
@@ -501,6 +508,100 @@ namespace Service.Transaction
 
                 }).ToList() : []
             };
+
+            return entity;
+        }
+
+        protected PurchaseRequest MapToEntity(PurchaseRequest entity, PRDto dto)
+        {
+            entity.PurchaseRequestId = dto.Id.GetValueOrDefault();
+            entity.Prnumber = dto.PrNumber;
+            entity.BudgetYear = dto.BudgetYear;
+            entity.Remarks = dto.Remarks;
+            entity.Status = dto.IsSubmitted ? "submitted" : dto.Status;
+            entity.CreatedDate = dto.CreatedDate;
+            entity.CreatedByUserId = dto.CreatedBy;
+            entity.IsActive = dto.IsActive;
+            entity.IsSubmitted = dto.IsSubmitted;
+            entity.SubmittedBy = dto.IsSubmitted ? _userContext.UserId : null;
+            entity.SubmittedDate = dto.IsSubmitted ? DateTime.Now : null;
+            entity.DeletedByUserId = dto.DeletedBy;
+            entity.DeletedDate = dto.DeletedDate;
+            entity.UpdatedDate = dto.UpdatedDate;
+            entity.UpdatedByUserId = dto.Updatedby;
+            entity.TotalAmount = dto.TotalAmount;
+            entity.RequestingOffice = dto.RequestingOfficeId;
+            //entity.TempPrnumber = dto.TempPrnumber;
+            entity.Purpose = dto.Purpose;
+            entity.PurchasingType = dto.PurchasingType;
+            entity.Prclassification = dto.PrClassification;
+            entity.ConsolidatedBy = dto.ConsolidatedBy;
+            entity.Prkind = dto.Prkind;
+            entity.ContractId = dto.ContractId;
+            entity.DatePrepared = dto.DatePrepared;
+            //entity.//UpdatedDate = dto.UpdatedDate;
+            //entity.//Updatedby = dto.UpdatedByUserId;
+            entity.FirstQuarter = dto.FirstQuarter;
+            entity.SecondQuarter = dto.SecondQuarter;
+            entity.ThirdQuarter = dto.ThirdQuarter;
+            entity.FourthQuarter = dto.FourthQuarter;
+            entity.HasEquipments = dto.HasEquipments;
+            entity.HasSupplies = dto.HasSupplies;
+            entity.IsConsolidated = dto.IsConsolidated;
+            entity.IsForDelivery = dto.IsForDelivery;
+            entity.IsContract = dto.IsContract;
+            entity.IsPartialEquipment = dto.IsPartialEquipment;
+            entity.IsPartialSupply = dto.IsPartialSupply;
+            entity.IsRepeatOrder = dto.IsRepeatOrder;
+            entity.ModeOfProcurement = dto.ModeOfProcurement;
+            entity.Supplier = dto.SupplierId;
+            entity.PpmpId = dto.PpmpId;
+            entity.PpmpNumber = dto.PpmpNumber;
+            entity.IsForRsqrfq = dto.IsForRsqrfq;
+            entity.IsItemized = dto.IsItemized;
+            entity.IsPrSo = dto.IsPrSo;
+            entity.OtherRemarks = dto.OtherRemarks;
+            entity.IsCreatedBySupplyOfficer = dto.IsCreatedBySupplyOfficer;
+            entity.WithApr = dto.WithApr;
+            entity.WithCanvassing = dto.WithCanvassing;
+            entity.WithoutPo = dto.WithoutPo;
+
+            //// Populate PrItems for Create ONLY(has PurchaseRequestId)
+            //entity.PurchaseRequestItems = dto.Id.GetValueOrDefault() == 0 ? dto.PurchaseRequestItems.Select(prItem => new PurchaseRequestItem
+            //{
+            //    PurchaseRequestItemsId = prItem.Id.GetValueOrDefault(),
+            //    PurchaseRequestId = prItem.PurchaseRequestId,
+            //    CatalogueId = prItem.CatalogueId,
+            //    RequestedQuantity = prItem.RequestedQuantity,
+            //    AmendedQuantity = prItem.AmendedQuantity,
+            //    AmendedUnitPrice = prItem.AmendedUnitPrice,
+            //    UnitPrice = prItem.UnitPrice,
+            //    Amount = prItem.Amount,
+            //    IsActive = prItem.IsActive,
+            //    CreatedDate = DateTime.Now,
+            //    CreatedByUserId = _userContext.UserId,
+            //    UpdatedDate = prItem.UpdatedDate,
+            //    UpdatedByUserId = prItem.Updatedby,
+            //    AvailableAt = prItem.AvailableAt,
+            //    IsFailed = prItem.IsFailed,
+            //    ItemDescription = prItem.ItemDescription,
+            //    ItemType = prItem.ItemTypeId,
+            //    UnitOfMeasurement = prItem.UnitOfMeasurementId,
+
+            //    PurchaseRequestItemDetails = prItem.Id == 0 ? dto.PurchaseRequestItemDetails.Where(d => d.PurchaseRequestItemsId == prItem.Id).Select(detail => new PurchaseRequestItemDetail
+            //    {
+            //        PurchaseRequestItemsId = prItem.Id.GetValueOrDefault(),
+            //        ItemSpecification = detail.ItemSpecification,
+            //        RequestedQuantity = detail.RequestedQuantity,
+            //        UnitPrice = detail.UnitPrice,
+            //        UnitOfMeasure = detail.UnitOfMeasureId,
+            //        ItemType = detail.ItemTypeId,
+            //        CreatedDate = DateTime.Now,
+            //        CreatedByUserId = _userContext.UserId,
+            //        IsActive = true
+            //    }).ToList() : []
+
+            //}).ToList() : [];
 
             return entity;
         }

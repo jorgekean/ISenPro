@@ -88,7 +88,7 @@ namespace API.Controllers.Transaction
         public async Task<ActionResult<PRDto>> Post(PRDto model)
         {
             try
-            {
+            { 
                 var data = await _prService.AddAsync(model);
             }
             catch (Exception ex)

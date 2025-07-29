@@ -100,7 +100,7 @@ namespace Service.Dto.Transaction
 
     public class PurchaseRequestItemDto : TransactionBaseDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public int PurchaseRequestId { get; set; }
 
