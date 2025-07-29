@@ -50,7 +50,7 @@ namespace Service.Dto.Transaction
 
         public bool IsItemized { get; set; }
 
-        public int? Supplier { get; set; }
+        public int? SupplierId { get; set; }
 
         public int? Prkind { get; set; }
 
@@ -129,6 +129,7 @@ namespace Service.Dto.Transaction
         public int? AmendedQuantity { get; set; }
 
         public decimal? AmendedUnitPrice { get; set; }
+        public string? Status { get; set; }
 
         public IEnumerable<PurchaseRequestItemDetailDto> PurchaseRequestItemDetails { get; set; } = new List<PurchaseRequestItemDetailDto>();
     }
@@ -151,6 +152,7 @@ namespace Service.Dto.Transaction
 
         public int? UnitOfMeasureId { get; set; }
         public string? UnitOfMeasure { get; set; }
+        public string? Status { get; set; }
 
         //public virtual PurchaseRequestItem PurchaseRequestItems { get; set; } = null!;
     }

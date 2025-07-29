@@ -386,7 +386,7 @@ public partial class ISenProContext : DbContext
             entity.Property(e => e.TempPrnumber)
                 .HasMaxLength(100)
                 .HasColumnName("TempPRNumber");
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
             entity.Property(e => e.WithoutPo).HasColumnName("WithoutPO");
         });
@@ -395,11 +395,11 @@ public partial class ISenProContext : DbContext
         {
             entity.HasKey(e => e.PurchaseRequestItemsId).HasName("PK__Purchase__2F2273C908869DF7");
 
-            entity.Property(e => e.AmendedUnitPrice).HasColumnType("decimal(18, 0)");
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.AmendedUnitPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.DeletedDate).HasColumnType("datetime");
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.PurchaseRequest).WithMany(p => p.PurchaseRequestItems)
@@ -414,7 +414,7 @@ public partial class ISenProContext : DbContext
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.DeletedDate).HasColumnType("datetime");
-            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.PurchaseRequestItems).WithMany(p => p.PurchaseRequestItemDetails)

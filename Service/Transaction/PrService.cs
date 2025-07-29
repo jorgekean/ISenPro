@@ -137,49 +137,67 @@ namespace Service.Transaction
 
             foreach (var item in dto.PurchaseRequestItems)
             {
-                if (item.Id != 0 && existingPrItems.TryGetValue(item.Id, out var prItem))
+                switch (item.Status?.ToLower())
                 {
-                    // Existing record: update its properties.
-                    prItem.PurchaseRequestItemsId = item.Id;
-                    prItem.CatalogueId = item.CatalogueId;
-                    prItem.RequestedQuantity = item.RequestedQuantity;
-                    prItem.AmendedQuantity = item.AmendedQuantity;
-                    prItem.AmendedUnitPrice = item.AmendedUnitPrice;
-                    prItem.UnitPrice = item.UnitPrice;
-                    prItem.UpdatedDate = DateTime.Now;
-                    prItem.UpdatedByUserId = _userContext.UserId;
-                    prItem.Amount = item.Amount;
-                    prItem.IsActive = item.IsActive;
-                    prItem.AvailableAt = item.AvailableAt;
-                    prItem.IsFailed = item.IsFailed;
-                    prItem.ItemDescription = item.ItemDescription;
-                    prItem.ItemType = item.ItemTypeId;
-                    prItem.UnitOfMeasurement = item.UnitOfMeasurementId;
-                    prItem.PurchaseRequestId = dto.Id.GetValueOrDefault();
-                }
-                else
-                {
-                    // New record: create a new instance and add it to the context.
-                    prItem = new PurchaseRequestItem
-                    {
-                        PurchaseRequestId = dto.Id.GetValueOrDefault(),
-                        AmendedQuantity = item.AmendedQuantity,
-                        AmendedUnitPrice = item.UnitPrice,
-                        Amount = item.Amount,
-                        AvailableAt = item.AvailableAt,
-                        CatalogueId = item.CatalogueId,
-                        CreatedByUserId = _userContext.UserId,
-                        CreatedDate = DateTime.Now,
-                        IsActive = true,
-                        IsFailed = item.IsFailed,
-                        ItemDescription = item.ItemDescription,
-                        ItemType = item.ItemTypeId,
-                        RequestedQuantity = item.RequestedQuantity,
-                        RequestingOfficeId = item.RequestingOfficeId,
-                        UnitOfMeasurement = item.UnitOfMeasurementId,
-                        UnitPrice = item.UnitPrice
-                    };
-                    _context.PurchaseRequestItems.Add(prItem);
+                    case "modified":
+                        if (existingPrItems.TryGetValue(item.Id, out var prItemToUpdate))
+                        {
+                            // Existing record: update its properties.
+                            prItemToUpdate.PurchaseRequestItemsId = item.Id;
+                            prItemToUpdate.CatalogueId = item.CatalogueId;
+                            prItemToUpdate.RequestedQuantity = item.RequestedQuantity;
+                            prItemToUpdate.AmendedQuantity = item.AmendedQuantity;
+                            prItemToUpdate.AmendedUnitPrice = item.AmendedUnitPrice;
+                            prItemToUpdate.UnitPrice = item.UnitPrice;
+                            prItemToUpdate.UpdatedDate = DateTime.Now;
+                            prItemToUpdate.UpdatedByUserId = _userContext.UserId;
+                            prItemToUpdate.Amount = item.Amount;
+                            prItemToUpdate.IsActive = item.IsActive;
+                            prItemToUpdate.AvailableAt = item.AvailableAt;
+                            prItemToUpdate.IsFailed = item.IsFailed;
+                            prItemToUpdate.ItemDescription = item.ItemDescription;
+                            prItemToUpdate.ItemType = item.ItemTypeId;
+                            prItemToUpdate.UnitOfMeasurement = item.UnitOfMeasurementId;
+                        }
+                        break;
+
+                    case "new":
+                        // New record: create a new instance and add it to the context.
+                        var newPrItem = new PurchaseRequestItem
+                        {
+                            PurchaseRequestId = dto.Id.GetValueOrDefault(),
+                            AmendedQuantity = item.AmendedQuantity,
+                            AmendedUnitPrice = item.UnitPrice,
+                            Amount = item.Amount,
+                            AvailableAt = item.AvailableAt,
+                            CatalogueId = item.CatalogueId,
+                            CreatedByUserId = _userContext.UserId,
+                            CreatedDate = DateTime.Now,
+                            IsActive = true,
+                            IsFailed = item.IsFailed,
+                            ItemDescription = item.ItemDescription,
+                            ItemType = item.ItemTypeId,
+                            RequestedQuantity = item.RequestedQuantity,
+                            RequestingOfficeId = item.RequestingOfficeId,
+                            UnitOfMeasurement = item.UnitOfMeasurementId,
+                            UnitPrice = item.UnitPrice
+                        };
+                        _context.PurchaseRequestItems.Add(newPrItem);
+                        break;
+
+                    case "deleted":
+                        // Deleted record: mark it as inactive (soft delete).
+                        if (existingPrItems.TryGetValue(item.Id, out var prItemToDelete))
+                        {
+                            prItemToDelete.IsActive = false;
+                            prItemToDelete.UpdatedDate = DateTime.Now;
+                            prItemToDelete.UpdatedByUserId = _userContext.UserId;
+                        }
+                        break;
+
+                    default:
+                        // Items with no status or an unknown status are ignored.
+                        break;
                 }
             }
             #endregion
@@ -342,7 +360,7 @@ namespace Service.Transaction
                 DeletedDate = entity.DeletedDate,
                 IsDeleted = entity.DeletedDate.HasValue,
                 Purpose = entity.Purpose,
-                NumberOfItems = entity.PurchaseRequestItems.Count,
+                NumberOfItems = entity.PurchaseRequestItems.Where(x=>x.IsActive).Count(),
                 PurchasingType = entity.PurchasingType,
                 PrClassification = entity.Prclassification,
                 ConsolidatedBy = entity.ConsolidatedBy,
@@ -364,7 +382,7 @@ namespace Service.Transaction
                 IsPartialSupply = entity.IsPartialSupply,
                 IsRepeatOrder = entity.IsRepeatOrder,
                 ModeOfProcurement = entity.ModeOfProcurement,
-                Supplier = entity.Supplier,
+                SupplierId = entity.Supplier,
                 PpmpId = entity.PpmpId,
                 PpmpNumber = entity.PpmpNumber,
                 IsForRsqrfq = entity.IsForRsqrfq,
@@ -434,7 +452,7 @@ namespace Service.Transaction
                 IsPartialSupply = dto.IsPartialSupply,
                 IsRepeatOrder = dto.IsRepeatOrder,
                 ModeOfProcurement = dto.ModeOfProcurement,
-                Supplier = dto.Supplier,
+                Supplier = dto.SupplierId,
                 PpmpId = dto.PpmpId,
                 PpmpNumber = dto.PpmpNumber,
                 IsForRsqrfq = dto.IsForRsqrfq,
@@ -459,7 +477,7 @@ namespace Service.Transaction
                     Amount = prItem.Amount,
                     IsActive = prItem.IsActive,
                     CreatedDate = DateTime.Now,
-                    CreatedByUserId = prItem.CreatedBy,
+                    CreatedByUserId = _userContext.UserId,
                     UpdatedDate = prItem.UpdatedDate,
                     UpdatedByUserId = prItem.Updatedby,
                     AvailableAt = prItem.AvailableAt,
